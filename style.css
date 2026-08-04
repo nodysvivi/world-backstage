@@ -17,7 +17,7 @@
     --wb-danger: #c78091;
     --wb-shadow: 0 35px 100px rgba(0, 0, 0, 0.48);
     --wb-radius: 22px;
-    --wb-font: Inter, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    --wb-font: "Noto Sans", "Noto Sans SC", Inter, -apple-system, "Segoe UI", sans-serif;
     --wb-reading-bump: 1px;
     --wb-reading-leading: 0.08;
     --wb-visual-inset-top: 0px;
@@ -218,7 +218,7 @@
 .wb-person-drawer h3 {
     margin: 0;
     color: var(--wb-text);
-    font-family: "Iowan Old Style", "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-weight: 500;
     letter-spacing: 0.025em;
 }
@@ -334,7 +334,7 @@
 .wb-calendar-page strong {
     display: block;
     color: var(--wb-text);
-    font-family: "Iowan Old Style", "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: 22px;
     font-weight: 500;
     line-height: 32px;
@@ -360,7 +360,7 @@
 
 .wb-calendar-copy strong {
     color: var(--wb-text-soft);
-    font-family: "Iowan Old Style", "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: calc(12px + var(--wb-reading-bump));
     font-weight: 500;
     white-space: nowrap;
@@ -1454,7 +1454,7 @@
     border-radius: 50%;
     background: var(--wb-accent-soft);
     color: var(--wb-text-soft);
-    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: 13px;
 }
 
@@ -1678,7 +1678,7 @@
 .wb-inner-voice p {
     margin: 0;
     color: var(--wb-text-soft);
-    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: 10px;
     font-style: normal;
     overflow-wrap: anywhere;
@@ -3457,7 +3457,7 @@
 
     .wb-content-column {
         grid-row: 1;
-        grid-template-rows: 64px auto minmax(0, 1fr) 43px;
+        grid-template-rows: 64px auto minmax(0, 1fr) auto;
     }
 
     .wb-view-header {
@@ -4344,7 +4344,7 @@
 
 .wb-memory-digest h3 {
     margin: 5px 0 0;
-    font-family: "Iowan Old Style", "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: 15px;
     font-weight: 500;
 }
@@ -5229,7 +5229,7 @@
 #world-backstage-root .wb-person-summary-heading strong {
     min-width: 0;
     color: var(--wb-text);
-    font-family: "Iowan Old Style", "Noto Serif SC", "Songti SC", serif;
+    font-family: "Noto Sans", "Noto Sans SC", Inter, sans-serif;
     font-size: 15px;
     font-weight: 500;
     overflow: hidden;
