@@ -2513,6 +2513,25 @@ export function createWorldBackstageUI({
     root.id = 'world-backstage-root';
     document.body.appendChild(root);
 
+    // Fix: on some mobile browsers the host page's viewport meta is missing
+    // or incorrect, so the layout viewport ends up wider than the real
+    // screen (e.g. ~980px). That makes every `@media (max-width: ...)`
+    // rule below think there is "desktop" space even on a phone, so the
+    // compact/mobile CSS never activates. Force a correct viewport so
+    // 100vw and the breakpoints match the actual device width.
+    (function ensureViewportMeta() {
+        let meta = document.querySelector('meta[name="viewport"]');
+        if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', 'viewport');
+            document.head.appendChild(meta);
+        }
+        meta.setAttribute(
+            'content',
+            'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover',
+        );
+    })();
+
     function syncVisualViewportInsets() {
         const viewport = window.visualViewport;
         const viewportWidth = Number(viewport?.width || window.innerWidth || 0);
