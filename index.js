@@ -135,7 +135,7 @@ const runtime = {
     lastTaskConnection: null,
     publicOpinionStatus: {
         phase: 'idle',
-        message: '舆情还没开张呢～',
+        message: 'Dư luận vẫn chưa mở cửa đâu～',
         error: '',
     },
     worldbookScan: {
@@ -152,7 +152,7 @@ const runtime = {
     },
     syncStatus: {
         phase: 'idle',
-        message: '还没推演过～世界先在这里等你',
+        message: 'Vẫn chưa suy diễn qua～ Thế giới đang đợi bạn ở đây trước',
         error: '',
         attemptedAt: '',
         succeededAt: '',
@@ -182,7 +182,7 @@ function worldbookEntryLabel(entry) {
     const keys = Array.isArray(entry?.key)
         ? entry.key
         : typeof entry?.key === 'string' ? [entry.key] : [];
-    return String(entry?.comment || keys[0] || `条目 ${entry?.uid ?? ''}`)
+    return String(entry?.comment || keys[0] || `Mục ${entry?.uid ?? ''}`)
         .trim()
         .slice(0, 80);
 }
@@ -190,13 +190,13 @@ function worldbookEntryLabel(entry) {
 async function scanWorldbook(bookName) {
     const name = String(bookName || '').trim();
     const context = getContext();
-    if (!name) throw new Error('先挑一本世界书给我看看嘛～');
+    if (!name) throw new Error('Chọn trước một cuốn Worldbook cho tôi xem đi mà～');
     if (typeof context?.loadWorldInfo !== 'function') {
-        throw new Error('当前酒馆版本没有开放世界书读取接口');
+        throw new Error('Phiên bản Tavern hiện tại chưa mở giao diện đọc Worldbook');
     }
     runtime.worldbookScan = {
         phase: 'running',
-        message: `正在翻《${name}》～稍等一下下`,
+        message: `Đang lật 《${name}》～Đợi một chút nhé`,
         bookName: name,
         entries: [],
     };
@@ -243,8 +243,8 @@ async function scanWorldbook(bookName) {
         runtime.worldbookScan = {
             phase: 'success',
             message: entries.length
-                ? `翻到 ${entries.length} 条内容啦～其中 ${entries.filter(entry => entry.likelyPerson).length} 条看起来像人物，确认一下再导入就好`
-                : '这本世界书里暂时没翻到能读的内容哦～',
+                ? `Lật đến ${entries.length}  mục nội dung rồi～ Trong đó có ${entries.filter(entry => entry.likelyPerson).length}  mục trông giống nhân vật, xác nhận một chút rồi nhập là được`
+                : 'Trong cuốn Worldbook này tạm thời chưa lật được nội dung nào có thể đọc đâu～',
             bookName: name,
             entries,
         };
@@ -252,7 +252,7 @@ async function scanWorldbook(bookName) {
     } catch (error) {
         runtime.worldbookScan = {
             phase: 'error',
-            message: `没读成功 QAQ：${describeError(error)}`,
+            message: `Đọc không thành công QAQ：${describeError(error)}`,
             bookName: name,
             entries: [],
         };
@@ -267,18 +267,18 @@ function looksLikeLegacyWorldbookPersonalityDump(value, candidateContent = '') {
     const raw = String(candidateContent || '').trim();
     if (!text) return false;
     if (raw && text === raw.slice(0, 600)) return true;
-    const markerHits = (text.match(/(?:<\/?(?:info|character)\b|中文名|姓名|昵称|gender|性别|age|年龄|birthday|生日|identity|身份|background|背景|appearance|外貌|height|身高)/giu) || []).length;
+    const markerHits = (text.match(/(?:<\/?(?:info|character)\b|Tên tiếng Trung|Họ tên|Biệt danh|gender|Giới tính|age|Tuổi tác|birthday|Sinh nhật|identity|Thân phận|background|Bối cảnh|appearance|Ngoại hình|height|Chiều cao)/giu) || []).length;
     return markerHits >= 3;
 }
 
 function importWorldbookPeople(bookName, entryIds = []) {
     const name = String(bookName || '').trim();
     if (runtime.worldbookScan.bookName !== name) {
-        throw new Error('世界书预览已经变化，请重新扫描');
+        throw new Error('Bản xem trước Worldbook đã thay đổi, vui lòng quét lại');
     }
     const wanted = new Set((Array.isArray(entryIds) ? entryIds : [entryIds]).map(String));
     const selected = runtime.worldbookScan.entries.filter(entry => wanted.has(String(entry.uid)));
-    if (!selected.length) throw new Error('请至少勾选一个人物条目');
+    if (!selected.length) throw new Error('Vui lòng chọn ít nhất một mục nhân vật');
 
     const next = clone(getState());
     let created = 0;
@@ -322,9 +322,9 @@ function importWorldbookPeople(bookName, entryIds = []) {
             id: `person_worldbook_${hashText(reference)}`,
             name: importedName,
             monogram: importedName.slice(0, 1),
-            location: '位置待确认',
-            action: '当前行动待确认',
-            intent: '短期意图待确认',
+            location: 'Vị trí chờ xác nhận',
+            action: 'Hành động hiện tại chờ xác nhận',
+            intent: 'Ý định ngắn hạn chờ xác nhận',
             longTermGoal: '',
             identityAnchor: profile.identityAnchor,
             personalityAnchor: profile.personalityAnchor,
@@ -349,7 +349,7 @@ function importWorldbookPeople(bookName, entryIds = []) {
         });
         created += 1;
     }
-    commitManualState(next, `世界书人物已导入：新增 ${created} 人，更新 ${updated} 人。`);
+    commitManualState(next, `Nhân vật Worldbook đã nhập: Thêm mới  ${created}  người, cập nhật  ${updated}  người.`);
     return { created, updated };
 }
 
@@ -360,7 +360,7 @@ function toast(message, tone = 'info') {
     }
     if (!globalThis.toastr) return;
     const method = ['success', 'warning', 'error', 'info'].includes(tone) ? tone : 'info';
-    globalThis.toastr[method](message, '世界背面', { preventDuplicates: true });
+    globalThis.toastr[method](message, 'Mặt trái thế giới', { preventDuplicates: true });
 }
 
 function normalizeOrbPosition(value) {
@@ -381,7 +381,7 @@ function normalizeApiProfiles(value) {
         const id = String(raw.id || '').trim().slice(0, 80);
         if (!id || seen.has(id)) continue;
         seen.add(id);
-        const name = String(raw.name || '未命名方案').trim().slice(0, 80) || '未命名方案';
+        const name = String(raw.name || 'Phương án chưa đặt tên').trim().slice(0, 80) || 'Phương án chưa đặt tên';
         const url = String(raw.url || raw.customApiUrl || '').trim().slice(0, 500);
         const key = String(raw.key || raw.customApiKey || '').trim().slice(0, 1000);
         const model = String(raw.model || raw.customApiModel || '').trim().slice(0, 180);
@@ -555,7 +555,7 @@ function saveSettings() {
 }
 
 function makeStore() {
-    const initialState = createInitialState({ worldName: '主世界' });
+    const initialState = createInitialState({ worldName: 'Thế giới chính' });
     return {
         schemaVersion: SCHEMA_VERSION,
         initialState,
@@ -680,12 +680,12 @@ function getStore({ create = true } = {}) {
     ) {
         store = addRecoveryPoint(store, {
             reason: migrationReason,
-            label: `升级到数据结构 ${SCHEMA_VERSION} 前自动保存`,
+            label: `Nâng cấp lên cấu trúc dữ liệu ${SCHEMA_VERSION} Tự động lưu trước khi`,
         });
         createdMigrationRecovery = true;
     }
     store.schemaVersion = SCHEMA_VERSION;
-    store.initialState = trimState(store.initialState || createInitialState({ worldName: '主世界' }));
+    store.initialState = trimState(store.initialState || createInitialState({ worldName: 'Thế giới chính' }));
     store.currentState = trimState(store.currentState || store.initialState);
     store.memorySummaryArchive = Array.isArray(store.memorySummaryArchive)
         ? store.memorySummaryArchive
@@ -783,7 +783,7 @@ function resolveTaskConnection(settings, taskKind = 'simulation') {
     const routeKey = taskRouteKey(taskKind);
     const route = String(settings.apiModuleRoutes?.[routeKey] || 'default');
     if (route === 'tavern') {
-        return { mode: 'tavern', route, routeKey, label: '跟随当前酒馆', settings };
+        return { mode: 'tavern', route, routeKey, label: 'Theo Tavern hiện tại', settings };
     }
     if (route.startsWith('profile:')) {
         const id = route.slice('profile:'.length);
@@ -793,7 +793,7 @@ function resolveTaskConnection(settings, taskKind = 'simulation') {
                 mode: 'custom',
                 route,
                 routeKey,
-                label: profile.name || '已保存方案',
+                label: profile.name || 'Phương án đã lưu',
                 profile,
                 settings: settingsForApiProfile(settings, profile),
             };
@@ -804,11 +804,11 @@ function resolveTaskConnection(settings, taskKind = 'simulation') {
             mode: 'custom',
             route: 'default',
             routeKey,
-            label: '默认独立接口',
+            label: 'Giao diện độc lập mặc định',
             settings,
         };
     }
-    return { mode: 'tavern', route: 'default', routeKey, label: '跟随当前酒馆', settings };
+    return { mode: 'tavern', route: 'default', routeKey, label: 'Theo Tavern hiện tại', settings };
 }
 
 function getConnectionInfo() {
@@ -824,13 +824,13 @@ function getConnectionInfo() {
         return {
             mainApi: 'custom-independent',
             source: 'custom-independent',
-            apiLabel: '独立 OpenAI 兼容接口',
-            model: pluginSettings.customApiModel || '模型尚未配置',
-            profile: host || '接口地址尚未配置',
+            apiLabel: 'Độc lập OpenAI Giao diện tương thích',
+            model: pluginSettings.customApiModel || 'Mô hình chưa được cấu hình',
+            profile: host || 'Địa chỉ API chưa được cấu hình',
             online: '',
             method: pluginSettings.customApiTransport === 'direct'
-                ? '浏览器直连（不继承酒馆模型）'
-                : '经酒馆转发（不继承酒馆模型）',
+                ? 'Trình duyệt kết nối trực tiếp (Không kế thừa mô hình Tavern)'
+                : 'Chuyển tiếp qua Tavern (Không kế thừa mô hình Tavern)',
             configured: Boolean(
                 pluginSettings.customApiUrl
                 && pluginSettings.customApiKey
@@ -869,7 +869,7 @@ function getConnectionInfo() {
         kobold: 'KoboldAI',
         koboldhorde: 'AI Horde',
         novel: 'NovelAI',
-        custom: '自定义兼容接口',
+        custom: 'Giao diện tương thích tùy chỉnh',
         google: 'Google AI Studio',
         makersuite: 'Google AI Studio',
         openrouter: 'OpenRouter',
@@ -879,11 +879,11 @@ function getConnectionInfo() {
     return {
         mainApi,
         source,
-        apiLabel: apiLabels[source] || apiLabels[mainApi] || source || '未识别',
-        model: String(configuredModel || selectedProfile?.model || messageModel || '跟随酒馆当前模型'),
+        apiLabel: apiLabels[source] || apiLabels[mainApi] || source || 'Chưa nhận diện',
+        model: String(configuredModel || selectedProfile?.model || messageModel || 'Theo mô hình hiện tại của Tavern'),
         profile: String(selectedProfile?.name || ''),
         online: String(context?.onlineStatus || ''),
-        method: typeof context?.generateRaw === 'function' ? '独立上下文推演' : '安静推演兼容模式',
+        method: typeof context?.generateRaw === 'function' ? 'Suy diễn ngữ cảnh độc lập' : 'Chế độ tương thích suy diễn yên tĩnh',
         configured: true,
     };
 }
@@ -907,19 +907,19 @@ function getSyncStatus() {
         if (branch.status === 'error') {
             derived = {
                 phase: 'error',
-                message: '上一次世界推演失败',
-                error: branch.error || '推演接口没有提供具体错误',
+                message: 'Suy diễn thế giới lần trước thất bại',
+                error: branch.error || 'Giao diện suy diễn không cung cấp lỗi cụ thể',
             };
         } else if (branch.status === 'pending') {
             derived = {
                 phase: 'pending',
-                message: '最新正文仍在等待推演',
+                message: 'Nội dung chính mới nhất vẫn đang chờ suy diễn',
                 error: '',
             };
         } else if (branch.status === 'committed') {
             derived = {
                 phase: 'success',
-                message: '最新正文已经完成推演',
+                message: 'Nội dung chính mới nhất đã hoàn thành suy diễn',
                 error: '',
                 summary: branch.summary || null,
             };
@@ -956,7 +956,7 @@ function getSyncStatus() {
                 && runtime.manualUndo.chatToken === currentChatToken()
                 && runtime.manualUndo.key === currentAnchorKey()
             ),
-            label: runtime.manualUndo?.label || '撤销刚才的手动更改',
+            label: runtime.manualUndo?.label || 'Hoàn tác thay đổi thủ công vừa rồi',
         },
         editDecision: {
             available: Boolean(
@@ -1042,14 +1042,14 @@ function describeError(error) {
         }
     }
     if (!message || message === '<none>' || message === '[object Object]') {
-        return '推演接口没有返回具体错误；请先测试世界背面的连接，再重试最新正文';
+        return 'Giao diện suy diễn không trả về lỗi cụ thể; vui lòng kiểm tra kết nối của mặt trái thế giới trước, sau đó thử lại nội dung chính mới nhất';
     }
     return message.slice(0, 420);
 }
 
 function retryJsonPrompt(prompt, attempt) {
     if (!(attempt > 0)) return prompt;
-    return `${prompt}\n\n<json_retry>\n这是第 ${attempt} 次格式重试。上一次返回无法解析或达到输出上限。请重新生成一个完整、严格、闭合的 JSON 对象；不要沿用被截断的句子，不要代码围栏或解释。优先省略没有变化的可选条目，绝不能省略结尾括号。\n</json_retry>`;
+    return `${prompt}\n\n<json_retry>\n Đây là lần thứ  ${attempt}  lần thử lại định dạng. Lần trả về trước không thể phân tích cú pháp hoặc đã đạt giới hạn đầu ra. Vui lòng tạo lại một  JSON đối tượng; đừng tiếp tục sử dụng các câu bị cắt bớt, không dùng khối mã hoặc giải thích. Ưu tiên bỏ qua các mục tùy chọn không có thay đổi, tuyệt đối không được bỏ qua dấu ngoặc kết thúc.\n</json_retry>`;
 }
 
 function retryTokenBudget(base, attempt) {
@@ -1123,17 +1123,17 @@ function simulationSummary(before, after, {
     };
 }
 
-function unreadableJsonError(raw, subject = '模型') {
+function unreadableJsonError(raw, subject = 'Mô hình') {
     const text = String(raw || '').trim();
-    if (!text) return new Error(`${subject}没有返回可读取的 JSON 状态`);
+    if (!text) return new Error(`${subject}không trả về dữ liệu có thể đọc của  JSON Trạng thái`);
     const compact = text.replace(/\s+/g, ' ');
     const beginning = compact.slice(0, 90);
     const ending = compact.length > 140 ? compact.slice(-70) : '';
     const likelyTruncated = /^[\[{]/.test(compact) && !/[}\]]\s*(?:```)?$/.test(compact);
-    const detail = ending ? `开头：${beginning}；结尾：${ending}` : beginning;
+    const detail = ending ? `Phần đầu:${beginning}；Phần cuối:${ending}` : beginning;
     return new Error(
-        `${subject}返回的 JSON ${likelyTruncated ? '没有闭合，疑似被输出上限截断' : '格式无效'}`
-        + `（${text.length} 字符）：${detail}`,
+        `${subject}Dữ liệu trả về của  JSON ${likelyTruncated ? 'không khép kín, nghi ngờ bị cắt bớt do giới hạn đầu ra' : 'Định dạng không hợp lệ'}`
+        + `（${text.length} ký tự):${detail}`,
     );
 }
 
@@ -1249,7 +1249,7 @@ function hasUsableAssistantText(message) {
         return false;
     }
     const text = selectedMessageText(message).trim();
-    return Boolean(text && !/^(?:\.{3}|…+|（?空回复）?)$/u.test(text));
+    return Boolean(text && !/^(?:\.{3}|…+|（?Phản hồi trống）?)$/u.test(text));
 }
 
 function narrativeContext(messageId, maximumTurns = 3) {
@@ -1380,8 +1380,8 @@ function nextHistoryBatch(cursor, {
 
 
 function publicOpinionEventSignature(state) {
-    // 舆情只在其公开信息源真正变化时失效。记忆整理、UI 编辑等无关 revision
-    // 不应该让同一份公开世界事实反复重跑 API。
+    // Dư luận chỉ hết hiệu lực khi nguồn thông tin công khai của nó thực sự thay đổi. Sắp xếp ký ức, UI chỉnh sửa v.v. không liên quan revision
+    // Không nên để cùng một sự thật thế giới công khai chạy lại nhiều lần API。
     return hashText(JSON.stringify(eligiblePublicOpinionEvents(state)));
 }
 
@@ -1428,15 +1428,15 @@ function publicOpinionRevealInjection(state, cache, settings, recentText = '') {
     if (!news.length && !forums.length) return '';
     const lines = [
         '<world_public_opinion>',
-        '以下是与当前镜头确实相关的公开舆情候选。只有角色存在自然接触渠道（手机、电视、路人讨论、工作消息等）时才允许顺手显露；不得为了播报而打断当前剧情，也不得把论坛猜测当成世界事实。',
+        'Dưới đây là các ứng cử viên dư luận công khai thực sự liên quan đến ống kính hiện tại. Chỉ khi nhân vật có kênh tiếp xúc tự nhiên (điện thoại, TV, người qua đường thảo luận, tin nhắn công việc, v.v.) mới được phép thuận tay hiển thị; không được vì thông báo mà làm gián đoạn cốt truyện hiện tại, cũng không được coi suy đoán trên diễn đàn là sự thật thế giới.',
     ];
     for (const item of news) {
         const audience = (item.audienceTags || []).slice(0, 4).join('、');
-        lines.push(`新闻｜${item.headline}｜${item.summary}｜来源：${item.source || '公开信息'}｜来源层级：${item.sourceType || 'official'}${audience ? `｜可能关注：${audience}` : ''}`);
+        lines.push(`Tin tức｜${item.headline}｜${item.summary}｜Nguồn:${item.source || 'Thông tin công khai'}｜Cấp độ nguồn:${item.sourceType || 'official'}${audience ? `｜Có thể quan tâm:${audience}` : ''}`);
     }
     for (const item of forums) {
         const audience = (item.audienceTags || []).slice(0, 4).join('、');
-        lines.push(`论坛｜${item.title}｜${item.summary}｜性质：${item.claimStatus || 'mixed'}｜来源层级：${item.sourceType || 'unofficial'}${audience ? `｜可能关注：${audience}` : ''}`);
+        lines.push(`Diễn đàn｜${item.title}｜${item.summary}｜Tính chất:${item.claimStatus || 'mixed'}｜Cấp độ nguồn:${item.sourceType || 'unofficial'}${audience ? `｜Có thể quan tâm:${audience}` : ''}`);
     }
     lines.push('</world_public_opinion>');
     return lines.join('\n');
@@ -1506,7 +1506,7 @@ function preemptLowPriorityTasksForCore() {
         runtime.activeHistoryScan.abort();
         runtime.historyProgress = {
             ...runtime.historyProgress,
-            message: '新正文来啦～先把世界主线追上，记忆会从已保存批次继续整理',
+            message: 'Nội dung chính mới đến rồi~ Trước tiên hãy theo kịp tuyến truyện chính của thế giới, ký ức sẽ tiếp tục được sắp xếp từ đợt đã lưu',
         };
         runtime.ui?.render();
     }
@@ -1518,7 +1518,7 @@ function scheduleDeferredPublicOpinion(delay = 220) {
         if (!runtime.pendingPublicOpinion || coreSimulationBusy()) return;
         runtime.pendingPublicOpinion = false;
         void generatePublicOpinionSnapshot({ allowDefer: true }).catch(error => {
-            if (!isAbortError(error)) console.warn('[世界背面] 延后舆情生成失败', error);
+            if (!isAbortError(error)) console.warn('[Mặt trái thế giới] Trì hoãn tạo dư luận thất bại', error);
         });
     }, delay);
 }
@@ -1537,12 +1537,12 @@ function cancelActiveSimulation() {
         try {
             getContext()?.stopGeneration?.();
         } catch (error) {
-            console.warn('[世界背面] 无法请求酒馆停止安静生成', error);
+            console.warn('[Mặt trái thế giới] Không thể yêu cầu Tavern dừng tạo im lặng', error);
         }
     }
     setSyncStatus({
         phase: 'cancelling',
-        message: '正在停止本次推演，不会提交任何世界变化',
+        message: 'Đang dừng lần suy diễn này, sẽ không gửi bất kỳ thay đổi thế giới nào',
         error: '',
     });
     return true;
@@ -1648,18 +1648,18 @@ async function backgroundSimulation(prompt, {
         taskKind,
         routeKey: route.routeKey,
         route: route.route,
-        apiLabel: route.mode === 'custom' ? route.label : '跟随当前酒馆',
+        apiLabel: route.mode === 'custom' ? route.label : 'Theo Tavern hiện tại',
         model: route.mode === 'custom'
-            ? String(requestSettings.customApiModel || '模型尚未配置')
-            : String(tavernConnection?.model || '跟随酒馆当前模型'),
+            ? String(requestSettings.customApiModel || 'Mô hình chưa được cấu hình')
+            : String(tavernConnection?.model || 'Theo mô hình hiện tại của Tavern'),
         method: route.mode === 'custom'
-            ? (requestSettings.customApiTransport === 'direct' ? '浏览器直连' : '酒馆转发')
-            : '酒馆独立上下文',
+            ? (requestSettings.customApiTransport === 'direct' ? 'Trình duyệt kết nối trực tiếp' : 'Tavern chuyển tiếp')
+            : 'Ngữ cảnh độc lập của Tavern',
         source: route.mode === 'custom' ? 'custom-independent' : tavernConnection?.source || 'tavern',
     };
     const messages = backgroundRequestMessages(prompt, settings, { taskKind });
     if (signal?.aborted) {
-        const error = new Error('推演已由用户取消');
+        const error = new Error('Suy diễn đã bị người dùng hủy');
         error.name = 'AbortError';
         throw error;
     }
@@ -1667,8 +1667,8 @@ async function backgroundSimulation(prompt, {
         runtime.inBackgroundGeneration = true;
         try {
             runtime.syncStatus.method = requestSettings.customApiTransport === 'direct'
-                ? `${route.label} · 浏览器直连`
-                : `${route.label} · 酒馆转发`;
+                ? `${route.label} · Trình duyệt kết nối trực tiếp`
+                : `${route.label} · Tavern chuyển tiếp`;
             return await requestCustomCompletion(requestSettings, messages, {
                 fetchImpl: globalThis.fetch.bind(globalThis),
                 getRequestHeaders: () => context?.getRequestHeaders?.() || {},
@@ -1689,10 +1689,10 @@ async function backgroundSimulation(prompt, {
         typeof context?.generateRaw !== 'function'
         && typeof context?.generateQuietPrompt !== 'function'
     ) {
-        throw new Error('当前酒馆版本没有提供安静生成接口');
+        throw new Error('Phiên bản Tavern hiện tại không cung cấp giao diện tạo im lặng');
     }
     if (taskKind === 'person-observation' && typeof context?.generateRaw !== 'function') {
-        throw new Error('当前酒馆版本没有提供独立上下文人物观测接口；请更新 SillyTavern 或为世界背面配置独立 API');
+        throw new Error('Phiên bản Tavern hiện tại không cung cấp giao diện quan sát nhân vật ngữ cảnh độc lập; vui lòng cập nhật SillyTavern hoặc cấu hình độc lập cho mặt trái thế giới API');
     }
 
     runtime.inBackgroundGeneration = true;
@@ -1701,14 +1701,14 @@ async function backgroundSimulation(prompt, {
         try {
             context?.stopGeneration?.();
         } catch (error) {
-            console.warn('[世界背面] 酒馆安静生成停止请求没有正常返回', error);
+            console.warn('[Mặt trái thế giới] Yêu cầu dừng tạo im lặng của Tavern không trả về bình thường', error);
         }
     };
     signal?.addEventListener?.('abort', stopNativeGeneration, { once: true });
     try {
         let request;
         if (typeof context.generateRaw === 'function') {
-            runtime.syncStatus.method = '独立上下文推演';
+            runtime.syncStatus.method = 'Suy diễn ngữ cảnh độc lập';
             request = context.generateRaw({
                 prompt: messages,
                 responseLength: maxTokens,
@@ -1716,7 +1716,7 @@ async function backgroundSimulation(prompt, {
                 signal,
             });
         } else {
-            runtime.syncStatus.method = '安静生成兼容模式';
+            runtime.syncStatus.method = 'Chế độ tương thích tạo im lặng';
             request = context.generateQuietPrompt({
                 quietPrompt: `${messages[0]?.content || ''}\n\n${messages[1]?.content || ''}`.trim(),
                 skipWIAN: true,
@@ -1750,10 +1750,10 @@ async function runSimulationForMessage(messageId, {
     const beforeMessage = beforeContext?.chat?.[messageId];
     const initialSettings = getSettings();
     if (!initialSettings.enabled || !initialSettings.worldSimulationEnabled) {
-        throw new Error('世界推演模块当前已停用');
+        throw new Error('Mô-đun suy diễn thế giới hiện đã bị vô hiệu hóa');
     }
     if (!hasUsableAssistantText(beforeMessage)) {
-        throw new Error('没有找到可以推演的 AI 正文');
+        throw new Error('Không tìm thấy nội dung có thể suy diễn của  AI Nội dung chính');
     }
     const beforeSwipeId = Number(beforeMessage.swipe_id ?? 0);
     const beforeSourceKey = branchSourceKey(messageId, beforeMessage, beforeSwipeId);
@@ -1763,7 +1763,7 @@ async function runSimulationForMessage(messageId, {
     ) {
         setSyncStatus({
             phase: 'pending',
-            message: '正文已发生变化，旧排队任务已跳过；等待按最新正文推演',
+            message: 'Nội dung chính đã thay đổi, nhiệm vụ xếp hàng cũ đã bị bỏ qua; đang chờ suy diễn theo nội dung chính mới nhất',
             error: '',
         });
         return null;
@@ -1784,7 +1784,7 @@ async function runSimulationForMessage(messageId, {
         offeredEventIds: job?.offeredEventIds ?? beforeData?.offeredEventIds,
     });
     if (!prepared) {
-        throw new Error('没有找到可以推演的 AI 正文');
+        throw new Error('Không tìm thấy nội dung có thể suy diễn của  AI Nội dung chính');
     }
 
     const {
@@ -1826,11 +1826,11 @@ async function runSimulationForMessage(messageId, {
         .map(text => String(text || '').trim())
         .filter(Boolean);
     const simulationModeLabel = {
-        light: '轻量',
-        balanced: '均衡',
-        deep: '深入',
-        manual: '手动',
-    }[settings.autoSimulationMode] || '均衡';
+        light: 'Gọn nhẹ',
+        balanced: 'Cân bằng',
+        deep: 'Chuyên sâu',
+        manual: 'Thủ công',
+    }[settings.autoSimulationMode] || 'Cân bằng';
     const generationMetrics = {
         raw: '',
         attempts: 1,
@@ -1853,8 +1853,8 @@ async function runSimulationForMessage(messageId, {
     setSyncStatus({
         phase: 'running',
         message: assistantTurnsToApply > 1
-            ? `正在合并最近 ${assistantTurnsToApply} 轮新正文并进行${simulationModeLabel}推演`
-            : `正在读取最近 ${settings.contextTurns} 轮正文并进行${simulationModeLabel}推演`,
+            ? `Đang hợp nhất gần đây ${assistantTurnsToApply} vòng nội dung chính mới và tiến hành${simulationModeLabel}Suy diễn`
+            : `Đang đọc gần đây ${settings.contextTurns} vòng nội dung chính và tiến hành${simulationModeLabel}Suy diễn`,
         error: '',
         attemptedAt: new Date().toISOString(),
     });
@@ -1878,7 +1878,7 @@ async function runSimulationForMessage(messageId, {
                 if (currentChatToken() === chatTokenAtStart) {
                     setSyncStatus({
                         phase: 'pending',
-                        message: '正文分支已变化，旧结果未提交；最新正文仍等待推演',
+                        message: 'Nhánh nội dung chính đã thay đổi, kết quả cũ chưa được gửi; nội dung chính mới nhất vẫn đang chờ suy diễn',
                         error: '',
                     });
                 }
@@ -1913,8 +1913,8 @@ async function runSimulationForMessage(messageId, {
             setSyncStatus({
                 phase: supersededByNewerReply ? 'pending' : 'success',
                 message: supersededByNewerReply
-                    ? '这一轮结果已安全存档，但更新正文已经出现～先不写进当前状态，正在追赶最新一轮'
-                    : '过滤后无有效正文，本轮没有推进世界',
+                    ? 'Kết quả vòng này đã được lưu trữ an toàn, nhưng nội dung chính cập nhật đã xuất hiện~ Tạm thời không ghi vào trạng thái hiện tại, đang bắt kịp vòng mới nhất'
+                    : 'Sau khi lọc không có nội dung chính hợp lệ, vòng này không thúc đẩy thế giới',
                 error: '',
                 succeededAt: supersededByNewerReply ? '' : new Date().toISOString(),
                 method: runtime.syncStatus.method,
@@ -1964,21 +1964,21 @@ async function runSimulationForMessage(messageId, {
         }, {
             retries: settings.autoRetryCount,
             shouldRetry: error => !(
-                /请先填写独立 API|HTTP 40[0134]|没有找到可以推演|没有提供安静生成接口/
+                /Vui lòng điền độc lập trước API|HTTP 40[0134]|Không tìm thấy có thể suy diễn|Không cung cấp giao diện tạo im lặng/
                     .test(describeError(error))
             ),
             onRetry: ({ attempt, total, delayMs, error }) => {
                 setSyncStatus({
                     phase: 'running',
-                    message: `推演失败，准备第 ${attempt}/${total} 次自动重试`,
-                    error: `${describeError(error)}；${Math.ceil(delayMs / 100) / 10} 秒后重试`,
+                    message: `Suy diễn thất bại, chuẩn bị lần thứ ${attempt}/${total} tự động thử lại`,
+                    error: `${describeError(error)}；${Math.ceil(delayMs / 100) / 10} giây sau thử lại`,
                 });
             },
             signal: controller.signal,
         });
 
         if (controller.signal.aborted) {
-            const error = new Error('推演已由用户取消');
+            const error = new Error('Suy diễn đã bị người dùng hủy');
             error.name = 'AbortError';
             throw error;
         }
@@ -2032,7 +2032,7 @@ async function runSimulationForMessage(messageId, {
             if (currentChatToken() === chatTokenAtStart) {
                 setSyncStatus({
                     phase: 'pending',
-                    message: '正文分支已变化，旧结果未提交；最新正文仍等待推演',
+                    message: 'Nhánh nội dung chính đã thay đổi, kết quả cũ chưa được gửi; nội dung chính mới nhất vẫn đang chờ suy diễn',
                     error: '',
                 });
             }
@@ -2071,8 +2071,8 @@ async function runSimulationForMessage(messageId, {
         setSyncStatus({
             phase: supersededByNewerReply ? 'pending' : 'success',
             message: supersededByNewerReply
-                ? '这一轮推演已经安全存档～但你已经走到更新正文啦，旧结果不会盖住当前状态，接下来直接追最新一轮'
-                : '最新正文已完成推演',
+                ? 'Suy diễn vòng này đã được lưu trữ an toàn~ Nhưng bạn đã đi đến nội dung chính cập nhật rồi, kết quả cũ sẽ không ghi đè trạng thái hiện tại, tiếp theo sẽ trực tiếp bắt kịp vòng mới nhất'
+                : 'Nội dung chính mới nhất đã hoàn thành suy diễn',
             error: '',
             succeededAt: supersededByNewerReply ? '' : new Date().toISOString(),
             method: runtime.syncStatus.method,
@@ -2102,10 +2102,10 @@ async function runSimulationForMessage(messageId, {
             if (currentChatToken() === chatTokenAtStart) {
                 setSyncStatus({
                     phase: 'pending',
-                    message: '本次推演已取消，正文仍保持待同步',
+                    message: 'Suy diễn lần này đã bị hủy, nội dung chính vẫn giữ trạng thái chờ đồng bộ',
                     error: '',
                 });
-                toast('已停止推演；时间、人物、事件和记忆均未提交。', 'info');
+                toast('Đã dừng suy diễn; thời gian, nhân vật, sự kiện và ký ức đều chưa được gửi.', 'info');
             }
             throw error;
         }
@@ -2134,11 +2134,11 @@ async function runSimulationForMessage(messageId, {
         if (currentChatToken() === chatTokenAtStart) {
             setSyncStatus({
                 phase: 'error',
-                message: '世界推演没有完成',
+                message: 'Suy diễn thế giới chưa hoàn thành',
                 error: errorMessage,
                 method: runtime.syncStatus.method,
             });
-            toast(`世界推演没有完成：${errorMessage}`, 'warning');
+            toast(`Suy diễn thế giới chưa hoàn thành:${errorMessage}`, 'warning');
         }
         throw error;
     } finally {
@@ -2181,7 +2181,7 @@ function queueSimulation(messageId, options = {}) {
 
     setSyncStatus({
         phase: 'queued',
-        message: '已排入世界推演队列',
+        message: 'Đã xếp vào hàng đợi suy diễn thế giới',
         error: '',
     });
     const task = runtime.simulationChain
@@ -2227,7 +2227,7 @@ function scheduleAutoSync(messageId, type) {
     if (!hasUsableAssistantText(message)) {
         setSyncStatus({
             phase: 'idle',
-            message: '未检测到有效 AI 正文，本轮没有推进世界',
+            message: 'Không phát hiện thấy hợp lệ AI nội dung chính, vòng này không thúc đẩy thế giới',
             error: '',
         });
         return;
@@ -2235,7 +2235,7 @@ function scheduleAutoSync(messageId, type) {
     if (!settings.enabled || !settings.worldSimulationEnabled) {
         setSyncStatus({
             phase: 'idle',
-            message: settings.enabled ? '世界推演模块已停用' : '世界背面当前未启用',
+            message: settings.enabled ? 'Mô-đun suy diễn thế giới đã ngừng hoạt động' : 'Mặt trái thế giới hiện chưa được bật',
             error: '',
         });
         return;
@@ -2253,7 +2253,7 @@ function scheduleAutoSync(messageId, type) {
     if (duplicateTask) {
         setSyncStatus({
             phase: runtime.activeSimulation?.sourceKey === sourceKey ? 'running' : 'queued',
-            message: '这轮正文已经在推演队列中，无需重复处理',
+            message: 'Nội dung chính vòng này đã ở trong hàng đợi suy diễn, không cần xử lý lặp lại',
             error: '',
         });
         return;
@@ -2269,7 +2269,7 @@ function scheduleAutoSync(messageId, type) {
     if (!settings.worldAutoEnabled) {
         setSyncStatus({
             phase: 'pending',
-            message: '自动推演设为手动；可随时推演累计正文',
+            message: 'Tự động suy diễn được đặt thành thủ công; có thể suy diễn nội dung chính tích lũy bất cứ lúc nào',
             error: '',
         });
         return;
@@ -2288,7 +2288,7 @@ function scheduleAutoSync(messageId, type) {
         );
         setSyncStatus({
             phase: activeForCurrentChat ? 'running' : 'queued',
-            message: `新正文已安全进入队列，会在当前推演完成后继续（待处理 ${waitingTurns} 轮）`,
+            message: `Nội dung chính mới đã vào hàng đợi an toàn, sẽ tiếp tục sau khi suy diễn hiện tại hoàn thành (chờ xử lý ${waitingTurns} vòng)`,
             error: '',
         });
         return;
@@ -2299,7 +2299,7 @@ function scheduleAutoSync(messageId, type) {
     if (pending.length < interval) {
         setSyncStatus({
             phase: 'pending',
-            message: `已累计 ${pending.length}/${interval} 轮新正文，达到频率后自动推演`,
+            message: `Đã tích lũy ${pending.length}/${interval} vòng nội dung chính mới, đạt đến tần suất sẽ tự động suy diễn`,
             error: '',
         });
         return;
@@ -2379,7 +2379,7 @@ function onMessageReceived(messageId, type) {
         if (!runtime.inBackgroundGeneration) {
             setSyncStatus({
                 phase: 'idle',
-                message: '回复为空或生成失败，已跳过推演与记忆写入',
+                message: 'Phản hồi trống hoặc tạo thất bại, đã bỏ qua suy diễn và ghi ký ức',
                 error: '',
             });
         }
@@ -2493,7 +2493,7 @@ function onMessageEdited(messageId) {
         };
         setSyncStatus({
             phase: 'pending',
-            message: '检测到已推演正文被编辑，正在等待你选择是否重推',
+            message: 'Phát hiện nội dung chính đã suy diễn bị chỉnh sửa, đang chờ bạn chọn có suy diễn lại hay không',
             error: '',
         });
         runtime.ui?.render();
@@ -2515,42 +2515,42 @@ function onMessageEdited(messageId) {
     if (message && !message.is_user && index === context.chat.length - 1) {
         setSyncStatus({
             phase: 'pending',
-            message: '正文已编辑，世界状态尚未改动；确认内容后请手动同步',
+            message: 'Nội dung chính đã chỉnh sửa, trạng thái thế giới chưa thay đổi; sau khi xác nhận nội dung vui lòng đồng bộ thủ công',
             error: '',
         });
-        toast('正文修改已保存，但不会自动重推；确认满意后再点“同步最新正文”。', 'info');
+        toast('Sửa đổi nội dung chính đã được lưu, nhưng sẽ không tự động suy diễn lại; sau khi xác nhận hài lòng hãy nhấp vào“Đồng bộ nội dung chính mới nhất”。', 'info');
         return;
     }
-    toast('已回到编辑点之前的世界快照；后续正文需要重新生成或手动同步。', 'info');
+    toast('Đã quay lại bản ghi nhanh thế giới trước điểm chỉnh sửa; nội dung chính tiếp theo cần tạo lại hoặc đồng bộ thủ công.', 'info');
 }
 
 async function resolveMessageEdit(mode) {
     const decision = runtime.editDecision;
     if (!decision || decision.chatToken !== currentChatToken()) {
         runtime.editDecision = null;
-        throw new Error('这次正文修改已经不在当前聊天分支中');
+        throw new Error('Sửa đổi nội dung chính lần này đã không còn trong nhánh trò chuyện hiện tại');
     }
     const context = getContext();
     const message = context?.chat?.[decision.messageId];
     if (!message || message.is_user || decision.messageId !== context.chat.length - 1) {
         runtime.editDecision = null;
-        throw new Error('正文位置已经改变，请改用“推演最新正文”同步');
+        throw new Error('Vị trí nội dung chính đã thay đổi, vui lòng chuyển sang dùng“Suy diễn nội dung chính mới nhất”Đồng bộ');
     }
 
     if (mode === 'keep') {
         runtime.editDecision = null;
         setSyncStatus({
             phase: 'success',
-            message: '已保留编辑前的世界推演结果',
+            message: 'Đã giữ lại kết quả suy diễn thế giới trước khi chỉnh sửa',
             error: '',
         });
         runtime.ui?.render();
-        toast('已保留原推演，适合仅修改错字、标点或措辞的情况。', 'success');
+        toast('Đã giữ lại suy diễn gốc, phù hợp cho trường hợp chỉ sửa lỗi chính tả, dấu câu hoặc cách dùng từ.', 'success');
         return;
     }
 
     if (!getSettings().worldSimulationEnabled) {
-        throw new Error('世界推演模块当前已停用，无法按修改后的正文重推');
+        throw new Error('Mô-đun suy diễn thế giới hiện đã ngừng hoạt động, không thể suy diễn lại theo nội dung chính đã sửa đổi');
     }
     runtime.editDecision = null;
     markSnapshotsStaleFrom(decision.messageId);
@@ -2568,7 +2568,7 @@ async function resolveMessageEdit(mode) {
         trigger: 'edited-reply',
         newAssistantCount: 1,
     });
-    toast('已按照修改后的正文重新完成世界推演。', 'success');
+    toast('Đã hoàn thành lại suy diễn thế giới theo nội dung chính đã sửa đổi.', 'success');
 }
 
 function onMessageDeleted() {
@@ -2607,12 +2607,12 @@ function onChatChanged() {
     };
     runtime.publicOpinionStatus = {
         phase: 'idle',
-        message: '尚未生成舆情快照',
+        message: 'Chưa tạo bản ghi nhanh dư luận',
         error: '',
     };
     runtime.syncStatus = {
         phase: 'idle',
-        message: '正在读取当前聊天的推演状态',
+        message: 'Đang đọc trạng thái suy diễn của cuộc trò chuyện hiện tại',
         error: '',
         attemptedAt: '',
         succeededAt: '',
@@ -2628,7 +2628,7 @@ function onChatChanged() {
 
 function armManualUndo(previousState, {
     key = currentAnchorKey(),
-    label = '撤销刚才的手动更改',
+    label = 'Hoàn tác thay đổi thủ công vừa rồi',
     previousInitialState = null,
 } = {}) {
     if (runtime.manualUndoTimer !== null) window.clearTimeout(runtime.manualUndoTimer);
@@ -2656,7 +2656,7 @@ function undoManualChange() {
         || undo.chatToken !== currentChatToken()
         || undo.key !== currentAnchorKey()
     ) {
-        throw new Error('可撤销时间已经结束，或者正文分支已经改变');
+        throw new Error('Thời gian có thể hoàn tác đã kết thúc, hoặc nhánh nội dung chính đã thay đổi');
     }
     if (runtime.manualUndoTimer !== null) window.clearTimeout(runtime.manualUndoTimer);
     runtime.manualUndo = null;
@@ -2672,10 +2672,10 @@ function undoManualChange() {
     saveStore(store, { immediate: true });
     refreshInjection();
     runtime.ui?.render();
-    toast('刚才的手动更改已经撤销。', 'success');
+    toast('Thay đổi thủ công vừa rồi đã được hoàn tác.', 'success');
 }
 
-function commitManualState(nextState, message = '世界状态已更新') {
+function commitManualState(nextState, message = 'Trạng thái thế giới đã cập nhật') {
     const key = currentAnchorKey();
     const previousState = getState();
     const committed = setCurrentState(nextState, { overrideKey: key });
@@ -2687,29 +2687,29 @@ function commitManualState(nextState, message = '世界状态已更新') {
 function createManualRecoveryPoint() {
     const store = addRecoveryPoint(getStore(), {
         reason: 'manual',
-        label: '手动创建的恢复点',
+        label: 'Điểm khôi phục được tạo thủ công',
     });
     saveStore(store, { immediate: true });
     runtime.ui?.render();
-    toast('恢复点存好啦～放心继续折腾 `(｡•̀ᴗ-)✧`', 'success');
+    toast('Điểm khôi phục đã được lưu~ Cứ yên tâm tiếp tục vọc vạch nhé `(｡•̀ᴗ-)✧`', 'success');
     return listRecoveryPoints(store).at(-1) || null;
 }
 
 function restoreLatestSavedRecovery() {
     const currentStore = getStore();
     const target = listRecoveryPoints(currentStore).at(-1);
-    if (!target) throw new Error('当前聊天还没有可恢复的保存点');
+    if (!target) throw new Error('Cuộc trò chuyện hiện tại chưa có điểm lưu nào có thể khôi phục');
     const confirmed = globalThis.confirm?.(
-        `(・_・;)  将当前世界恢复到：${target.label}\n${target.createdAt}\n\n恢复前也会自动保存现在的状态。`,
+        `(・_・;)  Khôi phục thế giới hiện tại về:${target.label}\n${target.createdAt}\n\n Trước khi khôi phục cũng sẽ tự động lưu trạng thái hiện tại.`,
     );
     if (confirmed === false) return null;
 
     let store = addRecoveryPoint(currentStore, {
         reason: 'before-restore',
-        label: '恢复操作前自动保存',
+        label: 'Tự động lưu trước thao tác khôi phục',
     });
     const restored = restoreRecoveryPoint(store, target.id);
-    if (!restored.point) throw new Error('恢复点已经失效，请重新打开设置后再试');
+    if (!restored.point) throw new Error('Điểm khôi phục đã hết hiệu lực, vui lòng mở lại cài đặt rồi thử lại');
     store = restored.store;
     const key = currentAnchorKey();
     store.branchOverrides ||= {};
@@ -2720,7 +2720,7 @@ function restoreLatestSavedRecovery() {
     saveStore(store, { immediate: true });
     refreshInjection();
     runtime.ui?.render();
-    toast('世界已经恢复到保存点，可以继续啦。', 'success');
+    toast('Thế giới đã được khôi phục về điểm lưu, có thể tiếp tục rồi.', 'success');
     return restored.point;
 }
 
@@ -2731,26 +2731,26 @@ function redactDiagnosticText(value) {
         String(settings.customApiKey || ''),
         ...(settings.apiProfiles || []).map(profile => String(profile.key || '')),
     ].filter(key => key.length >= 4);
-    for (const key of keys) text = text.split(key).join('[API Key 已隐藏]');
+    for (const key of keys) text = text.split(key).join('[API Key Đã ẩn]');
     return text
-        .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [已隐藏]')
-        .replace(/https?:\/\/[^\s"'<>]+/gi, '[接口地址已隐藏]')
-        .replace(/(api[-_ ]?key\s*[:=]\s*)[^\s,;]+/gi, '$1[已隐藏]')
+        .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [Đã ẩn]')
+        .replace(/https?:\/\/[^\s"'<>]+/gi, '[Địa chỉ API đã ẩn]')
+        .replace(/(api[-_ ]?key\s*[:=]\s*)[^\s,;]+/gi, '$1[Đã ẩn]')
         .slice(0, 600);
 }
 
 function classifyDiagnosticIssue(value) {
     const text = String(value || '').toLocaleLowerCase();
     if (!text) return 'none';
-    if (/abort|cancel|取消|停止/.test(text)) return 'cancelled';
-    if (/401|403|unauthorized|forbidden|鉴权|密钥|api.?key/.test(text)) return 'authorization';
-    if (/insufficient[_\s-]*quota|quota\s*(?:exceeded|exhausted|depleted)|credits?\s*(?:exhausted|depleted)|额度(?:不足|耗尽)|余额不足/.test(text)) return 'quota-exhausted';
-    if (/429|too many requests|rate[_\s-]*limit|请求过于频繁|频率限制|限流/.test(text)) return 'rate-limit';
-    if (/timeout|timed out|超时/.test(text)) return 'timeout';
-    if (/network|fetch|connection|econn|网络|连接/.test(text)) return 'network';
-    if (/no message|empty|空回|没有生成|未生成/.test(text)) return 'empty-response';
-    if (/length|max[_\s-]*tokens?|token[_\s-]*limit|输出上限|长度上限|过长/.test(text)) return 'output-limit';
-    if (/json|解析|parse|格式/.test(text)) return 'invalid-json';
+    if (/abort|cancel|Hủy|Dừng/.test(text)) return 'cancelled';
+    if (/401|403|unauthorized|forbidden|Xác thực|Khóa bí mật|api.?key/.test(text)) return 'authorization';
+    if (/insufficient[_\s-]*quota|quota\s*(?:exceeded|exhausted|depleted)|credits?\s*(?:exhausted|depleted)|Hạn mức(?:Không đủ|Cạn kiệt)|Số dư không đủ/.test(text)) return 'quota-exhausted';
+    if (/429|too many requests|rate[_\s-]*limit|Yêu cầu quá thường xuyên|Giới hạn tần suất|Giới hạn lưu lượng/.test(text)) return 'rate-limit';
+    if (/timeout|timed out|Hết thời gian/.test(text)) return 'timeout';
+    if (/network|fetch|connection|econn|Mạng|Kết nối/.test(text)) return 'network';
+    if (/no message|empty|Phản hồi trống|Không tạo ra|Chưa tạo/.test(text)) return 'empty-response';
+    if (/length|max[_\s-]*tokens?|token[_\s-]*limit|Giới hạn đầu ra|Giới hạn độ dài|Quá dài/.test(text)) return 'output-limit';
+    if (/json|Phân tích cú pháp|parse|Định dạng/.test(text)) return 'invalid-json';
     return 'other';
 }
 
@@ -2774,11 +2774,11 @@ function buildDiagnosticReport() {
                 context?.version
                 || globalThis.SillyTavern?.version
                 || document.querySelector?.('#version_display')?.textContent
-                || '未识别',
+                || 'Chưa nhận diện',
             ).trim().slice(0, 120),
         },
         device: {
-            userAgent: String(globalThis.navigator?.userAgent || '未识别').slice(0, 240),
+            userAgent: String(globalThis.navigator?.userAgent || 'Chưa nhận diện').slice(0, 240),
             viewport: `${Math.round(Number(viewport?.width || globalThis.innerWidth || 0))}x${Math.round(Number(viewport?.height || globalThis.innerHeight || 0))}`,
             touchPoints: Number(globalThis.navigator?.maxTouchPoints || 0),
         },
@@ -2863,10 +2863,10 @@ function buildDiagnosticReport() {
                 failedAt: operation.failedAt,
             };
         })(),
-        privacy: '不包含 API Key、接口地址、聊天正文、角色身份锚点或自定义提示词。',
+        privacy: 'Không bao gồm API Key、Địa chỉ API, nội dung trò chuyện, điểm neo thân phận nhân vật hoặc từ nhắc tùy chỉnh.',
         generatedAt: new Date().toISOString(),
     };
-    return `世界背面诊断信息（可安全分享）\n${JSON.stringify(report, null, 2)}`;
+    return `Thông tin chẩn đoán mặt trái thế giới (có thể chia sẻ an toàn)\n${JSON.stringify(report, null, 2)}`;
 }
 
 async function copyDiagnosticReport() {
@@ -2886,9 +2886,9 @@ async function copyDiagnosticReport() {
         textarea.select();
         const copied = document.execCommand?.('copy');
         textarea.remove();
-        if (!copied) throw new Error('浏览器没有允许复制，请检查剪贴板权限');
+        if (!copied) throw new Error('Trình duyệt không cho phép sao chép, vui lòng kiểm tra quyền khay nhớ tạm');
     }
-    toast('诊断信息已复制，敏感内容没有放进去。', 'success');
+    toast('Đã sao chép thông tin chẩn đoán, nội dung nhạy cảm không được đưa vào.', 'success');
     return report;
 }
 
@@ -2902,29 +2902,29 @@ function exportState() {
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    const safeWorldName = String(getState().world.name || '世界')
+    const safeWorldName = String(getState().world.name || 'Thế giới')
         .replace(/[\\/:*?"<>|]+/g, '_')
         .slice(0, 60);
     link.href = url;
-    link.download = `世界背面_${safeWorldName}.json`;
+    link.download = `Mặt trái thế giới_${safeWorldName}.json`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    toast('当前世界状态已导出。', 'success');
+    toast('Trạng thái thế giới hiện tại đã được xuất.', 'success');
 }
 
 function importState(text) {
     const parsed = JSON.parse(String(text || ''));
     const imported = trimState(parsed?.state || parsed);
     const confirmed = globalThis.confirm?.(
-        `(・_・;)  导入会替换这个聊天当前的世界状态。\n\n导入：${imported.world.name}`,
+        `(・_・;)  Nhập sẽ thay thế trạng thái thế giới hiện tại của cuộc trò chuyện này.\n\n Nhập:${imported.world.name}`,
     );
     if (confirmed === false) return;
 
     let store = addRecoveryPoint(getStore(), {
         reason: 'before-import',
-        label: '导入世界状态前自动保存',
+        label: 'Tự động lưu trước khi nhập trạng thái thế giới',
     });
     const previousState = clone(store.currentState);
     const previousInitialState = clone(store.initialState);
@@ -2940,10 +2940,10 @@ function importState(text) {
     runtime.ui?.render();
     armManualUndo(previousState, {
         key,
-        label: '撤销状态导入',
+        label: 'Hoàn tác nhập trạng thái',
         previousInitialState,
     });
-    toast('世界状态搬进来啦～一切都在原位。', 'success');
+    toast('Trạng thái thế giới đã được chuyển vào~ Mọi thứ đều ở đúng vị trí.', 'success');
 }
 
 function saveApiProfile(payload = {}) {
@@ -2951,16 +2951,16 @@ function saveApiProfile(payload = {}) {
     const settings = getSettings();
     const id = String(payload.id || '').trim() || makeApiProfileId();
     const existing = settings.apiProfiles.find(item => item.id === id);
-    const name = String(payload.name || existing?.name || '我的独立 API').trim().slice(0, 80) || '我的独立 API';
+    const name = String(payload.name || existing?.name || 'Độc lập của tôi API').trim().slice(0, 80) || 'Độc lập của tôi API';
     const url = String(payload.url || payload.customApiUrl || existing?.url || '').trim().slice(0, 500);
     const replacementKey = String(payload.key || payload.customApiKey || '').trim();
     const key = (replacementKey || existing?.key || '').slice(0, 1000);
     const model = String(payload.model || payload.customApiModel || existing?.model || '').trim().slice(0, 180);
     const transportValue = payload.transport || payload.customApiTransport || existing?.transport || 'proxy';
     const transport = ['proxy', 'direct'].includes(transportValue) ? transportValue : 'proxy';
-    if (!url) throw new Error('先填一下接口地址吧～');
-    if (!key) throw new Error('这个方案还缺 API Key 哦');
-    if (!model) throw new Error('还没选模型呢～');
+    if (!url) throw new Error('Hãy điền địa chỉ API trước nhé~');
+    if (!key) throw new Error('Phương án này vẫn thiếu API Key Ồ');
+    if (!model) throw new Error('Vẫn chưa chọn mô hình mà~');
     const profile = { id, name, url, key, model, transport };
     const next = settings.apiProfiles.filter(item => item.id !== id);
     next.push(profile);
@@ -2969,7 +2969,7 @@ function saveApiProfile(payload = {}) {
     context.extensionSettings[MODULE_ID] = settings;
     saveSettings();
     runtime.ui?.render();
-    toast(`“${name}”已经乖乖存好啦～`, 'success');
+    toast(`“${name}”Đã ngoan ngoãn lưu lại rồi nhé~`, 'success');
     return { ...profile, key: '' };
 }
 
@@ -2978,31 +2978,31 @@ function deleteApiProfile(profileId) {
     const settings = getSettings();
     const id = String(profileId || '').trim();
     const existing = settings.apiProfiles.find(item => item.id === id);
-    if (!existing) throw new Error('没有找到这个 API 方案');
+    if (!existing) throw new Error('Không tìm thấy cái này API Phương án');
     settings.apiProfiles = settings.apiProfiles.filter(item => item.id !== id);
     settings.apiModuleRoutes = normalizeApiModuleRoutes(settings.apiModuleRoutes, settings.apiProfiles);
     context.extensionSettings[MODULE_ID] = settings;
     saveSettings();
     runtime.ui?.render();
-    toast(`“${existing.name}”已经删掉啦～`, 'success');
+    toast(`“${existing.name}”Đã xóa rồi~`, 'success');
     return true;
 }
 
 function duplicateApiProfile(profileId) {
     const settings = getSettings();
     const existing = settings.apiProfiles.find(item => item.id === String(profileId || ''));
-    if (!existing) throw new Error('没有找到这个 API 方案');
+    if (!existing) throw new Error('Không tìm thấy cái này API Phương án');
     return saveApiProfile({
         ...existing,
         id: '',
-        name: `${existing.name} · 副本`.slice(0, 80),
+        name: `${existing.name} · Bản sao`.slice(0, 80),
     });
 }
 
 function profileRequestSettings(profileId) {
     const settings = getSettings();
     const profile = settings.apiProfiles.find(item => item.id === String(profileId || ''));
-    if (!profile) throw new Error('没有找到这个 API 方案');
+    if (!profile) throw new Error('Không tìm thấy cái này API Phương án');
     return { settings, profile, requestSettings: settingsForApiProfile(settings, profile) };
 }
 
@@ -3011,16 +3011,16 @@ async function testApiProfileConnection(profileId) {
     const context = getContext();
     setBusy(true);
     try {
-        const reply = await requestCustomCompletion(requestSettings, buildBackstageMessages('这是连接测试。请只回复：连接成功'), {
+        const reply = await requestCustomCompletion(requestSettings, buildBackstageMessages('Đây là bài kiểm tra kết nối. Vui lòng chỉ trả lời: Kết nối thành công'), {
             fetchImpl: globalThis.fetch.bind(globalThis),
             getRequestHeaders: () => context?.getRequestHeaders?.() || {},
             maxTokens: 80,
             temperature: 0,
             operation: 'connection-test',
-            routeLabel: profile.name || '已保存方案',
+            routeLabel: profile.name || 'Phương án đã lưu',
         });
-        if (!String(reply || '').trim()) throw new Error('接口没有返回内容');
-        toast(`“${profile.name}”连接成功啦～`, 'success');
+        if (!String(reply || '').trim()) throw new Error('API không trả về nội dung');
+        toast(`“${profile.name}”Kết nối thành công rồi~`, 'success');
         return true;
     } finally {
         setBusy(false);
@@ -3029,19 +3029,19 @@ async function testApiProfileConnection(profileId) {
 
 async function pullApiProfileModels(profileId) {
     const { profile, requestSettings } = profileRequestSettings(profileId);
-    runtime.modelPullStatus = { phase: 'running', message: `正在读取“${profile.name}”的模型列表` };
+    runtime.modelPullStatus = { phase: 'running', message: `Đang đọc“${profile.name}” danh sách mô hình` };
     runtime.ui?.render();
     try {
         const context = getContext();
         const models = await requestCustomModels(requestSettings, {
             fetchImpl: globalThis.fetch.bind(globalThis),
             getRequestHeaders: () => context?.getRequestHeaders?.() || {},
-            routeLabel: profile.name || '已保存方案',
+            routeLabel: profile.name || 'Phương án đã lưu',
         });
         runtime.customModels = models;
         runtime.modelPullStatus = {
             phase: 'success',
-            message: `找到 ${models.length} 个模型啦～还是可以手动填写哦`,
+            message: `Tìm thấy  ${models.length}  mô hình rồi~ vẫn có thể điền thủ công nhé`,
         };
         return models;
     } catch (error) {
@@ -3060,9 +3060,9 @@ function settingsFromApiDraft(payload = {}, { requireModel = true } = {}) {
     const transport = ['proxy', 'direct'].includes(payload.transport || payload.customApiTransport)
         ? (payload.transport || payload.customApiTransport)
         : 'proxy';
-    if (!url) throw new Error('还没填接口地址呢～');
-    if (!key) throw new Error('还缺 API Key 哦～');
-    if (requireModel && !model) throw new Error('还没选模型呢～');
+    if (!url) throw new Error('Vẫn chưa điền địa chỉ API đâu~');
+    if (!key) throw new Error('Vẫn thiếu  API Key  đó~');
+    if (requireModel && !model) throw new Error('Vẫn chưa chọn mô hình mà~');
     return {
         ...base,
         apiMode: 'custom',
@@ -3078,16 +3078,16 @@ async function testApiDraftConnection(payload = {}) {
     const context = getContext();
     setBusy(true);
     try {
-        const reply = await requestCustomCompletion(requestSettings, buildBackstageMessages('这是连接测试。请只回复：连接成功'), {
+        const reply = await requestCustomCompletion(requestSettings, buildBackstageMessages('Đây là bài kiểm tra kết nối. Vui lòng chỉ trả lời: Kết nối thành công'), {
             fetchImpl: globalThis.fetch.bind(globalThis),
             getRequestHeaders: () => context?.getRequestHeaders?.() || {},
             maxTokens: 80,
             temperature: 0,
             operation: 'connection-test',
-            routeLabel: String(payload.label || '临时独立接口').slice(0, 80),
+            routeLabel: String(payload.label || 'Giao diện độc lập tạm thời').slice(0, 80),
         });
-        if (!String(reply || '').trim()) throw new Error('接口没有返回内容');
-        toast(`${String(payload.label || '这个接口').slice(0, 80)}连接成功啦～`, 'success');
+        if (!String(reply || '').trim()) throw new Error('API không trả về nội dung');
+        toast(`${String(payload.label || 'Giao diện này').slice(0, 80)}Kết nối thành công rồi~`, 'success');
         return true;
     } finally {
         setBusy(false);
@@ -3096,8 +3096,8 @@ async function testApiDraftConnection(payload = {}) {
 
 async function pullApiDraftModels(payload = {}) {
     const requestSettings = settingsFromApiDraft(payload, { requireModel: false });
-    const label = String(payload.label || '这个接口').slice(0, 80);
-    runtime.modelPullStatus = { phase: 'running', message: `正在翻${label}的模型列表～` };
+    const label = String(payload.label || 'Giao diện này').slice(0, 80);
+    runtime.modelPullStatus = { phase: 'running', message: `Đang tìm ${label} danh sách mô hình~` };
     runtime.ui?.render();
     try {
         const context = getContext();
@@ -3109,9 +3109,9 @@ async function pullApiDraftModels(payload = {}) {
         runtime.customModels = models;
         runtime.modelPullStatus = {
             phase: 'success',
-            message: `找到 ${models.length} 个模型啦～不会改动默认接口`,
+            message: `Tìm thấy  ${models.length}  mô hình rồi~ sẽ không thay đổi giao diện mặc định`,
         };
-        toast(`找到 ${models.length} 个可用模型啦～`, 'success');
+        toast(`Tìm thấy  ${models.length}  mô hình khả dụng rồi~`, 'success');
         return models;
     } catch (error) {
         runtime.modelPullStatus = { phase: 'error', message: describeError(error) };
@@ -3124,47 +3124,47 @@ async function pullApiDraftModels(payload = {}) {
 async function testCustomApiConnection() {
     const settings = getSettings();
     if (settings.apiMode !== 'custom') {
-        throw new Error('请先把世界推演连接切换为“独立接口”');
+        throw new Error('Vui lòng chuyển kết nối suy diễn thế giới thành “Giao diện độc lập”');
     }
     setBusy(true);
     setSyncStatus({
         phase: 'running',
-        message: '正在戳一下独立 API，看看它醒不醒～',
+        message: 'Đang chọc thử giao diện độc lập  API， xem nó có tỉnh không~',
         error: '',
         attemptedAt: new Date().toISOString(),
     });
     try {
         const context = getContext();
         runtime.syncStatus.method = settings.customApiTransport === 'direct'
-            ? '默认独立接口 · 浏览器直连'
-            : '默认独立接口 · 酒馆转发';
+            ? 'Giao diện độc lập mặc định · Trình duyệt kết nối trực tiếp'
+            : 'Giao diện độc lập mặc định · Tavern chuyển tiếp';
         const reply = await requestCustomCompletion(
             settings,
-            buildBackstageMessages('这是连接测试。请只回复：连接成功'),
+            buildBackstageMessages('Đây là bài kiểm tra kết nối. Vui lòng chỉ trả lời: Kết nối thành công'),
             {
                 fetchImpl: globalThis.fetch.bind(globalThis),
                 getRequestHeaders: () => context?.getRequestHeaders?.() || {},
                 maxTokens: 80,
                 temperature: 0,
                 operation: 'connection-test',
-                routeLabel: '默认独立接口',
+                routeLabel: 'Giao diện độc lập mặc định',
             },
         );
-        if (!String(reply || '').trim()) throw new Error('接口没有返回内容');
+        if (!String(reply || '').trim()) throw new Error('API không trả về nội dung');
         setSyncStatus({
             phase: 'success',
-            message: '独立 API 连接成功啦～',
+            message: 'Độc lập API Kết nối thành công rồi~',
             error: '',
             succeededAt: new Date().toISOString(),
             method: runtime.syncStatus.method,
         });
-        toast('独立 API 通啦～可以开工 `(•̀ᴗ•́)و`', 'success');
+        toast('Độc lập API Thông rồi~ có thể bắt đầu làm việc `(•̀ᴗ•́)و`', 'success');
         return true;
     } catch (error) {
         const errorMessage = describeError(error);
         setSyncStatus({
             phase: 'error',
-            message: '独立 API 没接上 QAQ',
+            message: 'Độc lập API Không kết nối được QAQ',
             error: errorMessage,
             method: runtime.syncStatus.method,
         });
@@ -3177,23 +3177,23 @@ async function testCustomApiConnection() {
 async function pullCustomApiModels() {
     const settings = getSettings();
     if (settings.apiMode !== 'custom') {
-        throw new Error('请先把世界推演连接切换为“独立接口”');
+        throw new Error('Vui lòng chuyển kết nối suy diễn thế giới thành “Giao diện độc lập”');
     }
-    runtime.modelPullStatus = { phase: 'running', message: '正在翻模型列表～' };
+    runtime.modelPullStatus = { phase: 'running', message: 'Đang tìm danh sách mô hình~' };
     runtime.ui?.render();
     try {
         const context = getContext();
         const models = await requestCustomModels(settings, {
             fetchImpl: globalThis.fetch.bind(globalThis),
             getRequestHeaders: () => context?.getRequestHeaders?.() || {},
-            routeLabel: '默认独立接口',
+            routeLabel: 'Giao diện độc lập mặc định',
         });
         runtime.customModels = models;
         runtime.modelPullStatus = {
             phase: 'success',
-            message: `找到 ${models.length} 个模型啦～还是可以手动填写`,
+            message: `Tìm thấy  ${models.length}  mô hình rồi~ vẫn có thể điền thủ công`,
         };
-        toast(`找到 ${models.length} 个可用模型啦～`, 'success');
+        toast(`Tìm thấy  ${models.length}  mô hình khả dụng rồi~`, 'success');
         return models;
     } catch (error) {
         runtime.modelPullStatus = {
@@ -3210,14 +3210,14 @@ async function runOneMemoryRollup(state, controller) {
     const plan = planMemoryRollup(state);
     if (!plan) return { state, rolledUp: false };
     if (controller?.signal?.aborted) {
-        const error = new Error('记忆整理已停止');
+        const error = new Error('Sắp xếp ký ức đã dừng');
         error.name = 'AbortError';
         throw error;
     }
     runtime.historyProgress = {
         ...runtime.historyProgress,
         phase: 'running',
-        message: `正在把 ${plan.sourceSummaryIds.length} 条 L${plan.sourceLevel} 记忆压成 L${plan.targetLevel}～`,
+        message: `Đang đem  ${plan.sourceSummaryIds.length}  mục  L${plan.sourceLevel}  ký ức nén thành  L${plan.targetLevel}～`,
     };
     runtime.ui?.render();
     const payload = await runWithRetries(async attempt => {
@@ -3230,21 +3230,21 @@ async function runOneMemoryRollup(state, controller) {
         });
         const parsed = extractJsonObject(raw);
         if (parsed) return parsed;
-        throw unreadableJsonError(raw, '记忆压缩模型');
+        throw unreadableJsonError(raw, 'Mô hình nén ký ức');
     }, {
         retries: getSettings().autoRetryCount,
         shouldRetry: error => !(
-            /请先填写独立 API|HTTP 40[0134]|没有提供安静生成接口/
+            /Vui lòng điền độc lập trước API|HTTP 40[0134]|Không cung cấp giao diện tạo im lặng/
                 .test(describeError(error))
         ),
         onRetry: ({ attempt, total }) => {
-            runtime.historyProgress.message = `记忆压缩没收好，正在用更紧凑格式重试 ${attempt}/${total}`;
+            runtime.historyProgress.message = `Nén ký ức chưa hoàn tất, đang thử lại với định dạng nhỏ gọn hơn ${attempt}/${total}`;
             runtime.ui?.render();
         },
         signal: controller?.signal,
     });
     if (controller?.signal?.aborted) {
-        const error = new Error('记忆整理已停止');
+        const error = new Error('Sắp xếp ký ức đã dừng');
         error.name = 'AbortError';
         throw error;
     }
@@ -3260,33 +3260,33 @@ async function scanStoryMemoryHistory({
 } = {}) {
     if (!getSettings().memorySystemEnabled) {
         if (automatic) return false;
-        throw new Error('记忆系统当前已停用');
+        throw new Error('Hệ thống ký ức hiện đã bị vô hiệu hóa');
     }
     if (runtime.historyProgress.phase === 'running') {
         if (automatic) return false;
-        throw new Error('历史建档已经在进行中');
+        throw new Error('Việc lưu trữ lịch sử đang được tiến hành');
     }
     const context = getContext();
     const chatToken = currentChatToken();
     const chatLength = context?.chat?.length || 0;
-    if (!chatLength) throw new Error('当前聊天还没有可扫描的正文');
+    if (!chatLength) throw new Error('Cuộc trò chuyện hiện tại chưa có nội dung chính nào có thể quét');
 
     let state = getState();
     let cursor = Math.max(0, Number(state.storyMemory?.indexedThroughMessageId ?? -1) + 1);
     const initialRollupPlan = planMemoryRollup(state);
     if (cursor >= chatLength && !initialRollupPlan) {
-        if (!automatic) toast('历史档案已经追到最新一层啦～', 'info');
+        if (!automatic) toast('Hồ sơ lịch sử đã theo kịp đến tầng mới nhất rồi~', 'info');
         return true;
     }
     if (!automatic && cursor < chatLength) {
         const confirmed = globalThis.confirm?.(
-            `( •ᴗ• )  将从第 ${cursor} 层开始分批读取当前分支，共约 ${chatLength - cursor} 条消息。\n`
-            + '这会产生额外 API 调用，但每批成功后都会立即保存进度。是否继续？',
+            `( •ᴗ• )  Sẽ bắt đầu từ tầng thứ  ${cursor}  đọc theo đợt nhánh hiện tại, tổng cộng khoảng  ${chatLength - cursor}  tin nhắn.\n`
+            + 'Điều này sẽ tạo ra thêm  API  lần gọi, nhưng sau mỗi đợt thành công sẽ lập tức lưu tiến độ. Có tiếp tục không?',
         );
         if (confirmed === false) return false;
         const protectedStore = addRecoveryPoint(getStore(), {
             reason: 'before-memory-maintenance',
-            label: '手动整理记忆前自动保存',
+            label: 'Tự động lưu trước khi sắp xếp ký ức thủ công',
         });
         saveStore(protectedStore, { immediate: true });
     }
@@ -3296,8 +3296,8 @@ async function scanStoryMemoryHistory({
         processed: cursor,
         total: chatLength,
         message: cursor < chatLength
-            ? (automatic ? '正在悄悄整理新增记忆～' : '正在给历史档案归档～')
-            : '正文已经追平啦～顺手把旧经历再压一层',
+            ? (automatic ? 'Đang âm thầm sắp xếp ký ức mới thêm~' : 'Đang lưu trữ hồ sơ lịch sử~')
+            : 'Nội dung chính đã theo kịp rồi~ tiện tay nén thêm một tầng trải nghiệm cũ',
     };
     const controller = new AbortController();
     runtime.activeHistoryScan = controller;
@@ -3314,12 +3314,12 @@ async function scanStoryMemoryHistory({
             : Number.POSITIVE_INFINITY;
         while (cursor < chatLength && completedBatches < batchLimit) {
             if (!getSettings().memorySystemEnabled || controller.signal.aborted) {
-                const error = new Error('记忆系统已关闭，本次整理已停止');
+                const error = new Error('Hệ thống ký ức đã đóng, lần sắp xếp này đã dừng');
                 error.name = 'AbortError';
                 throw error;
             }
             if (currentChatToken() !== chatToken) {
-                throw new Error('扫描期间切换了聊天，本次已在上一个完成批次处停止');
+                throw new Error('Đã chuyển đổi cuộc trò chuyện trong lúc quét, lần này đã dừng ở đợt hoàn thành trước đó');
             }
             const batch = nextHistoryBatch(cursor, {
                 maximumAssistantTurns: assistantBatchLimit,
@@ -3332,7 +3332,7 @@ async function scanStoryMemoryHistory({
                 phase: 'running',
                 processed: batch.startMessageId,
                 total: chatLength,
-                message: `正在收拾消息 ${batch.startMessageId}—${batch.endMessageId}～`,
+                message: `Đang dọn dẹp tin nhắn ${batch.startMessageId}—${batch.endMessageId}～`,
             };
             runtime.ui?.render();
 
@@ -3367,21 +3367,21 @@ async function scanStoryMemoryHistory({
                         const missingIds = assistantIds.filter(id => !summarizedIds.has(id));
                         const fallbackSummary = parsed?.chapter_summary ?? parsed?.chapterSummary;
                         if (missingIds.length && !(assistantIds.length === 1 && fallbackSummary?.summary)) {
-                            const error = new Error(`L0摘要缺失：消息 ${missingIds.join(', ')}`);
+                            const error = new Error(`L0 Thiếu tóm tắt: Tin nhắn ${missingIds.join(', ')}`);
                             error.code = 'MEMORY_L0_MISSING';
                             throw error;
                         }
                         return parsed;
                     }
-                    throw unreadableJsonError(raw, '记忆整理模型');
+                    throw unreadableJsonError(raw, 'Mô hình sắp xếp ký ức');
                 }, {
                     retries: getSettings().autoRetryCount,
                     shouldRetry: error => !(
-                        /请先填写独立 API|HTTP 40[0134]|没有提供安静生成接口/
+                        /Vui lòng điền độc lập trước API|HTTP 40[0134]|Không cung cấp giao diện tạo im lặng/
                             .test(describeError(error))
                     ),
                     onRetry: ({ attempt, total }) => {
-                        runtime.historyProgress.message = `记忆整理失败，正在用紧凑格式重试 ${attempt}/${total}`;
+                        runtime.historyProgress.message = `Sắp xếp ký ức thất bại, đang thử lại bằng định dạng nhỏ gọn ${attempt}/${total}`;
                         runtime.ui?.render();
                     },
                     signal: controller.signal,
@@ -3389,19 +3389,19 @@ async function scanStoryMemoryHistory({
             } catch (error) {
                 const assistantTurns = batch.messages.filter(message => message.role === 'assistant').length;
                 const canSplit = assistantTurns > 1 && (
-                    /JSON|L0摘要缺失|截断|长度上限|No message generated|没有返回最终正文|没有可读取的最终正文/i
+                    /JSON|L0 Thiếu tóm tắt|Cắt bớt|Giới hạn độ dài|No message generated|Không trả về nội dung chính cuối cùng|Không có nội dung chính cuối cùng có thể đọc/i
                         .test(describeError(error))
                 );
                 if (canSplit) {
                     assistantBatchLimit = Math.max(1, Math.floor(assistantTurns / 2));
-                    runtime.historyProgress.message = `输出过长或为空，已自动缩小为每批 ${assistantBatchLimit} 轮后重试`;
+                    runtime.historyProgress.message = `Đầu ra quá dài hoặc trống, đã tự động thu nhỏ thành mỗi lô ${assistantBatchLimit} vòng sau thử lại`;
                     runtime.ui?.render();
                     continue;
                 }
                 throw error;
             }
             if (!getSettings().memorySystemEnabled || controller.signal.aborted) {
-                const error = new Error('记忆系统已关闭，本次整理已停止');
+                const error = new Error('Hệ thống ký ức đã đóng, lần sắp xếp này đã dừng');
                 error.name = 'AbortError';
                 throw error;
             }
@@ -3456,17 +3456,17 @@ async function scanStoryMemoryHistory({
             total: chatLength,
             message: caughtUp
                 ? (rolledUp
-                    ? '正文记忆已追平，上层经历也顺手整理好一层～'
-                    : (automatic ? '新增记忆已自动整理' : '当前分支的历史档案已经建立'))
-                : `已整理至消息 ${state.storyMemory.indexedThroughMessageId}`,
+                    ? 'Ký ức nội dung chính đã bắt kịp, trải nghiệm tầng trên cũng tiện tay sắp xếp xong một tầng~'
+                    : (automatic ? 'Ký ức mới thêm đã tự động sắp xếp' : 'Hồ sơ lịch sử của nhánh hiện tại đã được thiết lập'))
+                : `Đã sắp xếp đến tin nhắn ${state.storyMemory.indexedThroughMessageId}`,
         };
         refreshInjection();
         runtime.ui?.render();
         if (!automatic) {
             toast(
-                `记忆建档完成：${state.storyMemory.facts.length} 条长期事实，`
-                + `${state.storyMemory.clues.length} 条伏笔，`
-                + `${state.storyMemory.summaries.length} 段分层经历。`,
+                `Thiết lập hồ sơ ký ức hoàn tất:${state.storyMemory.facts.length} mục sự thật dài hạn,`
+                + `${state.storyMemory.clues.length} mục phục bút,`
+                + `${state.storyMemory.summaries.length} đoạn trải nghiệm phân tầng.`,
                 'success',
             );
         } else {
@@ -3478,7 +3478,7 @@ async function scanStoryMemoryHistory({
             runtime.historyProgress = {
                 ...runtime.historyProgress,
                 phase: 'idle',
-                message: '记忆整理已停止，未提交正在生成的批次',
+                message: 'Sắp xếp ký ức đã dừng, chưa gửi lô đang tạo',
             };
             runtime.ui?.render();
             return false;
@@ -3548,14 +3548,14 @@ function cachedPersonObservation(personId) {
 function queuePersonObservation(personId) {
     const state = getState();
     const person = state.people.find(item => item.id === personId);
-    if (!person) throw new Error('没有找到这个人物');
+    if (!person) throw new Error('Không tìm thấy nhân vật này');
     const cacheKey = personObservationCacheKey(state, person);
     const store = getStore();
     const observation = store.personObservations?.[cacheKey];
-    if (!observation?.text) throw new Error('请先生成一次人物观测');
+    if (!observation?.text) throw new Error('Vui lòng tạo quan sát nhân vật một lần trước');
     const existing = state.events.find(event => event.id === observation.queuedEventId);
     if (existing?.delivery?.state === 'delivered') {
-        throw new Error('这段观测已经由正文自然承接，无法撤回');
+        throw new Error('Đoạn quan sát này đã được tiếp nối tự nhiên bởi nội dung chính, không thể thu hồi');
     }
 
     if (existing) {
@@ -3575,8 +3575,8 @@ function queuePersonObservation(personId) {
         commitManualState(
             next,
             enabled
-                ? `已将 ${person.name} 的幕后观测撤回为仅观看。`
-                : `已允许 ${person.name} 的幕后观测在合适时自然显露。`,
+                ? `Đã chuyển ${person.name} quan sát hậu trường thu hồi thành chỉ xem.`
+                : `Đã cho phép ${person.name} quan sát hậu trường hiển thị tự nhiên khi thích hợp.`,
         );
         saveStore(store);
         return cachedPersonObservation(personId);
@@ -3584,7 +3584,7 @@ function queuePersonObservation(personId) {
 
     const previousIds = new Set(state.events.map(event => event.id));
     const next = addManualEvent(state, {
-        title: `${person.name}的镜头外片段`,
+        title: `${person.name}đoạn ngoài ống kính của`,
         place: person.location,
         summary: observation.text,
         expected_result: observation.text,
@@ -3597,8 +3597,8 @@ function queuePersonObservation(personId) {
         delivery_route: observation.text,
     });
     const created = next.events.find(event => !previousIds.has(event.id));
-    if (!created) throw new Error('没有成功建立自然显露候选');
-    commitManualState(next, `已允许 ${person.name} 的幕后观测在合适时自然显露。`);
+    if (!created) throw new Error('Không thiết lập thành công ứng cử viên hiển thị tự nhiên');
+    commitManualState(next, `Đã cho phép ${person.name} quan sát hậu trường hiển thị tự nhiên khi thích hợp.`);
     observation.queuedEventId = created.id;
     observation.revealEnabled = true;
     store.personObservations[cacheKey] = observation;
@@ -3608,14 +3608,14 @@ function queuePersonObservation(personId) {
 
 function personObservationPollutionReason(text, person) {
     const value = String(text || '').trim();
-    if (!value) return '返回内容为空';
+    if (!value) return 'Nội dung trả về trống';
     if (/<\/?content\b|<UpdateVariable\b|<JSONPatch\b|JSONPatch|<details\b/i.test(value)) {
-        return '返回内容混入了主聊天正文 / 变量更新协议';
+        return 'Nội dung trả về bị lẫn vào nội dung chính của trò chuyện chính / Giao thức cập nhật biến';
     }
-    const playerCentricHits = (value.match(/(?:^|[。！？\n])\s*你(?:正|又|还|已经|沿|走|坐|站|抬|低|伸|把|看|听|闻|感觉|发现|来到|回到|穿|拿|吃|喝|说|问|停|转)/g) || []).length;
-    const firstPersonHits = (value.match(/(?:^|[。！？\n，,])\s*我(?:正|又|还|已经|在|把|看|听|闻|想|觉得|发现|走|坐|站|抬|低|伸|拿|吃|喝|说|问|停|转|没|有)/g) || []).length;
+    const playerCentricHits = (value.match(/(?:^|[。！？\n])\s*Bạn(?:Đang|Lại|Vẫn|Đã|Dọc theo|Đi|Ngồi|Đứng|Nâng|Cúi|Duỗi|Đem|Nhìn|Nghe|Ngửi|Cảm thấy|Phát hiện|Đến|Trở về|Mặc|Cầm|Ăn|Uống|Nói|Hỏi|Dừng|Chuyển)/g) || []).length;
+    const firstPersonHits = (value.match(/(?:^|[。！？\n，,])\s*Tôi(?:Đang|Lại|Vẫn|Đã|Đang|Đem|Nhìn|Nghe|Ngửi|Nghĩ|Cảm thấy|Phát hiện|Đi|Ngồi|Đứng|Nâng|Cúi|Duỗi|Cầm|Ăn|Uống|Nói|Hỏi|Dừng|Chuyển|Không|Có)/g) || []).length;
     if (playerCentricHits >= 3 && firstPersonHits === 0) {
-        return `返回内容疑似把玩家当成叙述主体，而不是 ${person?.name || '被观测人物'} 的第一人称`;
+        return `Nội dung trả về nghi ngờ coi người chơi là chủ thể trần thuật, chứ không phải ${person?.name || 'nhân vật được quan sát'} Ngôi thứ nhất`;
     }
     return '';
 }
@@ -3631,8 +3631,8 @@ function personObservationLooksComplete(text) {
 
 async function generateIndependentPersonObservation(prompt, person, settings, { signal } = {}) {
     runtime.syncStatus.method = settings.apiMode === 'custom'
-        ? '人物观测 · 世界背面独立接口'
-        : '人物观测 · 世界背面独立上下文';
+        ? 'Quan sát nhân vật · Giao diện độc lập mặt trái thế giới'
+        : 'Quan sát nhân vật · Ngữ cảnh độc lập mặt trái thế giới';
 
     const attempts = [
         { maxTokens: 4096, temperature: 0.75 },
@@ -3656,14 +3656,14 @@ async function generateIndependentPersonObservation(prompt, person, settings, { 
             }) || '');
             const filtered = filterNarrativeText(raw, settings).trim();
             if (!filtered) {
-                throw new Error('人物观测返回内容在标签过滤后为空');
+                throw new Error('Nội dung trả về của quan sát nhân vật trống sau khi lọc thẻ');
             }
             const pollution = personObservationPollutionReason(filtered, person);
             if (pollution) {
-                throw new Error(`人物观测输出污染：${pollution}`);
+                throw new Error(`Đầu ra quan sát nhân vật bị ô nhiễm:${pollution}`);
             }
             if (!personObservationLooksComplete(filtered)) {
-                const error = new Error('人物观测疑似因输出长度被截断，未保存半截内容');
+                const error = new Error('Quan sát nhân vật nghi ngờ bị cắt bớt do độ dài đầu ra, không lưu nội dung bị cắt dở');
                 error.code = 'OUTPUT_TRUNCATED';
                 error.partialText = filtered;
                 throw error;
@@ -3672,17 +3672,17 @@ async function generateIndependentPersonObservation(prompt, person, settings, { 
         } catch (error) {
             if (isAbortError(error)) throw error;
             const truncated = error?.code === 'OUTPUT_TRUNCATED'
-                || /输出达到长度上限|输出长度被截断|MAX_TOKENS|finish_reason.?length/i.test(String(error?.message || error));
+                || /Đầu ra đạt giới hạn độ dài|Độ dài đầu ra bị cắt bớt|MAX_TOKENS|finish_reason.?length/i.test(String(error?.message || error));
             if (!truncated) throw error;
             lastTruncation = error;
             if (index >= attempts.length - 1) break;
-            console.warn(`[世界背面] 人物观测疑似截断，自动提高输出额度重试（${attempt.maxTokens} → ${attempts[index + 1].maxTokens}）`);
+            console.warn(`[Mặt trái thế giới] Quan sát nhân vật nghi ngờ bị cắt bớt, tự động tăng hạn mức đầu ra để thử lại (${attempt.maxTokens} → ${attempts[index + 1].maxTokens}）`);
         }
     }
 
     const reason = String(lastTruncation?.finishReason || '').trim();
     throw new Error(
-        `人物观测连续两次达到输出上限${reason ? `（${reason}）` : ''}，没有保存半截内容；请重新观测或检查当前模型的输出限制`,
+        `Quan sát nhân vật đạt giới hạn đầu ra hai lần liên tiếp${reason ? `（${reason}）` : ''}，Không lưu nội dung bị cắt dở; vui lòng quan sát lại hoặc kiểm tra giới hạn đầu ra của mô hình hiện tại`,
     );
 }
 
@@ -3692,10 +3692,10 @@ async function observePerson(personId, { force = false } = {}) {
     const baselineChatToken = currentChatToken();
     const baselineAssistantStamp = latestAssistantSourceStamp();
     const person = state.people.find(item => item.id === personId);
-    if (!person) throw new Error('没有找到这个人物');
-    if (person.isUser) throw new Error('玩家角色不使用镜头外人物观测');
+    if (!person) throw new Error('Không tìm thấy nhân vật này');
+    if (person.isUser) throw new Error('Nhân vật người chơi không sử dụng quan sát nhân vật ngoài ống kính');
     if (currentTurnPresentPersonIds().includes(person.id)) {
-        throw new Error('这个人物已经在本轮镜头中，不需要另行观测');
+        throw new Error('Nhân vật này đã ở trong ống kính vòng này, không cần quan sát riêng');
     }
     const cacheKey = personObservationCacheKey(state, person);
     const cached = getStore().personObservations?.[cacheKey];
@@ -3724,7 +3724,7 @@ async function observePerson(personId, { force = false } = {}) {
     setBusy(true);
     setSyncStatus({
         phase: 'running',
-        message: `正在看 ${person.name} 此刻在做什么`,
+        message: `Đang xem ${person.name} lúc này đang làm gì`,
         error: '',
         attemptedAt: new Date().toISOString(),
     });
@@ -3736,13 +3736,13 @@ async function observePerson(personId, { force = false } = {}) {
             || latestAssistantSourceStamp() !== baselineAssistantStamp
         );
         if (stale) {
-            const error = new Error('观测期间世界已经往前走啦～旧结果没有保存，重新看一次就会以最新状态为准');
+            const error = new Error('Trong thời gian quan sát thế giới đã tiến về phía trước rồi～Kết quả cũ không được lưu, xem lại lần nữa sẽ lấy trạng thái mới nhất làm chuẩn');
             error.code = 'STALE_BACKGROUND_TASK';
             throw error;
         }
         setSyncStatus({
             phase: 'success',
-            message: `${person.name} 的即时观测已经生成`,
+            message: `${person.name} quan sát tức thời đã được tạo`,
             error: '',
             succeededAt: new Date().toISOString(),
             method: runtime.syncStatus.method,
@@ -3765,7 +3765,7 @@ async function observePerson(personId, { force = false } = {}) {
         if (isAbortError(error) || controller.signal.aborted) {
             setSyncStatus({
                 phase: 'pending',
-                message: '新正文来啦～旧人物观测先停掉，不会保存过期结果',
+                message: 'Nội dung chính mới đến rồi～Quan sát nhân vật cũ tạm dừng trước, sẽ không lưu kết quả hết hạn',
                 error: '',
                 method: runtime.syncStatus.method,
             });
@@ -3775,8 +3775,8 @@ async function observePerson(personId, { force = false } = {}) {
         setSyncStatus({
             phase: error?.code === 'STALE_BACKGROUND_TASK' ? 'pending' : 'error',
             message: error?.code === 'STALE_BACKGROUND_TASK'
-                ? '人物观测已经过期，没有写入缓存'
-                : '人物即时观测没有完成',
+                ? 'Quan sát nhân vật đã hết hạn, không ghi vào bộ nhớ cache'
+                : 'Quan sát nhân vật tức thời chưa hoàn thành',
             error: errorMessage,
             method: runtime.syncStatus.method,
         });
@@ -3795,7 +3795,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
         runtime.pendingPublicOpinion = true;
         runtime.publicOpinionStatus = {
             phase: 'queued',
-            message: '世界主线还在推演～舆情先排到后面，等核心状态追上就自动继续 `(•̀ᴗ•́)و`',
+            message: 'Tuyến truyện chính của thế giới vẫn đang suy diễn～Dư luận xếp ra sau trước, đợi trạng thái cốt lõi theo kịp sẽ tự động tiếp tục `(•̀ᴗ•́)و`',
             error: '',
         };
         runtime.ui?.render();
@@ -3828,7 +3828,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
         refreshInjection();
         runtime.publicOpinionStatus = {
             phase: 'running',
-            message: `正史这轮没什么能传开的～公开 ${visibilityCounts.known + visibilityCounts.direct} · 痕迹 ${visibilityCounts.trace} · 隐藏 ${visibilityCounts.hidden}。那就顺手去街上捞点无关主线的小瓜吧 (ﾉ◕ヮ◕)ﾉ`,
+            message: `Chính sử vòng này không có gì có thể lan truyền～Công khai ${visibilityCounts.known + visibilityCounts.direct} · Dấu vết ${visibilityCounts.trace} · Ẩn ${visibilityCounts.hidden}。Vậy thì tiện tay ra phố hóng chút chuyện phiếm không liên quan đến tuyến truyện chính nhé (ﾉ◕ヮ◕)ﾉ`,
             error: '',
         };
         runtime.ui?.render();
@@ -3847,7 +3847,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
     runtime.pendingPublicOpinion = false;
     runtime.publicOpinionStatus = {
         phase: 'running',
-        message: '正在扒拉新闻和论坛～看看外面都在聊什么',
+        message: 'Đang lướt tin tức và diễn đàn～Xem bên ngoài đang bàn tán chuyện gì',
         error: '',
     };
     runtime.ui?.render();
@@ -3872,14 +3872,14 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
             {
                 retries: Math.min(1, settings.autoRetryCount),
                 delayMs: 650,
-                shouldRetry: error => /JSON|截断|长度上限|empty|No message generated|没有返回最终正文/i.test(String(error?.message || error || '')),
+                shouldRetry: error => /JSON|Cắt bớt|Giới hạn độ dài|empty|No message generated|Không trả về nội dung chính cuối cùng/i.test(String(error?.message || error || '')),
                 signal: controller.signal,
             },
         );
         const parsed = extractJsonObject(raw);
-        if (!parsed) throw new Error('舆情接口没有返回可解析的 JSON');
+        if (!parsed) throw new Error('Giao diện dư luận không trả về dữ liệu có thể phân tích JSON');
         if (controller.signal.aborted) {
-            const error = new Error('舆情任务已取消');
+            const error = new Error('Nhiệm vụ dư luận đã bị hủy');
             error.name = 'AbortError';
             throw error;
         }
@@ -3893,7 +3893,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
             runtime.pendingPublicOpinion = currentChatToken() === chatTokenAtStart;
             runtime.publicOpinionStatus = {
                 phase: 'pending',
-                message: '世界已经往前走啦～刚才那份旧舆情直接丢掉，不拿过期新闻追着新剧情跑 `(｡•̀ᴗ-)✧`',
+                message: 'Thế giới đã tiến về phía trước rồi～Bản dư luận cũ vừa nãy vứt bỏ luôn, không lấy tin tức hết hạn chạy theo cốt truyện mới `(｡•̀ᴗ-)✧`',
                 error: '',
             };
             runtime.ui?.render();
@@ -3916,7 +3916,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
         if (!cache.news.length && !cache.forums.length) {
             runtime.publicOpinionStatus = {
                 phase: 'running',
-                message: '正史候选明明有，但这次没扒出合格舆情～不让你空手回去，顺手切到闲逛捞点瓜 `(•̀ᴗ•́)و`',
+                message: 'Ứng cử viên chính sử rõ ràng là có, nhưng lần này không đào ra được dư luận đạt chuẩn～Không để bạn về tay không, tiện tay chuyển sang đi dạo hóng chút chuyện phiếm `(•̀ᴗ•́)و`',
                 error: '',
             };
             runtime.ui?.render();
@@ -3925,7 +3925,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
         }
         runtime.publicOpinionStatus = {
             phase: 'success',
-            message: `扒到 ${cache.news.length} 条新闻 · ${cache.forums.length} 个论坛话题～`,
+            message: `Đào được ${cache.news.length} tin tức · ${cache.forums.length} chủ đề diễn đàn～`,
             error: '',
         };
         runtime.ui?.render();
@@ -3936,7 +3936,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
                 runtime.pendingPublicOpinion = true;
                 runtime.publicOpinionStatus = {
                     phase: 'queued',
-                    message: '新正文抢先到啦～旧舆情先停掉，等世界推演追上后再看新的',
+                    message: 'Nội dung chính mới đã đến trước rồi~ Dư luận cũ tạm dừng, đợi suy diễn thế giới đuổi kịp rồi xem cái mới nhé',
                     error: '',
                 };
                 runtime.ui?.render();
@@ -3947,7 +3947,7 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
         if (currentChatToken() === chatTokenAtStart) {
             runtime.publicOpinionStatus = {
                 phase: 'error',
-                message: '舆情这次没扒完 QAQ',
+                message: 'Dư luận lần này chưa đào xong QAQ',
                 error: describeError(error),
             };
             runtime.ui?.render();
@@ -3962,13 +3962,13 @@ async function generatePublicOpinionSnapshot({ allowDefer = true } = {}) {
 
 async function generatePublicOpinionSandbox() {
     const chatTokenAtStart = currentChatToken();
-    if (coreSimulationBusy()) throw new Error('世界主线还在推演～先等核心状态接稳，再来闲逛一下吧');
+    if (coreSimulationBusy()) throw new Error('Tuyến truyện chính của thế giới vẫn đang suy diễn~ Hãy đợi trạng thái cốt lõi ổn định rồi hẵng đi dạo nhé');
     const state = getState();
     const controller = new AbortController();
     const activeSandbox = { controller, chatToken: chatTokenAtStart };
     runtime.activePublicOpinionSandbox = activeSandbox;
     const generatedAt = new Date().toISOString();
-    runtime.publicOpinionStatus = { phase: 'running', message: '正在街上随便逛逛～看看今天有什么无关紧要的小热闹 `(ﾉ◕ヮ◕)ﾉ`', error: '' };
+    runtime.publicOpinionStatus = { phase: 'running', message: 'Đang đi dạo trên phố~ Xem hôm nay có chuyện gì náo nhiệt không quan trọng không `(ﾉ◕ヮ◕)ﾉ`', error: '' };
     runtime.ui?.render();
     try {
         const prompt = buildPublicOpinionSandboxPrompt(state, { clockLabel: formatWorldCalendar(state)?.stamp || '' });
@@ -3983,17 +3983,17 @@ async function generatePublicOpinionSandbox() {
                     signal: controller.signal,
                 });
                 const parsed = extractJsonObject(raw);
-                if (!parsed) throw new Error('闲逛舆情没有返回可解析的 JSON');
+                if (!parsed) throw new Error('Dư luận đi dạo không trả về nội dung có thể phân tích JSON');
                 const normalized = normalizePublicOpinionSandboxPayload(parsed, { generatedAt });
                 if (!normalized.news.length && !normalized.forums.length) {
-                    throw new Error('闲逛舆情返回了空内容');
+                    throw new Error('Dư luận đi dạo trả về nội dung trống');
                 }
                 return normalized;
             },
             {
                 retries: Math.min(1, settings.autoRetryCount),
                 delayMs: 520,
-                shouldRetry: error => /JSON|空内容|截断|长度上限|empty|No message generated/i.test(String(error?.message || error || '')),
+                shouldRetry: error => /JSON|Nội dung trống|Cắt bớt|Giới hạn độ dài|empty|No message generated/i.test(String(error?.message || error || '')),
                 signal: controller.signal,
             },
         );
@@ -4003,7 +4003,7 @@ async function generatePublicOpinionSandbox() {
         saveStore(store);
         runtime.publicOpinionStatus = {
             phase: 'success',
-            message: `随便逛到 ${sandbox.news.length} 条小新闻 · ${sandbox.forums.length} 个闲聊话题～这些都不算正史哦`,
+            message: `Tình cờ đi dạo đến ${sandbox.news.length} tin tức nhỏ · ${sandbox.forums.length} chủ đề tán gẫu~ Những cái này không tính là chính sử đâu nhé`,
             error: '',
         };
         runtime.ui?.render();
@@ -4011,13 +4011,13 @@ async function generatePublicOpinionSandbox() {
     } catch (error) {
         if (isAbortError(error) || controller.signal.aborted) {
             if (currentChatToken() === chatTokenAtStart) {
-                runtime.publicOpinionStatus = { phase: 'idle', message: '主线有新动静啦～闲逛先收摊，不跟核心推演抢路 `(｡•̀ᴗ-)✧`', error: '' };
+                runtime.publicOpinionStatus = { phase: 'idle', message: 'Tuyến truyện chính có động tĩnh mới rồi~ Đi dạo tạm nghỉ, không giành đường với suy diễn cốt lõi `(｡•̀ᴗ-)✧`', error: '' };
                 runtime.ui?.render();
             }
             return null;
         }
         if (currentChatToken() === chatTokenAtStart) {
-            runtime.publicOpinionStatus = { phase: 'error', message: '今天闲逛没逛出东西 QAQ', error: describeError(error) };
+            runtime.publicOpinionStatus = { phase: 'error', message: 'Hôm nay đi dạo không thu hoạch được gì QAQ', error: describeError(error) };
             runtime.ui?.render();
         }
         throw error;
@@ -4032,7 +4032,7 @@ function clearPublicOpinionSandbox() {
     const store = getStore();
     store.publicOpinionSandbox = emptyPublicOpinionSandbox();
     saveStore(store);
-    runtime.publicOpinionStatus = { phase: 'idle', message: '闲逛小报收起来啦～', error: '' };
+    runtime.publicOpinionStatus = { phase: 'idle', message: 'Báo nhỏ đi dạo đã cất đi rồi~', error: '' };
     runtime.ui?.render();
     return true;
 }
@@ -4047,7 +4047,7 @@ function clearPublicOpinionSnapshot() {
     refreshInjection();
     runtime.publicOpinionStatus = {
         phase: 'idle',
-        message: '舆情快照清空啦～',
+        message: 'Bản ghi nhanh dư luận đã xóa sạch rồi~',
         error: '',
     };
     runtime.ui?.render();
@@ -4088,7 +4088,7 @@ async function handleUiAction(action, payload = {}) {
     }
 
     if (action === 'preview-notice') {
-        toast('之后的保存、恢复、推演和报错都会用这样的提示告诉你。', 'success');
+        toast('Việc lưu, khôi phục, suy diễn và báo lỗi sau này đều sẽ dùng thông báo như thế này để cho bạn biết.', 'success');
         return null;
     }
 
@@ -4186,12 +4186,12 @@ async function handleUiAction(action, payload = {}) {
     if (action === 'save-world-summary') {
         const title = String(payload.title || '').trim();
         const detail = String(payload.detail || '').trim();
-        if (!title || !detail) throw new Error('世界标题和概况不能为空');
+        if (!title || !detail) throw new Error('Tiêu đề và khái quát thế giới không được để trống');
         const next = clone(getState());
         next.world ||= {};
         next.world.title = title.slice(0, 140);
         next.world.detail = detail.slice(0, 900);
-        commitManualState(next, '世界概况已经更新。');
+        commitManualState(next, 'Khái quát thế giới đã được cập nhật.');
         return next.world;
     }
 
@@ -4200,7 +4200,7 @@ async function handleUiAction(action, payload = {}) {
         const id = String(payload.id || '');
         const title = String(payload.title || '').trim();
         const text = String(payload.text || '').trim();
-        if (!title || !text) throw new Error('标题和内容不能为空');
+        if (!title || !text) throw new Error('Tiêu đề và nội dung không được để trống');
         const next = clone(getState());
         const visibility = ['hidden', 'trace', 'known', 'direct'].includes(payload.visibility)
             ? payload.visibility
@@ -4208,7 +4208,7 @@ async function handleUiAction(action, payload = {}) {
 
         if (kind === 'echo') {
             const event = next.events.find(item => item.id === id);
-            if (!event) throw new Error('没有找到这条回声');
+            if (!event) throw new Error('Không tìm thấy tiếng vang này');
             event.title = title.slice(0, 140);
             event.result = text.slice(0, 900);
             event.consequence = event.result;
@@ -4231,17 +4231,17 @@ async function handleUiAction(action, payload = {}) {
                 entry.visibility = event.visibility;
                 entry.deliveryState = event.delivery.state;
             }
-            commitManualState(next, `回声“${event.title}”已经更新。`);
+            commitManualState(next, `Tiếng vang“${event.title}”đã được cập nhật.`);
             return event;
         }
 
         const entry = next.archive.find(item => item.id === id);
-        if (!entry) throw new Error('没有找到这条纪事');
+        if (!entry) throw new Error('Không tìm thấy biên niên sử này');
         entry.title = title.slice(0, 140);
         entry.text = text.slice(0, 900);
         entry.visibility = visibility;
         entry.manual = true;
-        commitManualState(next, `纪事“${entry.title}”已经更新。`);
+        commitManualState(next, `Biên niên sử“${entry.title}”đã được cập nhật.`);
         return entry;
     }
 
@@ -4251,17 +4251,17 @@ async function handleUiAction(action, payload = {}) {
         const next = clone(getState());
         if (kind === 'echo') {
             const index = next.events.findIndex(item => item.id === id);
-            if (index < 0) throw new Error('没有找到这条回声');
+            if (index < 0) throw new Error('Không tìm thấy tiếng vang này');
             const [removed] = next.events.splice(index, 1);
             next.echoes = (next.echoes || []).filter(item => item.eventId !== removed.id);
             next.archive = (next.archive || []).filter(item => item.eventId !== removed.id);
-            commitManualState(next, `回声“${removed.title}”已经删除。`);
+            commitManualState(next, `Tiếng vang“${removed.title}”đã bị xóa.`);
             return;
         }
         const index = next.archive.findIndex(item => item.id === id);
-        if (index < 0) throw new Error('没有找到这条纪事');
+        if (index < 0) throw new Error('Không tìm thấy biên niên sử này');
         const [removed] = next.archive.splice(index, 1);
-        commitManualState(next, `纪事“${removed.title || '未命名记录'}”已经删除。`);
+        commitManualState(next, `Biên niên sử“${removed.title || 'Bản ghi chưa đặt tên'}”đã bị xóa.`);
         return;
     }
 
@@ -4271,7 +4271,7 @@ async function handleUiAction(action, payload = {}) {
         const title = String(payload.title || '').trim();
         const relation = String(payload.relation || '').trim();
         const content = String(payload.content || '').trim();
-        if (!title || !content) throw new Error('标题和内容不能为空');
+        if (!title || !content) throw new Error('Tiêu đề và nội dung không được để trống');
 
         const next = clone(getState());
         next.storyMemory ||= { facts: [], clues: [], summaries: [] };
@@ -4282,7 +4282,7 @@ async function handleUiAction(action, payload = {}) {
                 : next.storyMemory.summaries;
         const existing = collection.find(item => item.id === id);
         if (existing?.locked && payload.locked === false) {
-            throw new Error('请先用卡片上的锁定按钮解锁，再编辑这条记忆');
+            throw new Error('Vui lòng dùng nút khóa trên thẻ để mở khóa trước, sau đó mới chỉnh sửa ký ức này');
         }
         const itemId = existing?.id || `${kind}_manual_${Date.now().toString(36)}`;
         const common = {
@@ -4334,7 +4334,7 @@ async function handleUiAction(action, payload = {}) {
         }
         if (existing) Object.assign(existing, updated);
         else collection.unshift(updated);
-        commitManualState(next, existing ? '记忆已经更新。' : '手动记忆已经加入。');
+        commitManualState(next, existing ? 'Ký ức đã được cập nhật.' : 'Ký ức thủ công đã được thêm vào.');
         return updated;
     }
 
@@ -4348,12 +4348,12 @@ async function handleUiAction(action, payload = {}) {
                 ? next.storyMemory?.clues
                 : next.storyMemory?.summaries;
         const item = collection?.find(entry => entry.id === String(payload.id || ''));
-        if (!item) throw new Error('没有找到这条记忆');
+        if (!item) throw new Error('Không tìm thấy ký ức này');
         item[field] = !item[field];
         if (field === 'important' && item.important && 'importance' in item) item.importance = 3;
         commitManualState(next, field === 'locked'
-            ? (item.locked ? '记忆已锁定，不会被自动整理覆盖。' : '记忆已解锁。')
-            : (item.important ? '已标记为重要记忆。' : '已取消重要标记。'));
+            ? (item.locked ? 'Ký ức đã bị khóa, sẽ không bị ghi đè bởi sắp xếp tự động.' : 'Ký ức đã được mở khóa.')
+            : (item.important ? 'Đã đánh dấu là ký ức quan trọng.' : 'Đã hủy đánh dấu quan trọng.'));
         return;
     }
 
@@ -4366,8 +4366,8 @@ async function handleUiAction(action, payload = {}) {
                 ? next.storyMemory?.clues
                 : next.storyMemory?.summaries;
         const index = collection?.findIndex(entry => entry.id === String(payload.id || '')) ?? -1;
-        if (index < 0) throw new Error('没有找到这条记忆');
-        if (collection[index].locked) throw new Error('锁定的记忆不能删除，请先解锁');
+        if (index < 0) throw new Error('Không tìm thấy ký ức này');
+        if (collection[index].locked) throw new Error('Ký ức đã khóa không thể xóa, vui lòng mở khóa trước');
         const removed = collection[index];
         if (kind === 'summary') {
             const summaries = next.storyMemory?.summaries || [];
@@ -4379,7 +4379,7 @@ async function handleUiAction(action, payload = {}) {
             }
         }
         collection.splice(index, 1);
-        commitManualState(next, '记忆已经删除。');
+        commitManualState(next, 'Ký ức đã bị xóa.');
         return;
     }
 
@@ -4387,23 +4387,23 @@ async function handleUiAction(action, payload = {}) {
         const id = String(payload.id || '');
         const originalName = String(payload.originalName || '').trim();
         const name = String(payload.name || '').trim();
-        if (!name) throw new Error('人物姓名不能为空');
+        if (!name) throw new Error('Họ tên nhân vật không được để trống');
         const next = clone(getState());
         const existing = next.people.find(person => (
             person.id === id
             && (!originalName || person.name === originalName)
         )) || next.people.find(person => person.id === id);
         if (existing?.locked && payload.locked === false) {
-            throw new Error('请先解锁人物卡，再修改核心设定');
+            throw new Error('Vui lòng mở khóa thẻ nhân vật trước, sau đó mới sửa đổi thiết lập cốt lõi');
         }
         const person = {
             ...(existing || {}),
             id: existing?.id || `person_manual_${hashText(`${name}\n${Date.now()}`)}`,
             name: name.slice(0, 80),
             monogram: name.slice(0, 1),
-            location: String(payload.location || '位置待确认').trim().slice(0, 160),
-            action: String(payload.action || '当前行动待确认').trim().slice(0, 280),
-            intent: String(payload.intent || '短期意图待确认').trim().slice(0, 320),
+            location: String(payload.location || 'Vị trí chờ xác nhận').trim().slice(0, 160),
+            action: String(payload.action || 'Hành động hiện tại chờ xác nhận').trim().slice(0, 280),
+            intent: String(payload.intent || 'Ý định ngắn hạn chờ xác nhận').trim().slice(0, 320),
             longTermGoal: String(payload.longTermGoal || '').trim().slice(0, 420),
             identityAnchor: String(payload.identityAnchor || '').trim().slice(0, 500),
             personalityAnchor: String(payload.personalityAnchor || '').trim().slice(0, 600),
@@ -4423,29 +4423,29 @@ async function handleUiAction(action, payload = {}) {
         if (existing) Object.assign(existing, person);
         else next.people.push(person);
         const reconciled = settlePersonWorldState(next, person.id, { source: 'manual' });
-        commitManualState(reconciled, existing ? '后台人物卡已经更新。' : `已将 ${person.name} 加入后台人物。`);
+        commitManualState(reconciled, existing ? 'Thẻ nhân vật chạy ngầm đã được cập nhật.' : `Đã chuyển ${person.name} Thêm nhân vật chạy ngầm.`);
         return person;
     }
 
     if (action === 'delete-manual-person') {
         const next = clone(getState());
         const index = next.people.findIndex(person => person.id === String(payload.id || ''));
-        if (index < 0) throw new Error('没有找到这个人物');
-        if (next.people[index].locked) throw new Error('锁定的人物卡不能删除，请先解锁');
+        if (index < 0) throw new Error('Không tìm thấy nhân vật này');
+        if (next.people[index].locked) throw new Error('Thẻ nhân vật đã khóa không thể xóa, vui lòng mở khóa trước');
         const [removed] = next.people.splice(index, 1);
-        commitManualState(next, `已移除后台人物 ${removed.name}。`);
+        commitManualState(next, `Đã xóa nhân vật chạy ngầm ${removed.name}。`);
         return;
     }
 
     if (action === 'sync-clock-from-story') {
         const latest = latestAssistantEntry();
         if (!latest?.message) {
-            toast('未识别正文时间。', 'warning');
+            toast('Không nhận diện được thời gian nội dung chính.', 'warning');
             return false;
         }
         const anchor = extractNarrativeTimeAnchor(selectedMessageText(latest.message));
         if (!anchor) {
-            toast('未识别正文时间。', 'warning');
+            toast('Không nhận diện được thời gian nội dung chính.', 'warning');
             return false;
         }
 
@@ -4460,18 +4460,18 @@ async function handleUiAction(action, payload = {}) {
             day: hasDate ? anchor.day : clock.dayOfMonth,
             hour: hasMinute ? anchor.hour : clock.hour,
             minute: hasMinute ? anchor.minute : clock.minute,
-            reason: `与最新正文校准${anchor.excerpt ? `：${anchor.excerpt}` : ''}`,
+            reason: `Hiệu chuẩn với nội dung chính mới nhất${anchor.excerpt ? `：${anchor.excerpt}` : ''}`,
         });
         next.clock.precision = hasMinute ? 'minute' : (anchor.daypart ? 'daypart' : 'date');
         next.clock.source = 'narrative-manual-sync';
-        next.clock.reason = `手动与最新正文校准${anchor.excerpt ? `：${anchor.excerpt}` : ''}`.slice(0, 240);
+        next.clock.reason = `Hiệu chuẩn thủ công với nội dung chính mới nhất${anchor.excerpt ? `：${anchor.excerpt}` : ''}`.slice(0, 240);
         commitManualState(
             next,
             hasDate && hasMinute
-                ? `已与正文校准至 ${anchor.year}年${anchor.month}月${anchor.day}日 ${String(anchor.hour).padStart(2, '0')}:${String(anchor.minute).padStart(2, '0')}。`
+                ? `Đã hiệu chuẩn với nội dung chính đến ${anchor.year}Năm${anchor.month}Tháng${anchor.day}Ngày ${String(anchor.hour).padStart(2, '0')}:${String(anchor.minute).padStart(2, '0')}。`
                 : hasDate
-                    ? `已同步正文日期：${anchor.year}年${anchor.month}月${anchor.day}日${anchor.daypart ? ` · ${anchor.daypart}` : ''}；正文未给出精确钟点，保留当前时分。`
-                    : `已同步正文钟点：${String(anchor.hour).padStart(2, '0')}:${String(anchor.minute).padStart(2, '0')}。`,
+                    ? `Đã đồng bộ ngày tháng nội dung chính:${anchor.year}Năm${anchor.month}Tháng${anchor.day}Ngày${anchor.daypart ? ` · ${anchor.daypart}` : ''}；Nội dung chính không đưa ra giờ giấc chính xác, giữ nguyên giờ phút hiện tại.`
+                    : `Đã đồng bộ giờ giấc nội dung chính:${String(anchor.hour).padStart(2, '0')}:${String(anchor.minute).padStart(2, '0')}。`,
         );
         return true;
     }
@@ -4484,16 +4484,16 @@ async function handleUiAction(action, payload = {}) {
             day: payload.day,
             hour: payload.hour,
             minute: payload.minute,
-            reason: '在世界背面校准',
+            reason: 'Hiệu chuẩn ở mặt trái thế giới',
         });
-        commitManualState(next, '主世界时间已经校准。');
+        commitManualState(next, 'Thời gian thế giới chính đã được hiệu chuẩn.');
         return;
     }
 
     if (action === 'advance-clock') {
         const minutes = Number(payload.minutes) || 0;
-        const next = advanceWorldClock(getState(), minutes, '在世界背面手动推进');
-        commitManualState(next, `主世界时间已推进 ${minutes} 分钟。`);
+        const next = advanceWorldClock(getState(), minutes, 'Tiến hành thủ công ở mặt trái thế giới');
+        commitManualState(next, `Thời gian thế giới chính đã tiến hành ${minutes} phút.`);
         return;
     }
 
@@ -4515,20 +4515,20 @@ async function handleUiAction(action, payload = {}) {
             visibility: payload.visibility,
             delivery_route: '',
         });
-        commitManualState(next, `暗流“${payload.title}”已经开始发展。`);
+        commitManualState(next, `Dòng chảy ngầm“${payload.title}”đã bắt đầu phát triển.`);
         return;
     }
 
     if (action === 'update-event') {
         const eventId = String(payload.id || payload.eventId || '');
         const title = String(payload.title || '').trim();
-        if (!title) throw new Error('事件名称不能为空');
+        if (!title) throw new Error('Tên sự kiện không được để trống');
 
         const next = clone(getState());
         const event = next.events.find(item => item.id === eventId);
-        if (!event) throw new Error('没有找到这条暗流');
+        if (!event) throw new Error('Không tìm thấy dòng chảy ngầm này');
         if (['resolved', 'cancelled', 'missed'].includes(event.status)) {
-            throw new Error('已经形成结果的事件请在“回声”中查看，不能再作为暗流修改');
+            throw new Error('Sự kiện đã hình thành kết quả vui lòng xem trong“Tiếng vang” để xem, không thể sửa đổi dưới dạng dòng chảy ngầm nữa');
         }
 
         const previousClockMode = event.clockMode;
@@ -4541,7 +4541,7 @@ async function handleUiAction(action, payload = {}) {
         const timingChanged = previousClockMode !== clockMode || previousDuration !== durationMinutes;
 
         event.title = title.slice(0, 140);
-        event.place = String(payload.place || '地点待确认').trim().slice(0, 140) || '地点待确认';
+        event.place = String(payload.place || 'Địa điểm chờ xác nhận').trim().slice(0, 140) || 'Địa điểm chờ xác nhận';
         event.summary = String(payload.summary || '').trim().slice(0, 420);
         event.expectedResult = String(payload.expectedResult || '').trim().slice(0, 420);
         event.consequence = event.expectedResult;
@@ -4582,7 +4582,7 @@ async function handleUiAction(action, payload = {}) {
 
         event.updatedAt = next.clock.absoluteMinute;
         event.resolvedAt = null;
-        commitManualState(next, `暗流“${event.title}”已经更新。`);
+        commitManualState(next, `Dòng chảy ngầm“${event.title}”đã được cập nhật.`);
         return event;
     }
 
@@ -4590,10 +4590,10 @@ async function handleUiAction(action, payload = {}) {
         const eventId = String(payload.eventId || payload.id || '');
         const next = clone(getState());
         const index = next.events.findIndex(item => item.id === eventId);
-        if (index < 0) throw new Error('没有找到这条暗流');
+        if (index < 0) throw new Error('Không tìm thấy dòng chảy ngầm này');
         const [removed] = next.events.splice(index, 1);
         next.echoes = (next.echoes || []).filter(echo => echo.eventId !== eventId);
-        commitManualState(next, `暗流“${removed.title}”已经删除。`);
+        commitManualState(next, `Dòng chảy ngầm“${removed.title}”đã bị xóa.`);
         return;
     }
 
@@ -4601,17 +4601,17 @@ async function handleUiAction(action, payload = {}) {
         const eventId = String(payload.eventId || '');
         const next = clone(getState());
         const event = next.events.find(item => item.id === eventId);
-        if (!event) throw new Error('没有找到这条事件');
+        if (!event) throw new Error('Không tìm thấy sự kiện này');
         if (event.visibility === 'hidden') {
-            throw new Error('完全隐藏的事件不能注入正文；请先调整其可见性');
+            throw new Error('Sự kiện bị ẩn hoàn toàn không thể chèn vào nội dung chính; vui lòng điều chỉnh mức độ hiển thị trước');
         }
         event.delivery ||= { state: 'none' };
         event.delivery.manualQueued = !event.delivery.manualQueued;
         commitManualState(
             next,
             event.delivery.manualQueued
-                ? `“${event.title}”将在下一轮优先寻找自然显露时机。`
-                : `已取消“${event.title}”的下一轮显露。`,
+                ? `“${event.title}”Sẽ ưu tiên tìm kiếm thời cơ hiển thị tự nhiên trong vòng tiếp theo.`
+                : `Đã hủy“${event.title}” hiển thị vòng tiếp theo.`,
         );
         return;
     }
@@ -4639,7 +4639,7 @@ async function handleUiAction(action, payload = {}) {
 
     if (action === 'cancel-simulation') {
         if (!cancelActiveSimulation()) {
-            toast('当前没有正在运行的世界推演。', 'info');
+            toast('Hiện tại không có suy diễn thế giới nào đang chạy.', 'info');
         }
         return;
     }
@@ -4651,12 +4651,12 @@ async function handleUiAction(action, payload = {}) {
 
     if (action === 'manual-sync') {
         if (!getSettings().worldSimulationEnabled) {
-            toast('世界推演模块当前已停用。', 'warning');
+            toast('Mô-đun suy diễn thế giới hiện đã bị vô hiệu hóa.', 'warning');
             return;
         }
         const lastAssistantIndex = latestAssistantEntry()?.index;
         if (!Number.isInteger(lastAssistantIndex)) {
-            toast('当前聊天还没有可推演的 AI 正文。', 'warning');
+            toast('Cuộc trò chuyện hiện tại vẫn chưa có gì để suy diễn AI nội dung chính.', 'warning');
             return;
         }
         try {
@@ -4671,8 +4671,8 @@ async function handleUiAction(action, payload = {}) {
             });
             toast(
                 pendingCount > 1
-                    ? `累计的 ${pendingCount} 轮正文已经完成推演。`
-                    : '最新正文已经重新推演。',
+                    ? `Tích lũy ${pendingCount} vòng nội dung chính đã hoàn thành suy diễn.`
+                    : 'Nội dung chính mới nhất đã được suy diễn lại.',
                 'success',
             );
         } catch {
@@ -4690,7 +4690,7 @@ async function handleUiAction(action, payload = {}) {
         try {
             importState(payload.text);
         } catch (error) {
-            toast(`导入失败：${error?.message || error}`, 'error');
+            toast(`Nhập thất bại:${error?.message || error}`, 'error');
         }
     }
 }
@@ -4706,17 +4706,17 @@ function installSettingsEntry() {
     entry.innerHTML = `
         <div class="inline-drawer">
             <div class="inline-drawer-toggle inline-drawer-header">
-                <b>世界背面</b>
+                <b>Mặt trái thế giới</b>
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
                 <label class="checkbox_label">
                     <input id="world-backstage-enabled" type="checkbox">
-                    <span>启用世界背面</span>
+                    <span>Bật mặt trái thế giới</span>
                 </label>
-                <p class="notes">镜头没照到的地方也会继续过日子～时间、人物和事件都会自己往前走 (｡•̀ᴗ-)✧</p>
+                <p class="notes">Những nơi ngoài ống kính cũng sẽ tiếp tục sống~ Thời gian, nhân vật và sự kiện đều sẽ tự tiến về phía trước (｡•̀ᴗ-)✧</p>
                 <button id="world-backstage-open" class="menu_button" type="button">
-                    打开世界背面
+                    Mở mặt trái thế giới
                 </button>
             </div>
         </div>
@@ -4765,8 +4765,8 @@ function registerDebugCheck() {
     const context = getContext();
     context?.registerDebugFunction?.(
         'world_backstage_state_check',
-        '检查世界背面状态',
-        '检查当前世界时钟、活动事件与分支快照是否可读取',
+        'Kiểm tra trạng thái mặt trái thế giới',
+        'Kiểm tra xem đồng hồ thế giới hiện tại, sự kiện hoạt động và bản ghi nhanh nhánh có thể đọc được không',
         () => {
             const state = getState();
             const result = {
@@ -4777,8 +4777,8 @@ function registerDebugCheck() {
                 pendingSync: state.pendingSync,
                 latestSnapshot: Boolean(findLatestResultSnapshot()),
             };
-            console.info('[世界背面] 状态检查', result);
-            toast('状态检查完成，详细结果已写入浏览器控制台。', 'success');
+            console.info('[Mặt trái thế giới] Kiểm tra trạng thái', result);
+            toast('Kiểm tra trạng thái hoàn tất, kết quả chi tiết đã được ghi vào bảng điều khiển trình duyệt.', 'success');
             return result;
         },
     );
@@ -4804,7 +4804,7 @@ function initialize() {
     registerEvents();
     registerDebugCheck();
     restoreLatestBranch();
-    console.info('[世界背面] 世界状态引擎已加载');
+    console.info('[Mặt trái thế giới] Công cụ trạng thái thế giới đã được tải');
 }
 
 if (document.readyState === 'loading') {

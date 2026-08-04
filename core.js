@@ -140,17 +140,17 @@ export function clamp(value, minimum, maximum) {
 
 export function hasExplicitTimeEvidence(text) {
     const value = String(text || '');
-    const chineseNumber = '[一二两三四五六七八九十百千万半]';
-    const arabicDurationUnit = '(?:分钟|分|刻钟|小时|个小时|钟头|天|日|周|星期|个月|月|年)';
-    const chineseDurationUnit = '(?:分钟|刻钟|小时|个小时|钟头|天|日|周|星期|个月|月|年)';
+    const chineseNumber = '[Một hai hai ba bốn năm sáu bảy tám chín mười trăm nghìn vạn rưỡi]';
+    const arabicDurationUnit = '(?:Phút|Phút|Khắc|Giờ|Tiếng|Giờ đồng hồ|Ngày|Ngày|Tuần|Tuần|Tháng|Tháng|Năm)';
+    const chineseDurationUnit = '(?:Phút|Khắc|Giờ|Tiếng|Giờ đồng hồ|Ngày|Ngày|Tuần|Tuần|Tháng|Tháng|Năm)';
     const patterns = [
         new RegExp(`\\d+(?:\\.\\d+)?\\s*${arabicDurationUnit}`),
         new RegExp(`${chineseNumber}+\\s*${chineseDurationUnit}`),
-        /(?:凌晨|清晨|早上|上午|中午|下午|傍晚|晚上|夜里)?\s*\d{1,2}\s*(?:点|时|[:：])\s*\d{0,2}/,
-        new RegExp(`(?:凌晨|清晨|早上|上午|中午|下午|傍晚|晚上|夜里)?\\s*${chineseNumber}+\\s*(?:点|时)`),
-        /第\s*\d+\s*[日天]/,
-        new RegExp(`第\\s*${chineseNumber}+\\s*[日天]`),
-        /(?:次日|翌日|第二天|隔天|第二周|下周|下个月|次年)/,
+        /(?:Rạng sáng|Sáng sớm|Buổi sáng|Sáng|Buổi trưa|Buổi chiều|Chạng vạng|Buổi tối|Ban đêm)?\s*\d{1,2}\s*(?:Giờ|Giờ|[:：])\s*\d{0,2}/,
+        new RegExp(`(?:Rạng sáng|Sáng sớm|Buổi sáng|Sáng|Buổi trưa|Buổi chiều|Chạng vạng|Buổi tối|Ban đêm)?\\s*${chineseNumber}+\\s*(?:Giờ|Giờ)`),
+        /Thứ\s*\d+\s*[Ngày]/,
+        new RegExp(`Thứ\\s*${chineseNumber}+\\s*[Ngày]`),
+        /(?:Ngày hôm sau|Hôm sau|Ngày thứ hai|Cách ngày|Tuần thứ hai|Tuần sau|Tháng sau|Năm sau)/,
     ];
     return patterns.some(pattern => pattern.test(value));
 }
@@ -176,7 +176,7 @@ export function formatWorldMinute(totalMinutes) {
         hour,
         minute,
         time: `${pad(hour)}:${pad(minute)}`,
-        stamp: `第 ${day} 日 ${pad(hour)}:${pad(minute)}`,
+        stamp: `Thứ ${day} Ngày ${pad(hour)}:${pad(minute)}`,
     };
 }
 
@@ -235,7 +235,7 @@ function calendarDayDifference(fromDate, toDate) {
 function extractExplicitCalendarDate(text = '') {
     const source = asString(text, '', 60000);
     const patterns = [
-        /(?:^|\D)(\d{1,4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日(?:\D|$)/g,
+        /(?:^|\D)(\d{1,4})\s*Năm\s*(\d{1,2})\s*Tháng\s*(\d{1,2})\s*Ngày(?:\D|$)/g,
         /(?:^|\D)(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:\D|$)/g,
     ];
     let latest = null;
@@ -257,29 +257,29 @@ function extractExplicitCalendarDate(text = '') {
 
 
 /**
- * 从一条正文中读取“作者明确写出来”的时间锚点。
- * 手动“与正文校准”使用它：不调用模型、不推断缺失的钟点。
- * 优先解析正文的“时间与地点” details；找不到时才回退到整条正文。
+ * Đọc từ một đoạn nội dung chính“Tác giả viết rõ ra”điểm neo thời gian.
+ * Thủ công“Hiệu chuẩn với nội dung chính”Sử dụng nó: không gọi mô hình, không suy luận giờ bị thiếu.
+ * Ưu tiên phân tích nội dung chính của“Thời gian và địa điểm” details；Chỉ khi không tìm thấy mới quay lại toàn bộ nội dung chính.
  */
 export function extractNarrativeTimeAnchor(text = '') {
     const source = asString(text, '', 60000);
     if (!source.trim()) return null;
 
-    const detailMatches = [...source.matchAll(/<details\b[^>]*>[\s\S]*?<summary\b[^>]*>[\s\S]*?(?:时间\s*[与和]\s*地点|时间地点)[\s\S]*?<\/summary>[\s\S]*?<\/details>/giu)];
+    const detailMatches = [...source.matchAll(/<details\b[^>]*>[\s\S]*?<summary\b[^>]*>[\s\S]*?(?:Thời gian\s*[Và]\s*Địa điểm|Thời gian địa điểm)[\s\S]*?<\/summary>[\s\S]*?<\/details>/giu)];
     const scope = detailMatches.length
         ? String(detailMatches.at(-1)?.[0] || '')
         : source;
 
     const date = extractExplicitCalendarDate(scope) || (scope === source ? null : extractExplicitCalendarDate(source));
 
-    // 形如 ▶07:40→08:15：结尾时间代表这段正文结束时的时间。
-    const transitions = [...scope.matchAll(/(?:▶|>)?\s*([01]?\d|2[0-3])\s*:\s*([0-5]\d)\s*(?:→|->|至|到)\s*([01]?\d|2[0-3])\s*:\s*([0-5]\d)/gu)];
+    // Có dạng như ▶07:40→08:15：Thời gian kết thúc đại diện cho thời gian khi đoạn nội dung chính này kết thúc.
+    const transitions = [...scope.matchAll(/(?:▶|>)?\s*([01]?\d|2[0-3])\s*:\s*([0-5]\d)\s*(?:→|->|Đến|Đến)\s*([01]?\d|2[0-3])\s*:\s*([0-5]\d)/gu)];
     let exact = null;
     if (transitions.length) {
         const match = transitions.at(-1);
         exact = { hour: Number(match[3]), minute: Number(match[4]), excerpt: match[0].trim() };
     } else {
-        // 时间栏里只有单个明确钟点时也允许同步。限制在“时间与地点”区域可减少误抓正文中的普通数字。
+        // Khi thanh thời gian chỉ có một giờ rõ ràng duy nhất cũng cho phép đồng bộ. Giới hạn ở“Thời gian và địa điểm”khu vực có thể giảm việc bắt nhầm các con số thông thường trong nội dung chính.
         const times = [...scope.matchAll(/(?:^|[^\d])([01]?\d|2[0-3])\s*:\s*([0-5]\d)(?!\d)/gu)];
         if (times.length) {
             const match = times.at(-1);
@@ -287,7 +287,7 @@ export function extractNarrativeTimeAnchor(text = '') {
         }
     }
 
-    const daypartMatch = [...scope.matchAll(/(?:凌晨|黎明|清晨|早晨|上午|中午|午后|下午|傍晚|黄昏|晚上|夜晚|深夜)/gu)].at(-1);
+    const daypartMatch = [...scope.matchAll(/(?:Rạng sáng|Bình minh|Sáng sớm|Buổi sáng|Sáng|Buổi trưa|Buổi chiều|Buổi chiều|Chạng vạng|Hoàng hôn|Buổi tối|Buổi tối|Đêm khuya)/gu)].at(-1);
     const daypart = daypartMatch?.[0] || '';
 
     if (!date && !exact) return null;
@@ -319,7 +319,7 @@ function normalizeWorldCalendar(raw, absoluteDay = 1) {
         day: raw?.anchor_day ?? raw?.anchorDay,
     }, fallback);
     return {
-        name: asString(raw?.name, '主世界历', 40),
+        name: asString(raw?.name, 'Lịch thế giới chính', 40),
         anchorAbsoluteDay: asInteger(
             raw?.anchor_absolute_day ?? raw?.anchorAbsoluteDay,
             absoluteDay,
@@ -341,7 +341,7 @@ export function formatWorldCalendar(state, totalMinutes = state?.clock?.absolute
         day: calendar.anchorDay,
     }, clock.day - calendar.anchorAbsoluteDay);
     const pad = number => String(number).padStart(2, '0');
-    const dateLabel = `${date.year}年${date.month}月${date.day}日`;
+    const dateLabel = `${date.year}Năm${date.month}Tháng${date.day}Ngày`;
     return {
         ...clock,
         calendarName: calendar.name,
@@ -349,7 +349,7 @@ export function formatWorldCalendar(state, totalMinutes = state?.clock?.absolute
         month: date.month,
         dayOfMonth: date.day,
         date: dateLabel,
-        shortDate: `${pad(date.month)}月${pad(date.day)}日`,
+        shortDate: `${pad(date.month)}Tháng${pad(date.day)}Ngày`,
         stamp: `${calendar.name} ${dateLabel} ${clock.time}`,
     };
 }
@@ -361,9 +361,9 @@ export function formatDuration(minutes) {
     const rest = safeMinutes % 60;
     const parts = [];
 
-    if (days) parts.push(`${days} 天`);
-    if (hours) parts.push(`${hours} 小时`);
-    if (rest || parts.length === 0) parts.push(`${rest} 分钟`);
+    if (days) parts.push(`${days} Ngày`);
+    if (hours) parts.push(`${hours} Giờ`);
+    if (rest || parts.length === 0) parts.push(`${rest} Phút`);
     return parts.join(' ');
 }
 
@@ -454,14 +454,14 @@ function upsertWorldFact(state, raw, {
 function settlePersonStateFacts(state, person, source, messageId = null) {
     if (!person?.id) return;
     const fields = [
-        ['location', '位置', person.location, 'hidden'],
-        ['action', '当前行动', person.action, 'hidden'],
-        ['physicalState', '身体状态', person.physicalState, 'hidden'],
-        ['resourceState', '资源状态', person.resourceState, 'hidden'],
+        ['location', 'Vị trí', person.location, 'hidden'],
+        ['action', 'Hành động hiện tại', person.action, 'hidden'],
+        ['physicalState', 'Trạng thái cơ thể', person.physicalState, 'hidden'],
+        ['resourceState', 'Trạng thái tài nguyên', person.resourceState, 'hidden'],
     ];
     for (const [field, label, value, visibility] of fields) {
         const text = asString(value, '', 520);
-        if (!text || /待确认$/.test(text)) continue;
+        if (!text || /Chờ xác nhận$/.test(text)) continue;
         upsertWorldFact(state, {
             key: `person:${person.id}:${field}`,
             subject_type: 'person',
@@ -514,7 +514,7 @@ function settleEventResultFact(state, event, messageId = null) {
 function normalizeConsistencyConflict(raw, worldMinute = 0, messageId = null) {
     return {
         id: normalizeId(raw?.id || `conflict_${hashText(JSON.stringify(raw || {}))}`, 'conflict'),
-        subject: asString(raw?.subject, '世界状态', 140),
+        subject: asString(raw?.subject, 'Trạng thái thế giới', 140),
         field: asString(raw?.field, 'state', 80),
         expected: asString(raw?.expected ?? raw?.previous_value ?? raw?.previousValue, '', 420),
         observed: asString(raw?.observed ?? raw?.narrative_value ?? raw?.narrativeValue, '', 420),
@@ -547,7 +547,7 @@ function selectRelevantWorldFacts(state, recentText = '', maximum = 12) {
 }
 
 export function createInitialState({
-    worldName = '未命名世界',
+    worldName = 'Thế giới chưa đặt tên',
     day = 1,
     hour = 8,
     minute = 0,
@@ -564,11 +564,11 @@ export function createInitialState({
         schemaVersion: SCHEMA_VERSION,
         revision: 0,
         world: {
-            name: asString(worldName, '未命名世界', 80),
-            title: '世界仍在镜头之外继续',
-            detail: '尚未完成第一次世界推演。',
+            name: asString(worldName, 'Thế giới chưa đặt tên', 80),
+            title: 'Thế giới vẫn đang tiếp diễn ngoài ống kính',
+            detail: 'Chưa hoàn thành suy diễn thế giới lần đầu tiên.',
             calendar: {
-                name: '主世界历',
+                name: 'Lịch thế giới chính',
                 anchorAbsoluteDay: absoluteDay,
                 anchorYear: initialDate.year,
                 anchorMonth: initialDate.month,
@@ -579,7 +579,7 @@ export function createInitialState({
             absoluteMinute,
             lastCheckedAt: absoluteMinute,
             source: 'initial',
-            reason: '建立主世界时钟',
+            reason: 'Thiết lập đồng hồ thế giới chính',
             anchored: false,
             precision: 'uninitialized',
         },
@@ -638,7 +638,7 @@ function normalizeStorySummary(raw, existing = null) {
             raw?.id || existing?.id || `summary_${startMessageId}_${endMessageId}`,
             'summary',
         ),
-        title: asString(raw?.title, existing?.title || `第 ${startMessageId}—${endMessageId} 层`, 120),
+        title: asString(raw?.title, existing?.title || `Thứ ${startMessageId}—${endMessageId} Tầng`, 120),
         summary,
         level,
         hierarchyManaged: Boolean(
@@ -687,7 +687,7 @@ function normalizeClue(raw, existing = null, worldMinute = 0, {
     const requestedStatus = asString(raw?.status, existing?.status || 'open', 20);
     return {
         id: normalizeId(clueId, 'clue'),
-        title: asString(raw?.title, existing?.title || text.slice(0, 48) || '未命名伏笔', 120),
+        title: asString(raw?.title, existing?.title || text.slice(0, 48) || 'Phục bút chưa đặt tên', 120),
         text,
         sourceMessageId: asInteger(
             raw?.source_message_id ?? raw?.sourceMessageId,
@@ -1033,7 +1033,7 @@ function normalizePerson(raw, existing = null, worldMinute = 0, {
     allowUserInnerVoice = true,
     sourceMessageId = null,
 } = {}) {
-    const name = asString(raw?.name, existing?.name || '未命名人物', 80);
+    const name = asString(raw?.name, existing?.name || 'Nhân vật chưa đặt tên', 80);
     const innerVoice = asString(raw?.inner_voice ?? raw?.innerVoice, '', LIMITS.innerVoice);
     const hasNewInnerVoice = Boolean(innerVoice);
     const longTermGoal = asString(
@@ -1127,9 +1127,9 @@ function normalizePerson(raw, existing = null, worldMinute = 0, {
         name,
         isUser,
         monogram: asString(raw?.monogram, existing?.monogram || name.slice(0, 1), 4),
-        location: asString(raw?.location, existing?.location || '位置待确认', 160),
-        action: asString(raw?.action, existing?.action || '当前行动待确认', 280),
-        intent: asString(raw?.intent, existing?.intent || '短期意图待确认', 320),
+        location: asString(raw?.location, existing?.location || 'Vị trí chờ xác nhận', 160),
+        action: asString(raw?.action, existing?.action || 'Hành động hiện tại chờ xác nhận', 280),
+        intent: asString(raw?.intent, existing?.intent || 'Ý định ngắn hạn chờ xác nhận', 320),
         longTermGoal: longTermGoal || asString(existing?.longTermGoal, '', LIMITS.longTermGoal),
         identityAnchor,
         personalityAnchor,
@@ -1254,8 +1254,8 @@ export function normalizeEvent(raw, worldMinute = 0, existing = null) {
 
     return {
         id: normalizeId(raw?.id || existing?.id, 'event'),
-        title: asString(raw?.title, existing?.title || '未命名事件', 140),
-        place: asString(raw?.place, existing?.place || '地点待确认', 140),
+        title: asString(raw?.title, existing?.title || 'Sự kiện chưa đặt tên', 140),
+        place: asString(raw?.place, existing?.place || 'Địa điểm chờ xác nhận', 140),
         summary: asString(raw?.summary, existing?.summary || '', 420),
         consequence: asString(raw?.consequence, existing?.consequence || '', 420),
         expectedResult: asString(
@@ -1336,7 +1336,7 @@ export function eventProgress(event, worldMinute) {
             ratio: 1,
             percent: 100,
             remaining: 0,
-        phase: event.status === 'ready' ? '到时待确认' : '已形成结果',
+        phase: event.status === 'ready' ? 'Thời gian đến chờ xác nhận' : 'Đã hình thành kết quả',
         };
     }
 
@@ -1345,7 +1345,7 @@ export function eventProgress(event, worldMinute) {
             ratio: null,
             percent: null,
             remaining: null,
-            phase: '等待条件',
+            phase: 'Chờ điều kiện',
         };
     }
 
@@ -1357,7 +1357,7 @@ export function eventProgress(event, worldMinute) {
             ratio,
             percent: Math.round(ratio * 100),
             remaining: Math.max(0, duration - accrued),
-            phase: ratio >= 0.72 ? '临近完成' : ratio >= 0.28 ? '发展' : '萌芽',
+            phase: ratio >= 0.72 ? 'Sắp hoàn thành' : ratio >= 0.28 ? 'Phát triển' : 'Nảy mầm',
         };
     }
 
@@ -1368,7 +1368,7 @@ export function eventProgress(event, worldMinute) {
             ratio: null,
             percent: null,
             remaining: null,
-            phase: event?.clockMode === 'scheduled' ? '等待时间点' : '时间待确认',
+            phase: event?.clockMode === 'scheduled' ? 'Chờ thời điểm' : 'Thời gian chờ xác nhận',
         };
     }
 
@@ -1376,9 +1376,9 @@ export function eventProgress(event, worldMinute) {
     const duration = dueAt - startedAt;
     const ratio = clamp(elapsed / duration, 0, 1);
     const remaining = Math.max(0, dueAt - worldMinute);
-    let phase = ratio >= 0.72 ? '临近完成' : ratio >= 0.28 ? '发展' : '萌芽';
+    let phase = ratio >= 0.72 ? 'Sắp hoàn thành' : ratio >= 0.28 ? 'Phát triển' : 'Nảy mầm';
     if (event.clockMode === 'scheduled') {
-        phase = remaining <= 30 ? '正在靠近' : '等待时间点';
+        phase = remaining <= 30 ? 'Đang đến gần' : 'Chờ thời điểm';
     }
 
     return {
@@ -1574,8 +1574,8 @@ function compactRolledUpSources(state, parentSummary, sources, { sourceMessageId
         if (Number(source.level || 0) >= MEMORY_SUMMARY_LEVELS.CHAPTER) continue;
         if (source.retentionState === 'compacted') continue;
         source.retentionState = 'compacted';
-        source.compactedReason = `细节已由 ${parentSummary.title || `L${parentSummary.level}`} 概括；原始正文仍可按消息范围回看。`;
-        source.summary = `细节已收进上层记忆；原始正文见消息 ${source.startMessageId}—${source.endMessageId}。`;
+        source.compactedReason = `Chi tiết đã được ${parentSummary.title || `L${parentSummary.level}`} tóm tắt; nội dung chính gốc vẫn có thể xem lại theo phạm vi tin nhắn.`;
+        source.summary = `Chi tiết đã được thu thập vào ký ức tầng trên; nội dung chính gốc xem tại tin nhắn ${source.startMessageId}—${source.endMessageId}。`;
         appendMemoryMetabolism(state, {
             kind: 'episode',
             action: 'compacted',
@@ -1659,7 +1659,7 @@ function applyMemoryFactUpdates(state, {
                 freezeKnownFactBeforeChange(state, conflict);
                 conflict.status = 'superseded';
                 conflict.supersededBy = prepared.id;
-                conflict.invalidationReason = `已被后续事实“${prepared.value}”取代`;
+                conflict.invalidationReason = `Đã bị sự thật tiếp theo“${prepared.value}”Thay thế`;
                 conflict.updatedAt = state.clock.absoluteMinute;
                 appendMemoryMetabolism(state, {
                     kind: 'fact',
@@ -1688,7 +1688,7 @@ function applyMemoryFactUpdates(state, {
         fact.status = 'invalidated';
         fact.invalidationReason = asString(
             invalidation?.reason ?? invalidation?.invalidation_reason,
-            fact.invalidationReason || '已被后续正文否定',
+            fact.invalidationReason || 'Đã bị nội dung chính tiếp theo phủ định',
             360,
         );
         fact.updatedAt = state.clock.absoluteMinute;
@@ -1733,7 +1733,7 @@ function applyClueUpdates(state, {
             : 'resolved';
         clue.resolution = asString(
             resolution?.resolution,
-            clue.resolution || (clue.status === 'discarded' ? '后续发展已证明这条线索无需继续追踪' : '已由后续正文呼应或解决'),
+            clue.resolution || (clue.status === 'discarded' ? 'Sự phát triển tiếp theo đã chứng minh manh mối này không cần tiếp tục theo dõi' : 'Đã được nội dung chính tiếp theo hưởng ứng hoặc giải quyết'),
             520,
         );
         clue.lifecycleReason = asString(
@@ -1875,15 +1875,15 @@ function narrativeSupportsLocationValue(narrativeText, value) {
     if (!text || compactValue.length < 2) return false;
     const terms = uniqueStrings([
         compactValue,
-        ...compactValue.split(/[的、,，/·|｜]/g),
+        ...compactValue.split(/[ của, ,，/·|｜]/g),
     ], 12).filter(term => term.length >= 2);
     for (const term of terms) {
         let index = text.indexOf(term);
         while (index >= 0) {
             const window = text.slice(Math.max(0, index - 28), Math.min(text.length, index + term.length + 18));
             if (
-                /(?:地点|位置|所在地|场景)[：:]/.test(window)
-                || /(?:在|位于|身处|来到|到达|抵达|回到|返回|进入|走进|前往|赶到|去了|住在|留在|待在|躺在|坐在|站在|出现在|离开)[^。！？!?]{0,22}/.test(window)
+                /(?:Địa điểm|Vị trí|Nơi ở|Cảnh)[：:]/.test(window)
+                || /(?:Tại|Nằm ở|Đang ở|Đến|Đến nơi|Tới|Trở về|Quay lại|Tiến vào|Bước vào|Đi đến|Kịp đến|Đã đi|Sống ở|Ở lại|Nán lại|Nằm ở|Ngồi ở|Đứng ở|Xuất hiện ở|Rời khỏi)[^。！？!?]{0,22}/.test(window)
             ) return true;
             index = text.indexOf(term, index + term.length);
         }
@@ -1945,7 +1945,7 @@ export function applySimulationResult(baseState, rawPayload, {
                 !baseClockAnchored
                 || dateChanged
                 || structuredForwardExact
-                || /→|->|至|到/.test(narrativeAnchor.excerpt || '')
+                || /→|->|Đến|Đến/.test(narrativeAnchor.excerpt || '')
             )
         );
         if (!anchor?.hasDate || dateChanged || reliableExact) {
@@ -1966,8 +1966,8 @@ export function applySimulationResult(baseState, rawPayload, {
             anchor.sourceExcerpt = anchor.sourceExcerpt || narrativeAnchor?.excerpt || narrativeCalendar.excerpt;
             anchor.reason = anchor.reason || (
                 baseClockAnchored
-                    ? '正文给出新的明确时间信息，自动校准主世界时间'
-                    : '从正文中的明确时间信息建立主世界时间锚点'
+                    ? 'Nội dung chính đưa ra thông tin thời gian rõ ràng mới, tự động hiệu chuẩn thời gian thế giới chính'
+                    : 'Thiết lập điểm neo thời gian thế giới chính từ thông tin thời gian rõ ràng trong nội dung chính'
             );
         }
     } else if (structuredForwardExact) {
@@ -1982,11 +1982,11 @@ export function applySimulationResult(baseState, rawPayload, {
         anchor.precision = 'minute';
         anchor.confidence = 'high';
         anchor.sourceExcerpt = anchor.sourceExcerpt || narrativeAnchor.excerpt;
-        anchor.reason = anchor.reason || '正文时间栏给出更晚的明确钟点，自动校准主世界时间';
+        anchor.reason = anchor.reason || 'Cột thời gian của nội dung chính đưa ra giờ giấc rõ ràng muộn hơn, tự động hiệu chuẩn thời gian thế giới chính';
     }
 
     // Date and clock time are intentionally separate. A story may give an
-    // authoritative YYYY/M/D while only saying “清晨/下午” for the time of day.
+    // authoritative YYYY/M/D while only saying “Sáng sớm/Buổi chiều” for the time of day.
     // Older builds required both fields, which caused the calendar date to stay
     // on the placeholder epoch forever.
     if (
@@ -2005,7 +2005,7 @@ export function applySimulationResult(baseState, rawPayload, {
             ? anchor.confidence
             : 'high';
         anchor.sourceExcerpt = anchor.sourceExcerpt || narrativeCalendar.excerpt;
-        anchor.reason = anchor.reason || '从正文中的明确年月日建立主世界历法锚点';
+        anchor.reason = anchor.reason || 'Thiết lập điểm neo lịch thế giới chính từ ngày tháng năm rõ ràng trong nội dung chính';
     }
 
     const anchorHasDate = Boolean(anchor?.hasDate);
@@ -2056,19 +2056,19 @@ export function applySimulationResult(baseState, rawPayload, {
     }
     if (anchorApplied) {
         payload.timeReason = anchor.reason
-            || (initializeClock ? '从故事上下文建立主世界时间锚点' : '正文给出新的可靠绝对时间，校准主世界时钟');
+            || (initializeClock ? 'Thiết lập điểm neo thời gian thế giới chính từ ngữ cảnh câu chuyện' : 'Nội dung chính đưa ra thời gian tuyệt đối đáng tin cậy mới, hiệu chuẩn đồng hồ thế giới chính');
     } else if (!baseClockAnchored && timePolicy === 'world') {
-        payload.timeReason = '尚未找到足够可靠的故事时间锚点，本轮不推进占位时钟';
+        payload.timeReason = 'Chưa tìm thấy điểm neo thời gian câu chuyện đủ đáng tin cậy, vòng này không tiến hành đồng hồ giữ chỗ';
     } else if (requestedElapsedMinutes > 0 && payload.elapsedMinutes === 0) {
-        payload.timeReason = '正文没有明确、可计算的时间证据，本轮保持世界时钟不动';
+        payload.timeReason = 'Nội dung chính không có bằng chứng thời gian rõ ràng, có thể tính toán, vòng này giữ nguyên đồng hồ thế giới';
     } else if (payload.elapsedMinutes < requestedElapsedMinutes) {
-        payload.timeReason = `正文时间较含糊，本轮最多推进 ${payload.elapsedMinutes} 分钟`;
+        payload.timeReason = `Thời gian nội dung chính khá mơ hồ, vòng này tiến hành tối đa ${payload.elapsedMinutes} Phút`;
     }
     let anchoredBaseState = baseState;
     if (initializeClock) {
         const currentClock = formatWorldCalendar(baseState);
         anchoredBaseState = setWorldCalendar(baseState, {
-            calendarName: anchor.calendarName || baseState?.world?.calendar?.name || '主世界历',
+            calendarName: anchor.calendarName || baseState?.world?.calendar?.name || 'Lịch thế giới chính',
             year: anchor.year,
             month: anchor.month,
             day: anchor.day,
@@ -2081,9 +2081,9 @@ export function applySimulationResult(baseState, rawPayload, {
         anchoredBaseState.clock.precision = anchor.precision;
         appendAudit(anchoredBaseState, {
             type: 'clock_anchor_initialized',
-            text: `主世界时间锚点建立：${formatWorldCalendar(anchoredBaseState).stamp}`,
+            text: `Thiết lập điểm neo thời gian thế giới chính:${formatWorldCalendar(anchoredBaseState).stamp}`,
             reason: anchor.sourceExcerpt
-                ? `${payload.timeReason}；依据：${anchor.sourceExcerpt}`
+                ? `${payload.timeReason}；Căn cứ:${anchor.sourceExcerpt}`
                 : payload.timeReason,
         });
     } else if (recalibrateClock) {
@@ -2119,9 +2119,9 @@ export function applySimulationResult(baseState, rawPayload, {
         anchoredBaseState.clock.precision = anchor.precision;
         appendAudit(anchoredBaseState, {
             type: 'clock_anchor_recalibrated',
-            text: `主世界时间重新校准：${formatWorldCalendar(anchoredBaseState).stamp}`,
+            text: `Hiệu chuẩn lại thời gian thế giới chính:${formatWorldCalendar(anchoredBaseState).stamp}`,
             reason: anchor.sourceExcerpt
-                ? `${payload.timeReason}；依据：${anchor.sourceExcerpt}`
+                ? `${payload.timeReason}；Căn cứ:${anchor.sourceExcerpt}`
                 : payload.timeReason,
         });
     }
@@ -2130,7 +2130,7 @@ export function applySimulationResult(baseState, rawPayload, {
         anchoredBaseState.clock.absoluteMinute + payload.elapsedMinutes,
         {
             source: anchorApplied ? anchoredBaseState.clock.source : 'narrative',
-            reason: payload.timeReason || '正文推演',
+            reason: payload.timeReason || 'Suy diễn nội dung chính',
         },
     );
     const worldMinute = state.clock.absoluteMinute;
@@ -2227,8 +2227,8 @@ export function applySimulationResult(baseState, rawPayload, {
                     narrative_value: requestedLocation,
                     resolution: 'keep-world',
                     reason: explicitKeep
-                        ? '推演识别到正文与权威位置无过渡冲突，保持既有世界事实'
-                        : '正文没有找到足够明确的位置变化证据，拒绝用模型推断无过渡覆盖权威位置',
+                        ? 'Suy diễn nhận diện được nội dung chính và vị trí chuẩn không có xung đột chuyển tiếp, giữ nguyên sự thật thế giới hiện có'
+                        : 'Nội dung chính không tìm thấy bằng chứng thay đổi vị trí đủ rõ ràng, từ chối dùng mô hình suy luận ghi đè vị trí chuẩn mà không có chuyển tiếp',
                     message_id: messageId,
                 });
             }
@@ -2409,7 +2409,7 @@ export function applySimulationResult(baseState, rawPayload, {
             at: worldMinute,
             title: event.title,
             route: event.delivery.route || event.result || event.consequence,
-            state: '已由正文承接',
+            state: 'Đã được tiếp nối bởi nội dung chính',
         });
     }
 
@@ -2427,7 +2427,7 @@ export function applySimulationResult(baseState, rawPayload, {
             key: rawFact?.key || `foreground:${hashText(text)}`,
             subject_type: rawFact?.subject_type || 'world',
             subject_id: rawFact?.subject_id || '',
-            subject: rawFact?.subject || '正文事实',
+            subject: rawFact?.subject || 'Sự thật nội dung chính',
             field: rawFact?.field || 'state',
             value: text,
             visibility: rawFact?.visibility ?? 'known',
@@ -2479,7 +2479,7 @@ export function applySimulationResult(baseState, rawPayload, {
     state.updatedAt = nowIso();
     appendAudit(state, {
         type: 'simulation_committed',
-        text: `世界推演完成 · ${formatWorldCalendar(state, worldMinute).stamp}`,
+        text: `Suy diễn thế giới hoàn tất · ${formatWorldCalendar(state, worldMinute).stamp}`,
         reason: payload.timeReason,
     });
     return trimState(state);
@@ -2496,8 +2496,8 @@ export function addManualEvent(inputState, rawEvent) {
     state.updatedAt = nowIso();
     appendAudit(state, {
         type: 'event_created',
-        text: `新增事件：${event.title}`,
-        reason: '手动创建',
+        text: `Sự kiện mới thêm:${event.title}`,
+        reason: 'Tạo thủ công',
     });
     return trimState(state);
 }
@@ -2506,7 +2506,7 @@ export function setWorldClock(inputState, {
     day,
     hour,
     minute,
-    reason = '手动校准',
+    reason = 'Hiệu chuẩn thủ công',
 } = {}) {
     const target = (
         asInteger(day, 1, 0, 999999) * MINUTES_PER_DAY
@@ -2526,7 +2526,7 @@ export function setWorldCalendar(inputState, {
     day,
     hour,
     minute,
-    reason = '手动校准历法',
+    reason = 'Hiệu chuẩn lịch thủ công',
 } = {}) {
     const currentClock = formatWorldMinute(inputState?.clock?.absoluteMinute ?? MINUTES_PER_DAY);
     const date = normalizeCalendarDate({ year, month, day }, sequentialCalendarDate(currentClock.day));
@@ -2540,7 +2540,7 @@ export function setWorldCalendar(inputState, {
         reason,
     });
     state.world.calendar = {
-        name: asString(calendarName, state.world?.calendar?.name || '主世界历', 40),
+        name: asString(calendarName, state.world?.calendar?.name || 'Lịch thế giới chính', 40),
         anchorAbsoluteDay: currentClock.day,
         anchorYear: date.year,
         anchorMonth: date.month,
@@ -2550,14 +2550,14 @@ export function setWorldCalendar(inputState, {
     state.clock.precision = 'minute';
     appendAudit(state, {
         type: 'calendar_calibrated',
-        text: `历法校准为 ${formatWorldCalendar(state).stamp}`,
+        text: `Lịch được hiệu chuẩn thành ${formatWorldCalendar(state).stamp}`,
         reason: asString(reason, '', 240),
     });
     state.updatedAt = nowIso();
     return trimState(state);
 }
 
-export function advanceWorldClock(inputState, minutes, reason = '手动推进') {
+export function advanceWorldClock(inputState, minutes, reason = 'Tiến hành thủ công') {
     const delta = asInteger(minutes, 0, 0, 5 * 365 * MINUTES_PER_DAY);
     return settleTimedEvents(
         inputState,
@@ -2582,9 +2582,9 @@ export function selectDeliveryCandidates(state, settings = {}) {
         restrained: 1,
         balanced: 2,
         active: 3,
-        克制: 1,
-        均衡: 2,
-        活跃: 3,
+        "Kiềm chế": 1,
+        "Cân bằng": 2,
+        "Tích cực": 3,
     }[settings.deliveryDensity] || 1;
 
     const manuallyQueued = state.events
@@ -2687,27 +2687,27 @@ export function buildInjectionPackage(state, settings = {}, recentText = '') {
         && clue.status !== 'discarded'
     ));
     const sceneTiming = {
-        strict: '只在转场、空档或角色自然能够接触信息时显露；当前场面不合适就继续延后。',
-        smart: '关键场面中延后次要信息；只有直接影响眼前行动的结果可以自然进入。',
-        open: '可以在场景中加入一条简短、自然的可感知变化，但不要后台播报。',
-    }[settings.sceneTiming] || '只在自然时机显露，不要后台播报。';
+        strict: 'Chỉ hiển thị khi chuyển cảnh, khoảng trống hoặc khi nhân vật có thể tiếp xúc thông tin một cách tự nhiên; nếu cảnh hiện tại không phù hợp thì tiếp tục trì hoãn.',
+        smart: 'Trì hoãn thông tin phụ trong các cảnh quan trọng; chỉ những kết quả ảnh hưởng trực tiếp đến hành động trước mắt mới có thể tiến vào một cách tự nhiên.',
+        open: 'Có thể thêm một thay đổi ngắn gọn, tự nhiên có thể nhận biết vào cảnh, nhưng đừng phát thanh chạy ngầm.',
+    }[settings.sceneTiming] || 'Chỉ hiển thị vào thời điểm tự nhiên, không thông báo chạy ngầm.';
 
     const lines = ['<world_backstage_state>'];
     if (injectWorldState) {
         if (state.clock?.anchored) {
             lines.push(
-                `权威主世界时间：${state.world.name} · ${clock.stamp}`,
-                `权威日期字段：year=${clock.year}; month=${clock.month}; day=${clock.dayOfMonth}; time=${clock.time}`,
-                `整体状态：${state.world.title}；${state.world.detail}`,
-                '时间一致性规则：主世界时间由世界背面维护，是本轮正文的事实源。若正文含“时间与地点”栏、日期标题或钟点显示，必须把其中的年、月、日逐项改为上面的权威 year/month/day；不得保留上一轮旧年月日，也不得自行另起日期。钟点同样以权威 time 为本轮起点。',
-                `若输出“时间与地点”栏，日期应明确写成：${clock.year}年${clock.month}月${clock.dayOfMonth}日。`,
-                '正文只负责叙事，不要在本轮自行额外推进世界时钟；本轮实际经过多久会在正文结束后由世界背面结算。',
+                `Thời gian thế giới chính chuẩn:${state.world.name} · ${clock.stamp}`,
+                `Trường dữ liệu ngày tháng chuẩn:year=${clock.year}; month=${clock.month}; day=${clock.dayOfMonth}; time=${clock.time}`,
+                `Trạng thái tổng thể:${state.world.title}；${state.world.detail}`,
+                'Quy tắc nhất quán thời gian: Thời gian thế giới chính được duy trì bởi mặt trái thế giới, là nguồn sự thật của nội dung chính vòng này. Nếu nội dung chính chứa“Thời gian và địa điểm”cột, tiêu đề ngày tháng hoặc hiển thị giờ giấc, phải đổi từng mục năm, tháng, ngày trong đó thành chuẩn ở trên year/month/day；Không được giữ lại năm tháng ngày cũ của vòng trước, cũng không được tự ý tạo ngày mới. Giờ giấc cũng lấy chuẩn time làm điểm bắt đầu của vòng này.',
+                `Nếu đầu ra“Thời gian và địa điểm”cột, "ngày tháng nên được viết rõ thành":${clock.year}Năm${clock.month}Tháng${clock.dayOfMonth}ngày.`,
+                'Nội dung chính chỉ chịu trách nhiệm kể chuyện, không tự ý đẩy nhanh đồng hồ thế giới thêm trong vòng này; thời gian thực tế trôi qua trong vòng này sẽ được mặt trái thế giới tổng kết sau khi nội dung chính kết thúc.',
             );
         } else {
             lines.push(
-                '主世界时间：尚未完成故事时间锚点校准。',
-                `整体状态：${state.world.title}；${state.world.detail}`,
-                '时间一致性规则：当前不要把占位历法/占位钟点当作剧情事实；本轮正文结束后由世界背面从上下文建立主世界时间锚点。',
+                'Thời gian thế giới chính: Chưa hoàn thành hiệu chuẩn điểm neo thời gian câu chuyện.',
+                `Trạng thái tổng thể:${state.world.title}；${state.world.detail}`,
+                'Quy tắc nhất quán thời gian: Hiện tại không lấy lịch giữ chỗ/giờ giấc giữ chỗ làm sự thật cốt truyện; sau khi nội dung chính vòng này kết thúc, mặt trái thế giới sẽ thiết lập điểm neo thời gian thế giới chính từ ngữ cảnh.',
             );
         }
     }
@@ -2715,56 +2715,56 @@ export function buildInjectionPackage(state, settings = {}, recentText = '') {
     if (people.length) {
         if (state.needsReconciliation) {
             lines.push(
-                '旧存档人物状态（等待一次前台重新校准）：',
-                '这些状态来自升级前的后台记录；若与最近正文的明确事实冲突，以正文为准。首次成功世界推演后会重新结算为权威状态。',
+                'Trạng thái nhân vật lưu trữ cũ (chờ hiệu chuẩn lại một lần ở tiền sảnh):',
+                'Những trạng thái này đến từ bản ghi chạy ngầm trước khi nâng cấp; nếu xung đột với sự thật rõ ràng của nội dung chính gần đây, lấy nội dung chính làm chuẩn. Sau khi suy diễn thế giới thành công lần đầu sẽ tổng kết lại thành trạng thái chuẩn.',
             );
         } else {
             lines.push(
-                '当前人物权威状态（必须保持连续性；不等于主角知道全部后台信息）：',
-                '若正文没有明确写出新的移动、离场、返回或状态变化，不得把人物无理由放到与这里冲突的位置；若正文明确发生了新变化，则按新变化继续，并由世界背面回写。',
+                'Trạng thái chuẩn của nhân vật hiện tại (phải duy trì tính liên tục; không có nghĩa là nhân vật chính biết toàn bộ thông tin chạy ngầm):',
+                'Nếu nội dung chính không viết rõ việc di chuyển, rời đi, quay lại hoặc thay đổi trạng thái mới, không được đưa nhân vật vào vị trí xung đột với ở đây mà không có lý do; nếu nội dung chính đã xảy ra thay đổi mới rõ ràng, thì tiếp tục theo thay đổi mới, và được mặt trái thế giới ghi ngược lại.',
             );
         }
         for (const person of people) {
-            const boundary = person.knowledge === 'known' ? '可知' : '幕后';
+            const boundary = person.knowledge === 'known' ? 'Có thể biết' : 'Hậu trường';
             lines.push(`- ${person.name}｜${person.location}｜${person.action}｜${boundary}`);
         }
     }
 
     if (authoritativeFacts.length) {
         lines.push(
-            '已结算世界事实（这是世界客观状态，不是可选剧情建议；必须保持一致，但角色是否知道仍看认知边界）：',
+            'Sự thật thế giới đã tổng kết (đây là trạng thái khách quan của thế giới, không phải đề xuất cốt truyện tùy chọn; phải duy trì sự nhất quán, nhưng nhân vật có biết hay không vẫn tùy thuộc vào ranh giới nhận thức):',
         );
         for (const fact of authoritativeFacts) {
-            const subject = fact.subject || fact.subjectId || '世界';
-            lines.push(`- ${subject}｜${fact.field}：${fact.value}｜显露=${fact.visibility}`);
+            const subject = fact.subject || fact.subjectId || 'Thế giới';
+            lines.push(`- ${subject}｜${fact.field}：${fact.value}｜Hiển thị=${fact.visibility}`);
         }
-        lines.push('显露度只决定这些事实如何进入镜头，不决定它们是否存在。隐藏事实可以约束连续性，但不得因此让不知情角色突然知晓。');
+        lines.push('Mức độ hiển thị chỉ quyết định những sự thật này đi vào ống kính như thế nào, không quyết định chúng có tồn tại hay không. Sự thật ẩn có thể ràng buộc tính liên tục, nhưng không được vì thế mà khiến nhân vật không hay biết đột nhiên biết được.');
     }
 
     if (knownFacts.length || knownClues.length) {
-        lines.push('与当前场景相关、且角色已经有资格知道的长期记忆：');
+        lines.push('Ký ức dài hạn liên quan đến bối cảnh hiện tại, "và nhân vật đã có đủ tư cách để biết":');
         for (const fact of knownFacts) {
-            const qualifier = fact.status === 'disputed' ? '（说法有争议，不可当成定论）' : '';
-            lines.push(`- 事实｜${fact.subject || fact.key}｜${fact.predicate || '相关信息'}：${fact.value}${qualifier}`);
+            const qualifier = fact.status === 'disputed' ? '（cách nói có tranh cãi, không thể coi là kết luận)' : '';
+            lines.push(`- Sự thật｜${fact.subject || fact.key}｜${fact.predicate || 'Thông tin liên quan'}：${fact.value}${qualifier}`);
         }
         for (const clue of knownClues) {
-            lines.push(`- 线索｜${clue.title}：${clue.text}`);
+            lines.push(`- Manh mối｜${clue.title}：${clue.text}`);
         }
-        lines.push('只用于维持回忆、承诺与前后呼应；不得把未列出的隐藏记忆补写成角色知识。');
+        lines.push('Chỉ dùng để duy trì hồi ức, cam kết và sự hô ứng trước sau; không được viết bù ký ức ẩn chưa được liệt kê thành kiến thức của nhân vật.');
     }
 
     if (deliveries.length) {
-        lines.push('本轮由用户点名或系统选中的可自然显露事件：');
+        lines.push('Sự kiện có thể hiển thị tự nhiên được người dùng điểm danh hoặc hệ thống chọn trong vòng này:');
         for (const event of deliveries) {
             const route = event.delivery.route || event.result || event.consequence || event.summary;
-            const request = event.delivery?.manualQueued ? '用户要求下一轮优先显露' : '系统候选';
+            const request = event.delivery?.manualQueued ? 'Người dùng yêu cầu ưu tiên hiển thị vòng tiếp theo' : 'Hệ thống đề cử';
             lines.push(`- [${event.id}] ${event.title}：${route}（${event.visibility}；${request}）`);
         }
-        lines.push(`显露节奏：${sceneTiming}`);
-        lines.push('只把真正写进正文、被角色感知或留下可见痕迹的结果视为已承接；不要声称“后台已递交”。');
+        lines.push(`Nhịp độ hiển thị:${sceneTiming}`);
+        lines.push('Chỉ coi những kết quả thực sự được viết vào nội dung chính, được nhân vật nhận thức hoặc để lại dấu vết có thể thấy là đã được tiếp nối; đừng tuyên bố“chạy ngầm đã đệ trình”。');
     }
 
-    lines.push('禁止提及“世界背面”、状态表、注入块或幕后独白。');
+    lines.push('Cấm nhắc đến“Mặt trái thế giới”、bảng trạng thái, khối chèn hoặc độc thoại hậu trường.');
     lines.push('</world_backstage_state>');
 
     const keptLines = [];
@@ -2779,7 +2779,7 @@ export function buildInjectionPackage(state, settings = {}, recentText = '') {
     if (originalKeptCount < lines.length) {
         const closing = '</world_backstage_state>';
         if (keptLines.at(-1) === closing) keptLines.pop();
-        const notice = '（其余低相关信息已压缩省略，禁止自行补全。）';
+        const notice = '（Các thông tin ít liên quan còn lại đã được nén và lược bỏ, cấm tự ý bổ sung.)';
         while (keptLines.length > 1 && [...keptLines, notice, closing].join('\n').length > 4200) {
             keptLines.pop();
         }
@@ -2834,15 +2834,15 @@ export function buildMemoryRollupPrompt(state, plan, { compact = false } = {}) {
     const sources = memory.summaries
         .filter(summary => sourceIds.has(summary.id))
         .sort((a, b) => Number(a.startMessageId) - Number(b.startMessageId));
-    if (!sources.length) throw new Error('没有可压缩的下层记忆');
-    const levelNames = ['单轮片段', '阶段小结', '章节总结', '长期经历'];
+    if (!sources.length) throw new Error('Không có ký ức tầng dưới nào có thể nén');
+    const levelNames = ['Đoạn đơn vòng', 'Tóm tắt giai đoạn', 'Tóm tắt chương', 'Trải nghiệm dài hạn'];
     const lengthRule = compact
-        ? 'summary 控制在 180—320 字，只保留真正会影响未来理解的变化。'
+        ? 'summary Kiểm soát trong khoảng 180—320 chữ, chỉ giữ lại những thay đổi thực sự sẽ ảnh hưởng đến việc hiểu trong tương lai.'
         : targetLevel === MEMORY_SUMMARY_LEVELS.STAGE
-            ? 'summary 约 220—420 字。'
+            ? 'summary Khoảng 220—420 chữ.'
             : targetLevel === MEMORY_SUMMARY_LEVELS.CHAPTER
-                ? 'summary 约 320—600 字。'
-                : 'summary 约 420—800 字，强调长期关系、目标、转折与仍未结束的线索。';
+                ? 'summary Khoảng 320—600 chữ.'
+                : 'summary Khoảng 420—800 chữ, nhấn mạnh mối quan hệ dài hạn, mục tiêu, bước ngoặt và các manh mối vẫn chưa kết thúc.';
     const payload = sources.map(summary => ({
         id: summary.id,
         level: summary.level,
@@ -2855,22 +2855,22 @@ export function buildMemoryRollupPrompt(state, plan, { compact = false } = {}) {
         tags: summary.tags,
     }));
     return [
-        '你是“世界背面”的长期记忆压缩员。这里只做档案压缩，不续写剧情、不推演未来、不修改任何事实。',
-        `请把下面 ${sources.length} 条 ${levelNames[sourceLevel]} 压成 1 条 ${levelNames[targetLevel]}。`,
-        '要求：',
-        '1. 只能使用给出的下层摘要；禁止补写不存在的情节。',
-        '2. 优先保留关系变化、长期目标、承诺、关键转折、持续冲突、重要物品与未解决问题。普通动作、重复气氛和已经失效的枝节可以舍弃。',
-        '3. 新摘要是上层长期索引。source_summary_ids 与消息范围会保留，但普通下层摘要在建立上层后可能被压成轻量占位；因此真正会影响未来理解的细节必须进入上层，不重要的枝节可以主动放下。',
-        '4. people / locations / tags 只保留真正贯穿这一段的重要项。',
+        'Bạn là“Mặt trái thế giới”nhân viên nén ký ức dài hạn của. Ở đây chỉ thực hiện nén hồ sơ, không viết tiếp cốt truyện, không suy diễn tương lai, không sửa đổi bất kỳ sự thật nào.',
+        `Vui lòng đem bên dưới ${sources.length} mục ${levelNames[sourceLevel]} nén thành 1 mục ${levelNames[targetLevel]}。`,
+        'Yêu cầu:',
+        '1. Chỉ có thể sử dụng tóm tắt tầng dưới được cung cấp; cấm viết thêm các tình tiết không tồn tại.',
+        '2. Ưu tiên giữ lại thay đổi mối quan hệ, mục tiêu dài hạn, cam kết, bước ngoặt quan trọng, xung đột kéo dài, vật phẩm quan trọng và các vấn đề chưa giải quyết. Các hành động thông thường, không khí lặp đi lặp lại và các chi tiết phụ đã hết hiệu lực có thể loại bỏ.',
+        '3. Tóm tắt mới là chỉ mục dài hạn tầng trên. source_summary_ids và phạm vi tin nhắn sẽ được giữ lại, nhưng tóm tắt tầng dưới thông thường sau khi thiết lập tầng trên có thể bị nén thành chỗ dành sẵn gọn nhẹ; do đó những chi tiết thực sự ảnh hưởng đến việc hiểu trong tương lai phải được đưa vào tầng trên, các chi tiết phụ không quan trọng có thể chủ động bỏ qua.',
+        '4. people / locations / tags Chỉ giữ lại các mục quan trọng thực sự xuyên suốt đoạn này.',
         `5. ${lengthRule}`,
-        '6. 只返回合法 JSON，不要代码围栏和解释。',
+        '6. Chỉ trả về hợp lệ JSON，Không cần khối mã và giải thích.',
         '',
-        `来源层级：L${sourceLevel} ${levelNames[sourceLevel]}`,
-        `目标层级：L${targetLevel} ${levelNames[targetLevel]}`,
-        '下层记忆：',
+        `Tầng nguồn:L${sourceLevel} ${levelNames[sourceLevel]}`,
+        `Tầng đích:L${targetLevel} ${levelNames[targetLevel]}`,
+        'Ký ức tầng dưới:',
         JSON.stringify(payload),
         '',
-        '返回结构：',
+        'Cấu trúc trả về:',
         JSON.stringify({
             summary_rollup: {
                 title: '',
@@ -2930,8 +2930,8 @@ export function applyMemoryRollupResult(inputState, rawPayload, plan = {}) {
     state.updatedAt = nowIso();
     appendAudit(state, {
         type: 'memory_rollup',
-        text: `记忆压缩完成 · L${sourceLevel} → L${targetLevel}`,
-        reason: `${sources.length} 条下层经历已建立可追溯上层索引`,
+        text: `Nén ký ức hoàn tất · L${sourceLevel} → L${targetLevel}`,
+        reason: `${sources.length} trải nghiệm tầng dưới đã thiết lập chỉ mục tầng trên có thể truy xuất`,
     });
     return trimState(state);
 }
@@ -3166,8 +3166,8 @@ export function buildHistoryIndexPrompt(state, {
         maximumSummaries: compactMode ? 3 : 6,
     });
     const outputLimits = compactMode
-        ? '极简重试：每条 turn_summaries.summary 不超过100字，memory_digest.text 不超过240字；facts_upsert 最多3条，clues_upsert 最多2条；没有变化的数组必须返回空数组。'
-        : '输出应紧凑：每条 turn_summaries.summary 约80—180字，memory_digest.text 约300—600字；facts_upsert 最多8条，clues_upsert 最多6条。';
+        ? 'Thử lại tối giản: mỗi mục turn_summaries.summary không vượt quá 100 chữ, memory_digest.text không vượt quá 240 chữ; facts_upsert tối đa 3 mục, clues_upsert tối đa 2 mục; mảng không có thay đổi phải trả về mảng rỗng.'
+        : 'Đầu ra nên nhỏ gọn: mỗi mục turn_summaries.summary Khoảng 80—180 chữ,memory_digest.text Khoảng 300—600 chữ;facts_upsert tối đa 8 mục,clues_upsert tối đa 6 mục.';
     const identityAnchor = modelText(playerIdentityAnchor, 400);
     const characterIdentityAnchors = asArray(state?.people)
         .filter(person => modelText(person?.identityAnchor, LIMITS.identityAnchor))
@@ -3178,37 +3178,37 @@ export function buildHistoryIndexPrompt(state, {
         }));
 
     return [
-        '你是“世界背面”的历史档案员。你只整理已经发生的聊天记录，不续写、不推演未来、不修改世界时间。',
+        'Bạn là“Mặt trái thế giới”nhân viên lưu trữ lịch sử của. Bạn chỉ sắp xếp lịch sử trò chuyện đã xảy ra, không viết tiếp, không suy diễn tương lai, không sửa đổi thời gian thế giới.',
         '',
-        '任务：',
-        '1. 为本批每一条 assistant 正文分别写一条 L0 单轮摘要，放进 turn_summaries。每条只总结对应消息，不把下一轮或别的消息混进来；保留关系变化、承诺、冲突、重要物品与未完成的问题。',
-        '2. 重写 memory_digest：把旧持续摘要与本批真正持久的重要变化合并，删除已经失效的说法；这不是逐轮流水账，也不是所有 L0 摘要的机械拼接。',
-        '3. facts_upsert 只记录正文明确成立、未来仍有用的长期事实，例如身份、关系、承诺、能力限制、重要物品归属和已经揭示的真相。临时位置、普通动作、气氛不算长期事实。',
-        '4. 每类事实使用稳定 key（例如“人物:老白:真实身份”）。同一 key 出现新值时保留 key 并提交新 value；插件会把旧版本标为 superseded。真假仍无法判断时用 status=disputed，不要强行覆盖。',
-        '5. 只提取真正可能在后文产生呼应的伏笔。普通环境描写、一次性动作和已经当场解释完的事实不要当作伏笔。',
-        '6. 长期事实与伏笔必须记录最早或最清楚的来源消息 id、swipe，并保留不超过80字的原文摘录。',
-        '7. 记忆要会更迭，不要只增不减：旧伏笔开始推进时用原 ID 更新为 developing；关键条件真正触发时可更新为 triggered；确实完成/揭晓时放入 clues_resolve(status=resolved)；后文已经证明它不再需要、方向被废弃或只是误判的伏笔放入 clues_resolve(status=discarded) 并写清 reason。被正文明确否定或已经失效的长期事实放入 facts_invalidate。',
-        '7A. 同一长期事实出现新值时继续用同一稳定 key，插件会把旧值标为 superseded 并保留轻量变化链；不要让互相冲突的旧值同时保持 active。世界事实更新不会自动修改任何 NPC 的认知账本。',
-        '7B. 不需要保存所有东西。普通枝节、已被高层经历覆盖且未来无独立价值的信息可以从持续摘要中淡出；锁定、重要、长期关系、重大承诺、身份、关键限制与未完成线索必须保留。',
-        '8. 不得把玩家未明说的想法写成事实。玩家角色名：'
-            + `${modelText(userName, 80) || '未提供'}。`
+        'Nhiệm vụ:',
+        '1. Cho mỗi mục của đợt này assistant nội dung chính viết riêng một mục L0 tóm tắt vòng đơn, đặt vào turn_summaries。Mỗi mục chỉ tóm tắt tin nhắn tương ứng, không trộn lẫn vòng tiếp theo hoặc tin nhắn khác vào; giữ lại thay đổi mối quan hệ, cam kết, xung đột, vật phẩm quan trọng và các vấn đề chưa hoàn thành.',
+        '2. Viết lại memory_digest：Hợp nhất tóm tắt liên tục cũ với những thay đổi quan trọng thực sự lâu dài của đợt này, xóa các cách nói đã hết hiệu lực; đây không phải là sổ ghi chép từng vòng, cũng không phải là tất cả L0 sự chắp vá máy móc của tóm tắt.',
+        '3. facts_upsert Chỉ ghi lại các sự thật dài hạn đã được xác lập rõ ràng trong nội dung chính và vẫn hữu ích trong tương lai, ví dụ như thân phận, mối quan hệ, cam kết, giới hạn năng lực, quyền sở hữu vật phẩm quan trọng và sự thật đã được tiết lộ. Vị trí tạm thời, hành động thông thường, không khí không được tính là sự thật dài hạn.',
+        '4. Mỗi loại sự thật sử dụng ổn định key（Ví dụ“Nhân vật:Lão Bạch:Thân phận thực sự”）。Cùng một key Giữ lại khi xuất hiện giá trị mới key và gửi mới value；Plugin sẽ đánh dấu phiên bản cũ là superseded。Khi vẫn chưa thể phán đoán thật giả thì dùng status=disputed，Không ghi đè cưỡng bức.',
+        '5. Chỉ trích xuất những phục bút thực sự có khả năng tạo ra sự hô ứng ở phần sau. Miêu tả môi trường thông thường, hành động một lần và những sự thật đã được giải thích xong ngay tại chỗ thì đừng coi là phục bút.',
+        '6. Sự thật dài hạn và phục bút phải ghi lại tin nhắn nguồn sớm nhất hoặc rõ ràng nhất id、swipe，và giữ lại không quá 80 chữ trích lục văn bản gốc.',
+        '7. Ký ức phải biết thay đổi, "đừng chỉ tăng mà không giảm": khi phục bút cũ bắt đầu tiến triển thì dùng nguyên ID cập nhật thành developing；khi điều kiện quan trọng thực sự kích hoạt có thể cập nhật thành triggered；thực sự hoàn thành/khi tiết lộ thì đưa vào clues_resolve(status=resolved)；Phục bút mà phần sau đã chứng minh nó không còn cần thiết, hướng đi bị loại bỏ hoặc chỉ là phán đoán sai thì đưa vào clues_resolve(status=discarded) và viết rõ reason。Sự thật dài hạn bị nội dung chính phủ định rõ ràng hoặc đã hết hiệu lực thì đưa vào facts_invalidate。',
+        '7A. Khi cùng một sự thật dài hạn xuất hiện giá trị mới thì tiếp tục dùng cùng một sự ổn định key，plugin sẽ đánh dấu giá trị cũ là superseded và giữ lại chuỗi thay đổi gọn nhẹ; đừng để các giá trị cũ xung đột lẫn nhau đồng thời tồn tại active。Cập nhật sự thật thế giới sẽ không tự động sửa đổi bất kỳ NPC sổ cái nhận thức của.',
+        '7B. Không cần lưu lại mọi thứ. Các chi tiết phụ thông thường, thông tin đã bị trải nghiệm cấp cao che lấp và không có giá trị độc lập trong tương lai có thể mờ dần khỏi tóm tắt liên tục; các khóa, quan trọng, mối quan hệ dài hạn, cam kết quan trọng, thân phận, giới hạn then chốt và manh mối chưa hoàn thành phải được giữ lại.',
+        '8. Không được viết những suy nghĩ mà người chơi chưa nói rõ thành sự thật. Tên nhân vật người chơi:'
+            + `${modelText(userName, 80) || 'Chưa cung cấp'}。`
             + (identityAnchor
-                ? ` 用户明确设定的身份锚点：${identityAnchor}。涉及性别身份、称谓/代词、外貌表达、身体设定、物种、年龄阶段或社会身份时必须逐项遵守；不得根据外貌、衣着、身体或物种反推性别。`
-                : ' 未设置玩家身份锚点；正文没有明确时使用中性表述，不得根据外貌、衣着、身体或物种猜测性别与称谓。'),
-        `用户维护的其他角色身份锚点：${characterIdentityAnchors.length ? JSON.stringify(characterIdentityAnchors) : '无'}。这些锚点是权威设定，整理身份、称谓和关系时必须遵守；没有锚点且正文也不明确的角色使用中性表述，不得凭外貌、衣着、身体或物种猜测。`,
-        '9. turn_summaries 只为 assistant 消息生成；user 消息作为上下文使用，但不要单独建立 L0。每条必须带准确 source_message_id。',
-        '10. chapter_summary 是旧版兼容兜底字段：正常情况下返回 null；只有无法输出 turn_summaries 时才用它概括整批。',
-        '11. 只返回一个合法 JSON 对象，不要代码围栏和解释。',
+                ? ` Điểm neo thân phận do người dùng thiết lập rõ ràng:${identityAnchor}。Liên quan đến thân phận giới tính, danh xưng/đại từ, biểu đạt ngoại hình, cài đặt cơ thể, loài, giai đoạn tuổi hoặc thân phận xã hội thì phải tuân thủ từng mục; không được dựa vào ngoại hình, trang phục, cơ thể hoặc loài để suy ngược ra giới tính.`
+                : ' Chưa thiết lập điểm neo thân phận người chơi; khi nội dung chính không rõ ràng thì sử dụng cách diễn đạt trung tính, không được dựa vào ngoại hình, trang phục, cơ thể hoặc loài để đoán giới tính và danh xưng.'),
+        `Điểm neo thân phận nhân vật khác do người dùng duy trì:${characterIdentityAnchors.length ? JSON.stringify(characterIdentityAnchors) : 'Không có'}。Những điểm neo này là thiết lập chuẩn, khi sắp xếp thân phận, danh xưng và mối quan hệ phải tuân thủ; nhân vật không có điểm neo và nội dung chính cũng không rõ ràng thì sử dụng cách diễn đạt trung tính, không được dựa vào ngoại hình, trang phục, cơ thể hoặc loài để đoán.`,
+        '9. turn_summaries Chỉ cho assistant tạo tin nhắn;user tin nhắn được sử dụng làm ngữ cảnh, nhưng đừng tạo riêng L0。mỗi mục phải mang theo chính xác source_message_id。',
+        '10. chapter_summary là trường dữ liệu dự phòng tương thích phiên bản cũ: trong trường hợp bình thường trả về null；chỉ khi không thể xuất turn_summaries thì mới dùng nó để khái quát toàn bộ lô.',
+        '11. Chỉ trả về một hợp lệ JSON đối tượng, không cần khối mã và giải thích.',
         `12. ${outputLimits}`,
         '',
-        `本批范围：消息 ${startMessageId}—${endMessageId}`,
-        '本批正文：',
-        sourceText || '（没有正文）',
+        `Phạm vi lô này: tin nhắn ${startMessageId}—${endMessageId}`,
+        'Nội dung chính lô này:',
+        sourceText || '（không có nội dung chính)',
         '',
-        '已有相关档案（用于去重与延续 ID）：',
+        'Đã có hồ sơ liên quan (dùng để loại bỏ trùng lặp và tiếp nối ID）：',
         JSON.stringify(existing),
         '',
-        '返回结构：',
+        'Cấu trúc trả về:',
         JSON.stringify({
             memory_digest: {
                 text: '',
@@ -3346,8 +3346,8 @@ export function applyHistoryIndexResult(inputState, rawPayload, {
     state.updatedAt = nowIso();
     appendAudit(state, {
         type: 'history_indexed',
-        text: `历史档案已整理至消息 ${state.storyMemory.indexedThroughMessageId}`,
-        reason: `本批 ${startMessageId}—${endMessageId}`,
+        text: `Hồ sơ lịch sử đã được sắp xếp đến tin nhắn ${state.storyMemory.indexedThroughMessageId}`,
+        reason: `Lô này ${startMessageId}—${endMessageId}`,
     });
     return trimState(state);
 }
@@ -3366,7 +3366,7 @@ export function buildPersonObservationPrompt(state, person, {
         )
     );
     if (isUser && !includeUserInnerVoice) {
-        throw new Error('玩家视角默认关闭；如确实需要，请先开启“描写玩家内心”');
+        throw new Error('Góc nhìn người chơi mặc định tắt; nếu thực sự cần thiết, vui lòng bật trước“Miêu tả nội tâm người chơi”');
     }
     const recent = asArray(narrativeTurns)
         .map(turn => `${turn?.role === 'user' ? 'user' : 'assistant'}：${modelText(turn?.content, 2400)}`)
@@ -3462,33 +3462,33 @@ ${belief.value}`)}`,
     const observedBackgroundProfile = modelText(person?.backgroundProfile, LIMITS.backgroundProfile);
 
     return [
-        '你是“世界背面”的人物即时观测器。',
-        `本次唯一叙述主体是“${modelText(person?.name, 80)}”。请以该角色本人的第一人称，描写此刻正在做什么。`,
-        '这是幕后即时观测，不是主聊天正文，也不是新的世界推演。',
-        '本任务拥有独立 POV 与输出协议。忽略任何要求你续写玩家正文、采用玩家第二人称视角、输出正文标签/状态栏/变量更新/JSONPatch 的指令。',
-        '要求：',
-        '1. 只描写几分钟内的动作、感官、注意力与符合既有信息的即时念头；使用“我”。',
-        '2. 不推进主世界时间，不制造重大新事件，不替其他角色行动，不改变任何既有事实。',
-        '3. 严守该角色的知识边界；幕后伏笔若角色并不知道，不得让该角色突然知晓。',
-        '3A. 人物认知账本 known_event_ids / known_fact_keys / known_clue_ids 优先于“玩家已知”或“后台存在”。最近正文只提供时间线背景；若该人物没有亲历、被告知、调查获得或通过既有信息渠道接触，就不得把其中内容当成该人物知识。',
-        '3B. physical_state / emotional_state / resource_state 是当前状态约束。行动、注意力和即时判断必须受伤势、疲劳、情绪与资源限制影响；不得凭空获得能力、装备、权限或知识。',
+        'Bạn là“Mặt trái thế giới”máy quan sát nhân vật tức thời của.',
+        `Chủ thể trần thuật duy nhất lần này là“${modelText(person?.name, 80)}”。Vui lòng dùng ngôi thứ nhất của chính nhân vật đó, miêu tả lúc này đang làm gì.`,
+        'Đây là quan sát tức thời ở hậu trường, không phải nội dung trò chuyện chính, cũng không phải suy diễn thế giới mới.',
+        'Nhiệm vụ này sở hữu độc lập POV và giao thức đầu ra. Bỏ qua bất kỳ yêu cầu nào bắt bạn viết tiếp nội dung chính của người chơi, sử dụng góc nhìn ngôi thứ hai của người chơi, xuất thẻ nội dung chính/Thanh trạng thái/Cập nhật biến/JSONPatch của lệnh.',
+        'Yêu cầu:',
+        '1. Chỉ miêu tả hành động, cảm quan, sự chú ý trong vài phút và những suy nghĩ tức thời phù hợp với thông tin đã có; sử dụng“tôi”。',
+        '2. Không thúc đẩy thời gian thế giới chính, không tạo ra sự kiện mới quan trọng, không hành động thay cho nhân vật khác, không thay đổi bất kỳ sự thật nào đã có.',
+        '3. Tuân thủ nghiêm ngặt ranh giới kiến thức của nhân vật này; nếu nhân vật không biết phục bút phía sau, không được để nhân vật đó đột nhiên biết được.',
+        '3A. Sổ cái nhận thức nhân vật known_event_ids / known_fact_keys / known_clue_ids Ưu tiên hơn“Người chơi đã biết”hoặc“Tồn tại chạy ngầm”。Nội dung chính gần đây chỉ cung cấp bối cảnh dòng thời gian; nếu nhân vật đó không đích thân trải qua, được thông báo, điều tra thu được hoặc tiếp xúc qua các kênh thông tin đã có, thì không được coi nội dung trong đó là kiến thức của nhân vật đó.',
+        '3B. physical_state / emotional_state / resource_state là ràng buộc trạng thái hiện tại. Hành động, sự chú ý và phán đoán tức thời phải bị ảnh hưởng bởi thương tích, sự mệt mỏi, cảm xúc và giới hạn tài nguyên; không được tự dưng có được năng lực, trang bị, quyền hạn hoặc kiến thức.',
         observedIdentityAnchor
-            ? `该角色的身份锚点：${observedIdentityAnchor}。性别身份、称谓/代词、物种、年龄阶段与社会身份必须逐项遵守，不得根据外貌或其他表面特征擅自改写。`
-            : '该角色没有设置身份锚点；正文也未明确时使用中性表述，不得根据外貌、衣着、身体或物种猜测其性别与称谓。',
+            ? `Điểm neo thân phận của nhân vật này:${observedIdentityAnchor}。Thân phận giới tính, danh xưng/Đại từ, loài, giai đoạn tuổi và thân phận xã hội phải được tuân thủ từng mục, không được tự ý viết lại dựa trên ngoại hình hoặc các đặc điểm bề ngoài khác.`
+            : 'Nhân vật này không cài đặt điểm neo thân phận; khi nội dung chính cũng không rõ ràng thì sử dụng cách diễn đạt trung tính, không được đoán giới tính và danh xưng dựa trên ngoại hình, trang phục, cơ thể hoặc loài.',
         observedAppearanceProfile
-            ? `该角色的稳定外貌设定：${observedAppearanceProfile}。观测时保持一致，不要把外貌特征混写成人格或身份。`
-            : '该角色没有额外外貌设定；不要为了画面感凭空补充关键身体特征。',
+            ? `Cài đặt ngoại hình ổn định của nhân vật này:${observedAppearanceProfile}。Giữ nhất quán khi quan sát, đừng viết lẫn lộn đặc điểm ngoại hình thành nhân cách hoặc thân phận.`
+            : 'Nhân vật này không có cài đặt ngoại hình bổ sung; đừng tự dưng bổ sung các đặc điểm cơ thể quan trọng chỉ để tạo cảm giác hình ảnh.',
         observedBackgroundProfile
-            ? `该角色的背景与关系设定：${observedBackgroundProfile}。只用于保持经历与关系连续，不得因此让角色知道认知账本之外的信息。`
-            : '该角色没有额外背景资料；不要自行补造重要经历或关系。',
+            ? `Cài đặt bối cảnh và mối quan hệ của nhân vật này:${observedBackgroundProfile}。Chỉ dùng để giữ tính liên tục của trải nghiệm và mối quan hệ, không được vì thế mà để nhân vật biết thông tin ngoài sổ cái nhận thức.`
+            : 'Nhân vật này không có tài liệu bối cảnh bổ sung; đừng tự ý bịa thêm trải nghiệm hoặc mối quan hệ quan trọng.',
         modelText(playerIdentityAnchor, 400)
-            ? `若片段提及玩家“${modelText(userName, 80) || 'user'}”，必须逐项遵守身份锚点：${modelText(playerIdentityAnchor, 400)}；不得根据外貌、衣着、身体或物种反推性别，也不得擅自改变称谓或身份。`
-            : '若片段提及玩家且正文没有明确身份或称谓，使用中性表述；不得根据外貌、衣着、身体或物种猜测性别。',
-        '4. 文风自然沉浸，不写标题、说明、项目符号或“第一视角”等标签。',
-        '5. 输出约 250—450 字的中文片段，只返回片段本身。必须完整结束最后一句；宁可提前收束，也不要在句中停止。',
+            ? `Nếu đoạn trích đề cập đến người chơi“${modelText(userName, 80) || 'user'}”，Phải tuân thủ từng mục điểm neo thân phận:${modelText(playerIdentityAnchor, 400)}；Không được suy ngược giới tính dựa trên ngoại hình, trang phục, cơ thể hoặc loài, cũng không được tự ý thay đổi danh xưng hoặc thân phận.`
+            : 'Nếu đoạn trích đề cập đến người chơi và nội dung chính không nêu rõ thân phận hoặc danh xưng, hãy sử dụng cách diễn đạt trung tính; không được đoán giới tính dựa trên ngoại hình, trang phục, cơ thể hoặc loài.',
+        '4. Văn phong nhập vai tự nhiên, không viết tiêu đề, giải thích, dấu đầu dòng hoặc“Góc nhìn thứ nhất”các thẻ tương tự.',
+        '5. Đầu ra khoảng 250—450 chữ của đoạn trích tiếng Trung, chỉ trả về bản thân đoạn trích. Phải kết thúc trọn vẹn câu cuối cùng; thà thu gọn sớm còn hơn dừng giữa câu.',
         '',
-        `主世界时间：${formatWorldCalendar(state).stamp}`,
-        '人物状态：',
+        `Thời gian thế giới chính:${formatWorldCalendar(state).stamp}`,
+        'Trạng thái nhân vật:',
         JSON.stringify({
             name: person?.name,
             location: person?.location,
@@ -3512,12 +3512,12 @@ ${belief.value}`)}`,
             emotional_state: person?.emotionalState,
             resource_state: person?.resourceState,
         }),
-        '同地点或相关进行中事件：',
+        'Sự kiện đang diễn ra cùng địa điểm hoặc có liên quan:',
         JSON.stringify(relevantEvents),
-        '相关旧记忆（只使用该角色有合理机会知道的内容）：',
+        'Ký ức cũ liên quan (chỉ sử dụng nội dung mà nhân vật này có cơ hội hợp lý để biết):',
         JSON.stringify(relevantMemory),
-        '最近正文：',
-        recent || '（无）',
+        'Nội dung chính gần đây:',
+        recent || '（Không có)',
     ].join('\n');
 }
 
@@ -3681,86 +3681,86 @@ export function buildSimulationPrompt(state, {
         maximumSummaries: 4,
     });
     const timeRule = {
-        explicit: '严格时间：只有正文明确给出几点、多少分钟/小时/天或明确跨到次日时，elapsed_minutes 才能大于 0；“夜幕降临、过了一会、首夜、许久”等氛围或模糊词一律填 0。',
-        cautious: '克制估算：明确时间正常计算；只有模糊时间变化时可以保守估算，但不得超过 180 分钟。',
-        open: '开放估算：允许依据清楚的叙事时间变化估算经过时长，但仍不得把回复轮次当时间。',
-        world: '世界钟模式：主世界时钟一旦建立就是连续时间基准。不要重新猜“现在几点”；只根据 new="true" 正文里真实发生的行动、路程、等待、睡眠、工作等估算本批实际经过时长。没有事件耗时就填 0；不得把回复轮次本身当时间。',
-    }[timePolicy] || '严格时间：没有明确、可计算的时间证据就填 0。';
+        explicit: 'Thời gian nghiêm ngặt: Chỉ khi nội dung chính nêu rõ mấy giờ, bao nhiêu phút/Giờ/ngày hoặc rõ ràng bước sang ngày hôm sau,elapsed_minutes mới có thể lớn hơn 0；“màn đêm buông xuống, một lúc sau, đêm đầu tiên, từ lâu”và các từ ngữ bầu không khí hoặc mơ hồ khác đều điền 0。',
+        cautious: 'Kiềm chế ước tính: Thời gian rõ ràng tính toán bình thường; chỉ khi có sự thay đổi thời gian mơ hồ mới có thể ước tính dè dặt, nhưng không được vượt quá 180 phút.',
+        open: 'Ước tính mở: Cho phép ước tính khoảng thời gian trôi qua dựa trên sự thay đổi thời gian tự sự rõ ràng, nhưng vẫn không được coi số vòng phản hồi là thời gian.',
+        world: 'Chế độ đồng hồ thế giới: Đồng hồ thế giới chính một khi được thiết lập sẽ là mốc thời gian liên tục. Đừng đoán lại“bây giờ là mấy giờ”；chỉ dựa vào new="true" Ước tính thời gian thực tế trôi qua của đợt này dựa trên các hành động, quãng đường, chờ đợi, giấc ngủ, công việc, v.v. thực sự xảy ra trong nội dung chính. Nếu không có sự kiện tiêu tốn thời gian thì điền 0；Không được coi bản thân số vòng phản hồi là thời gian.',
+    }[timePolicy] || 'Thời gian nghiêm ngặt: Nếu không có bằng chứng thời gian rõ ràng, có thể tính toán được thì điền 0。';
     const identityAnchor = modelText(playerIdentityAnchor, 400);
     const playerIdentityRule = identityAnchor
-        ? `用户明确设定的玩家身份锚点：${identityAnchor}。涉及玩家的性别身份、称谓/代词、外貌表达、身体设定、物种、年龄阶段或社会身份时必须逐项遵守，除非用户更新此锚点；不得根据外貌、衣着、身体或物种反推性别。`
-        : '用户没有设置玩家身份锚点；正文没有明确身份或称谓时必须使用中性表述，不得根据外貌、衣着、身体或物种猜测性别。';
+        ? `Điểm neo thân phận người chơi do người dùng thiết lập rõ ràng:${identityAnchor}。Liên quan đến giới tính, thân phận, danh xưng của người chơi/Khi đề cập đến đại từ, biểu đạt ngoại hình, cài đặt cơ thể, loài, giai đoạn tuổi hoặc thân phận xã hội thì phải tuân thủ từng mục, trừ khi người dùng cập nhật điểm neo này; không được suy ngược giới tính dựa trên ngoại hình, trang phục, cơ thể hoặc loài.`
+        : 'Người dùng không cài đặt điểm neo thân phận người chơi; khi nội dung chính không có thân phận hoặc danh xưng rõ ràng thì phải sử dụng cách diễn đạt trung tính, không được đoán giới tính dựa trên ngoại hình, trang phục, cơ thể hoặc loài.';
     const userVoiceRule = includeUserInnerVoice
-        ? `玩家角色名为“${modelText(userName, 80) || '未提供'}”；允许在正文已经明确体现其情绪时写入玩家角色 inner_voice，但不得替玩家新增决定、欲望或立场。`
-        : `玩家角色名为“${modelText(userName, 80) || '未提供'}”；可以追踪玩家角色的位置与行动，但必须标记 is_user=true，且 inner_voice 必须为空，绝不替玩家描写内心活动。`;
+        ? `Tên nhân vật người chơi là“${modelText(userName, 80) || 'Chưa cung cấp'}”；Cho phép viết vào nhân vật người chơi khi nội dung chính đã thể hiện rõ cảm xúc của họ inner_voice，Nhưng không được thêm quyết định, ham muốn hoặc lập trường thay cho người chơi.`
+        : `Tên nhân vật người chơi là“${modelText(userName, 80) || 'Chưa cung cấp'}”；Có thể theo dõi vị trí và hành động của nhân vật người chơi, nhưng phải đánh dấu is_user=true，Và inner_voice Phải để trống, tuyệt đối không miêu tả hoạt động nội tâm thay cho người chơi.`;
     const simulationRule = {
-        light: '轻量推演：只处理最后正文明确造成的变化，原则上不新建镜头外事件；最多提取1条真正重要的新伏笔。',
-        balanced: '均衡推演：维护明确的前台变化，并让少量高相关的镜头外人物和事件继续发展；避免无意义扩张。',
-        deep: '深入推演：在保持因果与知识边界的前提下，可以维护更多高相关镜头外人物、事件和伏笔，但仍不得凭空制造灾难或强行转折。',
-        manual: '手动均衡推演：按均衡尺度处理本次正文，不因为手动触发而重复旧变化。',
-    }[simulationMode] || '均衡推演：只维护与当前因果相关的变化。';
+        light: 'Suy diễn gọn nhẹ: Chỉ xử lý những thay đổi do nội dung chính cuối cùng gây ra rõ ràng, về nguyên tắc không tạo mới sự kiện ngoài ống kính; trích xuất tối đa 1 phục bút mới thực sự quan trọng.',
+        balanced: 'Suy diễn cân bằng: Duy trì các thay đổi tiền cảnh rõ ràng, và để một số lượng nhỏ nhân vật và sự kiện ngoài ống kính có độ liên quan cao tiếp tục phát triển; tránh mở rộng vô nghĩa.',
+        deep: 'Suy diễn chuyên sâu: Dưới tiền đề giữ nguyên nhân quả và ranh giới kiến thức, có thể duy trì thêm nhiều nhân vật, sự kiện và phục bút ngoài ống kính có độ liên quan cao, nhưng vẫn không được tự dưng tạo ra thảm họa hoặc gượng ép bước ngoặt.',
+        manual: 'Suy diễn cân bằng thủ công: Xử lý nội dung chính lần này theo mức độ cân bằng, không lặp lại thay đổi cũ do kích hoạt thủ công.',
+    }[simulationMode] || 'Suy diễn cân bằng: Chỉ duy trì các thay đổi liên quan đến nhân quả hiện tại.';
     const customRule = modelText(customInstruction, 1000);
     const npcBudget = asInteger(backgroundNpcBudget, 4, 0, 12);
     const newAssistantRule = newAssistantIndexSet.size === 1
-        ? '11. 较早轮次只用于理解因果，不得重复计算；本次只推演最后一个 assistant_turn（new="true"）。'
-        : `11. 只处理标记 new="true" 的最后 ${newAssistantIndexSet.size} 个 assistant_turn，并按消息顺序合并变化；new="false" 的轮次只用于理解因果，不得重复计算。`;
+        ? '11. Các vòng trước đó chỉ dùng để hiểu nhân quả, không được tính toán lặp lại; lần này chỉ suy diễn cái cuối cùng assistant_turn（new="true"）。'
+        : `11. Chỉ xử lý đánh dấu new="true" cuối cùng của ${newAssistantIndexSet.size} cái assistant_turn，và hợp nhất các thay đổi theo thứ tự tin nhắn;new="false" Các vòng của ... chỉ dùng để hiểu nhân quả, không được tính toán lặp lại.`;
 
     return [
-        '你是“世界背面”的世界状态引擎。你维护一个持续运转的世界，不是正文纪要器。正文只是当前镜头；镜头外已经结算的结果同样属于真实世界。你不续写小说正文，只处理标记为 new="true" 的正文变化，并继续维护必要的镜头外因果。',
+        'Bạn là“Mặt trái thế giới”Động cơ trạng thái thế giới của. Bạn duy trì một thế giới vận hành liên tục, không phải là máy ghi chép nội dung chính. Nội dung chính chỉ là ống kính hiện tại; kết quả đã được kết toán ngoài ống kính cũng thuộc về thế giới thực. Bạn không viết tiếp nội dung chính của tiểu thuyết, chỉ xử lý những thay đổi của nội dung chính được đánh dấu là new="true" , và tiếp tục duy trì nhân quả ngoài ống kính cần thiết.',
         '',
-        '推演原则：',
-        `1. 主世界时间是唯一进度轴。${timeRule}`,
-        '1A. clock_anchor 是绝对时间校准口。年月日与钟点可以分开成立：若正文明确给出 YYYY年M月D日，即使只有“清晨/下午”等模糊时段，也必须把 year/month/day 填入 clock_anchor；只有能够可靠确定具体钟点时才填写 hour/minute。minute 精度锚点表示本批 new 正文结束时的完整时间，插件不会再叠加 elapsed_minutes；date/daypart 精度只校准历法日期，elapsed_minutes 仍用于结算本批经过时长。',
-        '1B. 当推演前状态 world_clock_anchored=false：必须优先扫描当前上下文，寻找最可靠的故事时间锚点并返回 clock_anchor.mode="initialize"。明确年月日属于强锚点，必须同步；钟点可以由剧情证据推断，若证据不足就只返回 date/daypart 精度，不要为了凑字段编造分钟。建立后不要每轮重猜。',
-        '1C. 当 world_clock_anchored=true：旧的正文时间栏只视为展示信息，可能已经滞后，不能单凭它反向覆盖主世界时钟。只有本批新正文在剧情内容里明确建立了新的绝对时间事实（例如“第二天早上七点”“看表是15:20”“三天后上午十点”），且与连续时间明显冲突或发生跳时，才返回 clock_anchor.mode="calibrate"；此时 confidence 必须为 high。',
-        '1D. 模糊时段只能辅助 elapsed_minutes 或首次初始化，不得在每轮把主时钟重新对齐到某个固定“清晨/晚上”钟点。',
-        `本次尺度：${simulationRule}`,
-        '2. 玩家/用户的行动只能来自正文已经发生的内容，不得替玩家新增行动。',
-        `3. 先做“前台事实协调”：new="true" 正文明确写出的时间、人物位置/移动、行动、身体状态、物品或环境变化必须回写。这个步骤不受后台 NPC 预算限制。完成前台协调后，本次最多更新 ${npcBudget} 名镜头外 NPC。`,
-        '3A. 推演前权威状态不是可选建议。若新正文没有描写移动/返回/离场等过渡，却把人物放到与权威位置矛盾的地方，不要默默覆盖世界状态；把它写入 consistency_conflicts，并保持原世界事实。只有正文明确建立了新的过渡或可靠新事实，才接受正文并更新状态。',
-        '3B. 后台推演也可以形成真实世界事实。事件一旦 resolved/cancelled/missed，或镜头外行动已经客观完成，就必须把结果结算进人物/事件状态；无法落到现有字段的稳定结果写入 world_facts_upsert。不要等正文重复确认它才算发生。',
-        '3C. 结算结果如果改变了人物位置、当前行动、身体/资源状态等已有结构字段，必须同步写入对应 people_upsert；不能只在 event.result 里写“已经到达卧室”，却继续让人物权威位置停在工作室。事件结果与人物/地点状态必须彼此一致。',
-        '大量同阵营或同地点 NPC 的共同变化优先合并成势力/地点事件；名字重新出现、地点接近、关联事件到时或伏笔命中时再唤醒个人。',
-        '4. 不输出百分比。duration/scheduled 事件由插件按时间计算；active 事件只填写本轮实际工作的 worked_minutes；condition 事件等待条件。',
-        '5. 到时事件必须给出 resolved/cancelled/missed 之一及具体 result，或明确保持 ready；不能用 99%/100% 长期悬挂。',
-        '6. NPC 第一视角独白写入 inner_voice，必须是该人物自己的口吻、20—80字，只在该人物的处境、目标或情绪有真实变化时更新。不要让所有人物每轮集体独白。',
-        '人物状态中的 identity_anchor、personality_anchor、appearance_profile、background_profile、speaking_style 与 behavior_boundaries 是用户维护的稳定角色设定：必须遵守，不得在 people_upsert 中重写。identity_anchor 可包含任意性别身份、称谓/代词、物种、年龄阶段与社会身份；appearance_profile 负责外貌与身体特征；background_profile 负责背景、经历与关系。不得根据外貌、衣着、身体或物种反推或改写身份。没有身份锚点且正文也不明确时使用中性表述。',
+        'Nguyên tắc suy diễn:',
+        `1. Thời gian thế giới chính là trục tiến độ duy nhất.${timeRule}`,
+        '1A. clock_anchor là cổng hiệu chuẩn thời gian tuyệt đối. Năm tháng ngày và giờ giấc có thể thành lập riêng biệt: Nếu nội dung chính đưa ra rõ ràng YYYY Năm M Tháng D ngày, ngay cả khi chỉ có“Sáng sớm/Buổi chiều”các khoảng thời gian mơ hồ như vậy, cũng phải đưa year/month/day điền vào clock_anchor；Chỉ điền khi có thể xác định giờ giấc cụ thể một cách đáng tin cậy hour/minute。minute Điểm neo độ chính xác biểu thị đợt này new thời gian hoàn chỉnh khi kết thúc nội dung chính, plugin sẽ không cộng dồn thêm elapsed_minutes；date/daypart Độ chính xác chỉ hiệu chuẩn ngày tháng lịch pháp,elapsed_minutes vẫn dùng để kết toán thời gian trôi qua của đợt này.',
+        '1B. Khi trạng thái trước suy diễn world_clock_anchored=false：Phải ưu tiên quét ngữ cảnh hiện tại, tìm kiếm điểm neo thời gian câu chuyện đáng tin cậy nhất và trả về clock_anchor.mode="initialize"。Năm tháng ngày rõ ràng thuộc về điểm neo mạnh, phải đồng bộ; giờ giấc có thể suy luận từ bằng chứng cốt truyện, nếu bằng chứng không đủ thì chỉ trả về date/daypart độ chính xác, đừng bịa đặt số phút chỉ để cho đủ trường dữ liệu. Sau khi thiết lập, đừng đoán lại mỗi vòng.',
+        '1C. Khi world_clock_anchored=true：Cột thời gian nội dung chính cũ chỉ được xem là thông tin hiển thị, có thể đã bị trễ, không thể chỉ dựa vào nó để ghi đè ngược lại đồng hồ thế giới chính. Chỉ khi nội dung chính mới của đợt này thiết lập rõ ràng sự thật thời gian tuyệt đối mới trong nội dung cốt truyện (ví dụ“bảy giờ sáng ngày hôm sau”“xem đồng hồ là 15:20”“mười giờ sáng ba ngày sau”），và xung đột rõ ràng với thời gian liên tục hoặc xảy ra nhảy thời gian, mới trả về clock_anchor.mode="calibrate"；Lúc này confidence phải là high。',
+        '1D. Khoảng thời gian mơ hồ chỉ có thể hỗ trợ elapsed_minutes hoặc khởi tạo lần đầu, không được căn chỉnh lại đồng hồ chính về một mốc cố định trong mỗi vòng.“Sáng sớm/Buổi tối”giờ.',
+        `Quy mô lần này:${simulationRule}`,
+        '2. Người chơi/Hành động của người dùng chỉ có thể đến từ nội dung đã xảy ra trong nội dung chính, không được thêm hành động mới thay cho người chơi.',
+        `3. Làm trước“Điều phối sự thật tiền cảnh”：new="true" Thời gian, vị trí nhân vật được viết rõ trong nội dung chính/Di chuyển, hành động, trạng thái cơ thể, vật phẩm hoặc thay đổi môi trường phải được ghi lại. Bước này không bị giới hạn bởi NPC ngân sách chạy ngầm. Sau khi hoàn thành điều phối tiền cảnh, lần này cập nhật tối đa ${npcBudget} người ngoài ống kính NPC。`,
+        '3A. Trạng thái chuẩn trước khi suy diễn không phải là đề xuất tùy chọn. Nếu nội dung chính mới không miêu tả di chuyển/Quay lại/rời khỏi hoặc các chuyển tiếp khác, nhưng lại đặt nhân vật ở nơi mâu thuẫn với vị trí chuẩn, đừng âm thầm ghi đè trạng thái thế giới; hãy ghi nó vào consistency_conflicts，và giữ nguyên sự thật thế giới gốc. Chỉ khi nội dung chính thiết lập rõ ràng chuyển tiếp mới hoặc sự thật mới đáng tin cậy, mới chấp nhận nội dung chính và cập nhật trạng thái.',
+        '3B. Suy diễn chạy ngầm cũng có thể hình thành sự thật thế giới thực. Sự kiện một khi resolved/cancelled/missed，hoặc hành động ngoài ống kính đã hoàn thành một cách khách quan, thì phải kết toán kết quả vào nhân vật/trạng thái sự kiện; kết quả ổn định không thể rơi vào trường dữ liệu hiện có thì ghi vào world_facts_upsert。đừng đợi nội dung chính xác nhận lại mới coi là đã xảy ra.',
+        '3C. Nếu kết quả kết toán làm thay đổi vị trí nhân vật, hành động hiện tại, cơ thể/trạng thái tài nguyên và các trường dữ liệu cấu trúc hiện có khác, phải đồng bộ ghi vào tương ứng people_upsert；không thể chỉ ghi trong event.result viết“đã đến phòng ngủ”，nhưng tiếp tục để vị trí chuẩn của nhân vật dừng ở phòng làm việc. Kết quả sự kiện và nhân vật/trạng thái địa điểm phải nhất quán với nhau.',
+        'Số lượng lớn cùng phe hoặc cùng địa điểm NPC thay đổi chung ưu tiên gộp thành thế lực/sự kiện địa điểm; khi tên xuất hiện lại, gần địa điểm, sự kiện liên kết đến hạn hoặc phục bút trúng đích thì mới đánh thức cá nhân.',
+        '4. Không xuất phần trăm.duration/scheduled Sự kiện do plugin tính toán theo thời gian;active Sự kiện chỉ điền công việc thực tế của vòng này worked_minutes；condition điều kiện chờ sự kiện.',
+        '5. Sự kiện đến hạn phải đưa ra resolved/cancelled/missed một trong số đó và cụ thể result，hoặc duy trì rõ ràng ready；không thể dùng 99%/100% treo dài hạn.',
+        '6. NPC Độc thoại góc nhìn thứ nhất ghi vào inner_voice，phải là giọng điệu của chính nhân vật đó,20—80 chữ, chỉ cập nhật khi hoàn cảnh, mục tiêu hoặc cảm xúc của nhân vật đó có thay đổi thực sự. Đừng để tất cả nhân vật độc thoại tập thể mỗi vòng.',
+        'trong trạng thái nhân vật identity_anchor, personality_anchor, appearance_profile, background_profile, speaking_style và behavior_boundaries là thiết lập nhân vật ổn định do người dùng duy trì: phải tuân thủ, không được ghi đè trong people_upsert. identity_anchor có thể bao gồm bất kỳ bản dạng giới, danh xưng/đại từ, loài, giai đoạn tuổi và thân phận xã hội; appearance_profile chịu trách nhiệm về ngoại hình và đặc điểm cơ thể; background_profile chịu trách nhiệm về bối cảnh, trải nghiệm và mối quan hệ. Không được suy ngược hoặc viết lại thân phận dựa trên ngoại hình, trang phục, cơ thể hoặc loài. Khi không có điểm neo thân phận và nội dung chính cũng không rõ ràng thì sử dụng cách diễn đạt trung tính.',
         `7. ${userVoiceRule} ${playerIdentityRule}`,
-        '8. long_term_goal 是人物较稳定的长期方向；只有目标真正建立、完成、放弃或转向时才更新，不能把本轮动作重复填进去。',
-        '9. inner_voice 是幕后观测信息，不得当作主角已知事实，也不得写入 deliveries_confirmed。',
-        '10. deliveries_confirmed 只表示“正文是否看见了结果”，绝不决定结果是否存在。已经结算的世界事实即使没有显露也仍然有效；只有本批新正文确实承接、感知或留下可见痕迹时才填写对应事件ID。',
+        '8. long_term_goal là hướng đi dài hạn tương đối ổn định của nhân vật; chỉ cập nhật khi mục tiêu thực sự được thiết lập, hoàn thành, từ bỏ hoặc chuyển hướng, không thể điền lặp lại hành động của vòng này vào.',
+        '9. inner_voice Là thông tin quan sát hậu trường, không được coi là sự thật mà nhân vật chính đã biết, cũng không được viết vào deliveries_confirmed。',
+        '10. deliveries_confirmed Chỉ biểu thị“Nội dung chính có nhìn thấy kết quả hay không”，Tuyệt đối không quyết định kết quả có tồn tại hay không. Sự thật thế giới đã được kết toán dù không hiển thị thì vẫn có hiệu lực; chỉ khi loạt nội dung chính mới này thực sự tiếp nối, nhận thức hoặc để lại dấu vết có thể thấy được thì mới điền sự kiện tương ứng ID。',
         newAssistantRule,
-        '12. 相关旧记忆中的伏笔只能帮助保持因果连续；角色不知情的隐藏伏笔不能突然变成角色知识。',
-        '12A. NPC 认知由 known_event_ids / known_fact_keys / known_fact_beliefs / known_clue_ids 与事件 known_by 共同记录。只有亲历、被明确告知、主动调查得到、或通过该人物既有身份/渠道合理获得的信息才能加入；绝不能把玩家知道、旁白知道或后台知道的内容自动复制给 NPC。账本条目不会因为本轮未提及而自动遗忘。known_fact_beliefs 保存该人物实际获知时的事实版本；世界事实后续更迭时不得自动刷新。若人物本轮确实得知同一 key 的新版本，除了保留 known_fact_keys，还要把该 key 放进 known_fact_refresh_keys。对于本轮确实处理到的旧人物，在核对其当前认知后设置 cognition_ready=true；旧存档人物首次升级时不得把所有相关记忆批量回填，只能加入有证据支持其知情的条目。',
-        '12B. event.visibility 只表示事件对前台/玩家的显露边界，不代表 NPC 是否知道；NPC 是否知情只看 known_by 与人物认知账本。known_by 优先填写已有人物 id，新人物尚无 id 时可暂填精确姓名。',
-        '12C. physical_state / emotional_state / resource_state 是人物当前状态。状态变化必须真实影响 action、intent 与执行能力；受伤、疲劳、缺资源、权限不足或情绪压力不能下一轮凭空消失。不得发明角色卡、身份锚点、既有记忆未支持的技能、装备、权限或知识。玩家的 emotional_state 只有正文/玩家明确表达时才能更新，不得替玩家猜内心。',
-        '12D. 新事件要写明 cause；若它由已有事件的行动、结果或后果继续发酵，必须在 caused_by 填上游事件 ID。actors 只列真实参与/经历该事件的人，known_by 只列确实知情的人。一个事件解决后如果产生了新的未解决局面，应创建新的后续事件并用 caused_by 串起来，而不是把已经解决的旧事件无限续命；也不要为了制造“热闹”强行生成后续。',
-        '12E. 当 event.visibility=trace 时，public_trace 只写“不知内情的外界观察者实际能看见/听见/注意到的表面迹象”，例如封路、异常车流、公开可见的损坏、突然停业等；绝不能把隐藏原因、幕后行动、人物私密内容或未公开结论塞进 public_trace。hidden 事件的 public_trace 必须为空；known/direct 可按需给一条简短公开线索。',
-        '12F. visibility 必须按“外界实际能察觉到什么”主动选择，而不是习惯性全部填 hidden：只有事件及其影响都无法被不知情者合理察觉时才用 hidden；幕后原因仍保密、但已经出现可见/可听/可公开注意到的表面异常时必须用 trace，并填写安全的 public_trace；已经通过公告、媒体、公开渠道传播的事实用 known；当前镜头中的人物/玩家已直接感知到的显露内容可用 direct。秘密原因 + 公开迹象的组合必须是 trace，不能因为真相保密就继续写 hidden。',
-        '13. 新出现且可能在后文呼应的细节写入 memory_update.clues_upsert；普通动作和气氛不要滥记。旧伏笔开始推进时用原 ID 更新为 developing，关键条件已实际触发时可更新为 triggered；已经完成/揭晓用 clues_resolve(status=resolved)，后文证明不再需要或误判的线索用 clues_resolve(status=discarded) 并说明原因。',
-        '14. 只有本批新正文明确建立或改变了未来仍有用的身份、关系、承诺、限制、物品归属或已揭示真相时，才写入 memory_update.facts_upsert。临时位置、动作和模型自行推演的幕后猜测不得写成长效事实。长期事实必须更迭：同一稳定 key 出现新值时提交新值，让旧版本退出 active；明确失效/否定时写 facts_invalidate。不要让过期事实与新事实同时保持当前有效。',
-        '14A. 事实层更新只代表世界真相/档案更新，绝不能因此自动把新值塞进所有 NPC 的 known_fact_keys；NPC 认知仍只按 12A 的知情证据单独变化。',
-        '同一类事实使用稳定 key。正文给出新值时保留 key；插件会保留旧版本并标为 superseded。正文明确否定某条旧事实时写入 facts_invalidate；真假未定时用 status=disputed。',
-        '人物 source 只有在本批 new="true" 正文真实描写到该人物时才填 foreground；镜头外人物必须填 background。present_in_scene 只有人物本人在当前场景中实际行动、说话或被直接感知时才为 true；仅被提及、回忆、谈论、作为目标或出现在内心想法里一律为 false。last_seen_message_id 必须填该人物最后实际出现的 assistant 消息 ID。',
+        '12. Phục bút trong ký ức cũ liên quan chỉ có thể giúp duy trì tính liên tục của nhân quả; phục bút ẩn mà nhân vật không biết không thể đột nhiên biến thành kiến thức của nhân vật.',
+        '12A. NPC nhận thức do known_event_ids / known_fact_keys / known_fact_beliefs / known_clue_ids và sự kiện known_by cùng ghi lại. Chỉ những thông tin đích thân trải qua, được thông báo rõ ràng, chủ động điều tra được, hoặc thông qua thân phận sẵn có của nhân vật đó/kênh thu thập hợp lý mới có thể thêm vào; tuyệt đối không được tự động sao chép nội dung mà người chơi biết, dẫn chuyện biết hoặc chạy ngầm biết cho NPC. Mục sổ cái sẽ không tự động bị lãng quên vì vòng này không được nhắc đến. known_fact_beliefs lưu phiên bản sự thật khi nhân vật đó thực sự biết được; khi sự thật thế giới thay đổi sau đó không được tự động làm mới. Nếu nhân vật trong vòng này thực sự biết được phiên bản mới của cùng một key, ngoài việc giữ lại known_fact_keys, còn phải đưa key vào trong known_fact_refresh_keys. Đối với nhân vật cũ thực sự được xử lý trong vòng này, sau khi đối chiếu nhận thức hiện tại của họ thì cài đặt cognition_ready=true; khi nhân vật lưu trữ cũ nâng cấp lần đầu không được điền lại hàng loạt tất cả ký ức liên quan, chỉ có thể thêm các mục có bằng chứng hỗ trợ việc họ đã biết.',
+        '12B. event.visibility Chỉ biểu thị sự kiện đối với tiền sảnh/Ranh giới hiển thị của người chơi, không đại diện cho NPC Có biết hay không;NPC Có biết hay không chỉ xem known_by Và sổ cái nhận thức nhân vật.known_by Ưu tiên điền nhân vật đã có id，Nhân vật mới chưa có id Khi đó có thể tạm điền họ tên chính xác.',
+        '12C. physical_state / emotional_state / resource_state Là trạng thái hiện tại của nhân vật. Sự thay đổi trạng thái phải thực sự ảnh hưởng đến action、intent Và khả năng thực thi; bị thương, mệt mỏi, thiếu tài nguyên, không đủ quyền hạn hoặc áp lực cảm xúc không thể biến mất vô cớ ở vòng tiếp theo. Không được phát minh ra kỹ năng, trang bị, quyền hạn hoặc kiến thức không được hỗ trợ bởi thẻ nhân vật, điểm neo thân phận, ký ức sẵn có. Của người chơi emotional_state Chỉ có nội dung chính/Khi người chơi bày tỏ rõ ràng mới có thể cập nhật, không được đoán nội tâm thay người chơi.',
+        '12D. Sự kiện mới phải viết rõ cause；Nếu nó tiếp tục lên men từ hành động, kết quả hoặc hậu quả của sự kiện đã có, phải ở caused_by Điền sự kiện thượng nguồn ID。actors Chỉ liệt kê những người thực sự tham gia/Những người trải qua sự kiện đó,known_by Chỉ liệt kê những người thực sự biết chuyện. Sau khi một sự kiện được giải quyết nếu tạo ra cục diện chưa giải quyết mới, nên tạo sự kiện tiếp theo mới và dùng caused_by Xâu chuỗi lại, chứ không phải kéo dài vô hạn sự kiện cũ đã giải quyết; cũng đừng vì muốn tạo ra“Náo nhiệt”Cưỡng ép tạo ra phần tiếp theo.',
+        '12E. Khi event.visibility=trace Khi,public_trace Chỉ viết“Người quan sát bên ngoài không biết nội tình thực tế có thể nhìn thấy/Nghe thấy/Dấu hiệu bề ngoài chú ý tới”，Ví dụ như phong tỏa đường, lưu lượng xe bất thường, hư hỏng có thể thấy công khai, đột nhiên đóng cửa, v.v.; tuyệt đối không được nhét nguyên nhân ẩn, hành động hậu trường, nội dung riêng tư của nhân vật hoặc kết luận chưa công khai vào public_trace。hidden Của sự kiện public_trace Phải để trống;known/direct Có thể cung cấp một manh mối công khai ngắn gọn theo nhu cầu.',
+        '12F. visibility Phải theo“Thế giới bên ngoài thực tế có thể nhận ra điều gì”Chủ động lựa chọn, chứ không phải điền tất cả theo thói quen hidden：Chỉ dùng khi sự kiện và ảnh hưởng của nó đều không thể bị người không biết chuyện nhận ra một cách hợp lý hidden；Nguyên nhân hậu trường vẫn được giữ bí mật, nhưng đã xuất hiện những dấu hiệu có thể nhìn thấy/có thể nghe thấy/những bất thường trên bề mặt có thể được chú ý công khai thì bắt buộc phải dùng trace，và điền vào phần an toàn public_trace；Những sự thật đã được lan truyền qua thông báo, phương tiện truyền thông, kênh công khai thì dùng known；Nhân vật trong ống kính hiện tại/Nội dung hiển thị mà người chơi đã trực tiếp nhận thức được có thể dùng direct。Nguyên nhân bí mật + Sự kết hợp của các dấu hiệu công khai phải là trace，Không thể vì sự thật được giữ bí mật mà tiếp tục viết hidden。',
+        '13. Viết vào những chi tiết mới xuất hiện và có thể hô ứng ở phần sau memory_update.clues_upsert；Đừng ghi chép bừa bãi các hành động và bầu không khí thông thường. Khi phục bút cũ bắt đầu tiến triển thì dùng nguyên bản ID cập nhật thành developing，Khi điều kiện quan trọng đã thực sự được kích hoạt thì có thể cập nhật thành triggered；Đã hoàn thành/Dùng để tiết lộ clues_resolve(status=resolved)，Những manh mối mà phần sau chứng minh là không còn cần thiết hoặc bị đánh giá sai thì dùng clues_resolve(status=discarded) và giải thích nguyên nhân.',
+        '14. Chỉ khi đợt nội dung chính mới này thiết lập hoặc thay đổi rõ ràng thân phận, mối quan hệ, cam kết, giới hạn, quyền sở hữu vật phẩm hoặc sự thật đã được tiết lộ mà vẫn hữu ích trong tương lai, thì mới viết vào memory_update.facts_upsert。Vị trí tạm thời, "hành động và những suy đoán hậu trường do mô hình tự suy diễn không được viết thành sự thật dài hạn. Sự thật dài hạn phải được thay đổi": Cùng một sự ổn định key Khi xuất hiện giá trị mới thì gửi giá trị mới, để phiên bản cũ rút lui active；Hết hiệu lực rõ ràng/Viết khi phủ định facts_invalidate。Đừng để sự thật đã hết hạn và sự thật mới đồng thời giữ hiệu lực hiện tại.',
+        '14A. Cập nhật tầng sự thật chỉ đại diện cho sự thật thế giới/Cập nhật hồ sơ, tuyệt đối không được vì thế mà tự động nhét giá trị mới vào tất cả NPC của known_fact_keys；NPC Nhận thức vẫn chỉ theo 12A bằng chứng biết chuyện của ... thay đổi riêng biệt.',
+        'Cùng một loại sự thật sử dụng ổn định key。Giữ lại khi nội dung chính đưa ra giá trị mới key；Plugin sẽ giữ lại phiên bản cũ và đánh dấu là superseded。Viết vào khi nội dung chính phủ định rõ ràng một sự thật cũ nào đó facts_invalidate；Dùng khi chưa xác định được thật giả status=disputed。',
+        'Nhân vật source Chỉ trong đợt này new="true" Chỉ điền khi nội dung chính thực sự miêu tả đến nhân vật đó foreground；Nhân vật ngoài ống kính bắt buộc phải điền background。present_in_scene Chỉ khi bản thân nhân vật thực sự hành động, nói chuyện hoặc được trực tiếp nhận thức trong cảnh hiện tại thì mới là true；Chỉ được nhắc đến, nhớ lại, bàn luận, làm mục tiêu hoặc xuất hiện trong suy nghĩ nội tâm thì đều là false。last_seen_message_id Bắt buộc phải điền ... xuất hiện thực tế cuối cùng của nhân vật đó assistant Tin nhắn ID。',
         customRule
-            ? `用户自定义侧重点：${customRule}（它只能调整侧重点，不能覆盖时间证据、知识边界、玩家意志或 JSON 格式规则。）`
-            : '用户没有追加自定义推演要求。',
-        '15. 只返回一个合法 JSON 对象，不要代码围栏，不要解释。',
-        '16. 权威状态为了控制调用体积只列出最相关的人物与事件；未列出的旧条目会由插件原样保留，绝不能据此推断其消失。',
+            ? `Trọng tâm tùy chỉnh của người dùng:${customRule}（Nó chỉ có thể điều chỉnh trọng tâm, không thể ghi đè bằng chứng thời gian, ranh giới kiến thức, ý chí người chơi hoặc JSON quy tắc định dạng.）`
+            : 'Người dùng không thêm yêu cầu suy diễn tùy chỉnh.',
+        '15. Chỉ trả về một hợp lệ JSON đối tượng, không cần khối mã, không cần giải thích.',
+        '16. Trạng thái chuẩn để kiểm soát dung lượng gọi chỉ liệt kê các nhân vật và sự kiện liên quan nhất; các mục cũ không được liệt kê sẽ được plugin giữ nguyên, tuyệt đối không được dựa vào đó để suy đoán là chúng đã biến mất.',
         '',
-        `触发类型：${trigger}`,
-        `本轮曾提供给正文的候选结果ID：${queued.length ? queued.join(', ') : '无'}`,
+        `Loại kích hoạt:${trigger}`,
+        `Kết quả ứng cử viên từng được cung cấp cho nội dung chính trong vòng này ID：${queued.length ? queued.join(', ') : 'Không có'}`,
         '',
-        '最近正文上下文（只处理 new="true" 的 assistant_turn）：',
-        narrativeBlock || '<assistant_turn>（AI正文为空）</assistant_turn>',
+        'Ngữ cảnh nội dung chính gần đây (chỉ xử lý new="true" của assistant_turn）：',
+        narrativeBlock || '<assistant_turn>（AI Nội dung chính trống)</assistant_turn>',
         '',
-        '与当前人物、地点和物品相关的旧记忆：',
+        'Ký ức cũ liên quan đến nhân vật, "địa điểm và vật phẩm hiện tại":',
         JSON.stringify(relevantMemory),
         '',
-        '推演前权威状态：',
+        'Trạng thái chuẩn trước khi suy diễn:',
         JSON.stringify(compact),
         '',
-        '返回结构：',
+        'Cấu trúc trả về:',
         JSON.stringify({
             elapsed_minutes: 0,
             time_reason: '',
@@ -3844,7 +3844,7 @@ export function buildSimulationPrompt(state, {
                 visibility: 'known',
             }],
             world_facts_upsert: [{
-                key: 'person:人物ID:location',
+                key: 'person:Nhân vật ID:location',
                 subject_type: 'person | event | world | location | item | organization | other',
                 subject_id: '',
                 subject: '',
@@ -4118,9 +4118,9 @@ function normalizeRecoveryPoint(raw) {
         id: asString(raw.id, '', 120),
         createdAt: asString(raw.createdAt, '', 40),
         reason: asString(raw.reason, 'manual', 60),
-        label: asString(raw.label, '手动恢复点', 120),
+        label: asString(raw.label, 'Điểm khôi phục thủ công', 120),
         schemaVersion: asInteger(raw.schemaVersion, 0, 0),
-        worldName: asString(raw.worldName, raw.state?.world?.name || '主世界', 80),
+        worldName: asString(raw.worldName, raw.state?.world?.name || 'Thế giới chính', 80),
         worldMinute: asInteger(raw.worldMinute, raw.state?.clock?.absoluteMinute ?? 0, 0),
         revision: asInteger(raw.revision, raw.state?.revision ?? 0, 0),
         state: deepClone(raw.state),
@@ -4137,7 +4137,7 @@ export function listRecoveryPoints(inputStore) {
 
 export function addRecoveryPoint(inputStore, {
     reason = 'manual',
-    label = '手动恢复点',
+    label = 'Điểm khôi phục thủ công',
     createdAt = nowIso(),
     id = '',
 } = {}) {
@@ -4377,8 +4377,8 @@ export function trimState(inputState) {
     const absoluteMinute = asInteger(state.clock?.absoluteMinute, MINUTES_PER_DAY, 0);
     const absoluteDay = Math.floor(absoluteMinute / MINUTES_PER_DAY);
     state.world = {
-        name: asString(state.world?.name, '未命名世界', 80),
-        title: asString(state.world?.title, '世界仍在继续', 180),
+        name: asString(state.world?.name, 'Thế giới chưa đặt tên', 80),
+        title: asString(state.world?.title, 'Thế giới vẫn đang tiếp diễn', 180),
         detail: asString(state.world?.detail, '', 640),
         calendar: normalizeWorldCalendar(state.world?.calendar, absoluteDay),
     };
@@ -4388,7 +4388,7 @@ export function trimState(inputState) {
             .includes(entry?.type)
     ));
     const legacyCalendarLooksPlaceholder = previousSchemaVersion < 8
-        && rawCalendar?.name === '主世界历'
+        && rawCalendar?.name === 'Lịch thế giới chính'
         && Number(rawCalendar?.anchorYear) === 1
         && Number(rawCalendar?.anchorMonth) === 1
         && Number(rawCalendar?.anchorDay) === 1
@@ -4420,10 +4420,10 @@ export function trimState(inputState) {
                     : 'uninitialized')),
     };
 
-    // 人物 ID 是 UI 编辑、观测与删除操作的稳定定位键。
-    // 旧状态或模型输出偶尔可能产生重复 ID；如果继续保留，点击 A 人物的操作
-    // 会命中数组中更早出现的 B 人物。载入/提交状态时统一修复冲突，保留首个
-    // ID，并为后续冲突项生成新的稳定 ID。
+    // Nhân vật ID Có UI Khóa định vị ổn định cho các thao tác chỉnh sửa, quan sát và xóa.
+    // Trạng thái cũ hoặc đầu ra của mô hình đôi khi có thể tạo ra sự trùng lặp ID；Nếu tiếp tục giữ lại, hãy nhấp vào A Thao tác của nhân vật
+    // sẽ trúng mục xuất hiện sớm hơn trong mảng B nhân vật. Tải/Thống nhất sửa chữa xung đột khi gửi trạng thái, giữ lại mục đầu tiên
+    // ID，và tạo khóa ổn định mới cho các mục xung đột tiếp theo ID。
     const seenPersonIds = new Set();
     state.people = asArray(state.people)
         .slice(-LIMITS.people)

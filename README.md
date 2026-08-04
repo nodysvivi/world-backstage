@@ -1,537 +1,538 @@
-# 世界背面
+# Mặt trái thế giới
 
-**镜头之外，世界仍在继续。**
+**Ngoài ống kính, thế giới vẫn đang tiếp diễn.**
 
-世界背面是一个为 SillyTavern 设计的独立世界演算扩展。
-它不负责替你写正文，也不要所有事情围绕玩家发生。
+Mặt trái thế giới là một tiện ích mở rộng tính toán thế giới độc lập được thiết kế cho SillyTavern.
+Nó không chịu trách nhiệm viết nội dung chính thay bạn, cũng không để mọi việc xoay quanh người chơi.
 
-当镜头停留在主线时，世界的另一面仍然拥有自己的时间、人物、事件、认知与因果。NPC 会继续生活，暗流会自行发展，已经发生的事情会留下后果，而尚未被任何人知道的秘密，也不会因为模型“知道”就突然变成所有角色的共同知识。
+Khi ống kính dừng lại ở tuyến truyện chính, mặt kia của thế giới vẫn có thời gian, nhân vật, sự kiện, nhận thức và nhân quả riêng. NPC sẽ tiếp tục sống, dòng chảy ngầm sẽ tự phát triển, những việc đã xảy ra sẽ để lại hậu quả, và những bí mật chưa ai biết sẽ không đột nhiên trở thành kiến thức chung của tất cả các nhân vật chỉ vì mô hình "biết".
 
-世界背面维护一条独立的 **主世界时间轴**。人物的位置、行动、意图与状态会随着时间变化；事件拥有自己的起因、发展和后果，并通过因果链继续影响之后的世界。
+Mặt trái thế giới duy trì một **dòng thời gian thế giới chính** độc lập. Vị trí, hành động, ý định và trạng thái của nhân vật sẽ thay đổi theo thời gian; sự kiện có nguyên nhân, diễn biến và hậu quả riêng, và tiếp tục ảnh hưởng đến thế giới sau đó thông qua chuỗi nhân quả.
 
-每个人也拥有属于自己的 **认知边界**。
+Mỗi người cũng có **ranh giới kiến thức** của riêng mình.
 
-**世界真正发生了什么，和角色以为发生了什么，是两回事。**
+**Thế giới thực sự đã xảy ra chuyện gì, và nhân vật nghĩ rằng đã xảy ra chuyện gì, là hai việc khác nhau.**
 
-有人知道真相，有人只听说过传闻，也有人至今对此一无所知。世界发生变化，并不意味着所有人物都会同时获得最新答案。
+Có người biết sự thật, có người chỉ nghe qua tin đồn, cũng có người đến nay vẫn hoàn toàn không biết gì về điều đó. Thế giới thay đổi không có nghĩa là tất cả nhân vật sẽ đồng thời nhận được câu trả lời mới nhất.
 
-你可以随时看看某个人此刻正在做什么，但观测不会让她突然成为剧情中心；后台发生的事情，也只有在真正与当前人物、地点或情境产生联系时，才有机会自然来到镜头前。
+Bạn có thể bất cứ lúc nào xem một người nào đó đang làm gì lúc này, nhưng việc quan sát sẽ không khiến cô ấy đột nhiên trở thành trung tâm của cốt truyện; những việc xảy ra chạy ngầm cũng chỉ có cơ hội hiển thị tự nhiên trước ống kính khi thực sự có liên hệ với nhân vật, địa điểm hoặc tình huống hiện tại.
 
-世界背面也会记忆，但它不会无止境地把所有东西堆进仓库。
+Mặt trái thế giới cũng sẽ ghi nhớ, nhưng nó sẽ không nhét mọi thứ vào kho một cách vô tận.
 
-**重要的事情会被巩固，重复的信息会被合并，已经改变的事实会被更新，完成使命的伏笔会退出活跃区，不再重要的碎片也会逐渐淡去。**
+**Những việc quan trọng sẽ được củng cố, thông tin lặp lại sẽ được hợp nhất, sự thật đã thay đổi sẽ được cập nhật, phục bút đã hoàn thành sứ mệnh sẽ rời khỏi khu vực hoạt động, và những mảnh vỡ không còn quan trọng cũng sẽ dần phai nhạt.**
 
-最近发生的经历会逐渐沉淀成阶段、章节与长期记忆；旧事实可以被新事实取代，却仍然留下曾经存在过的历史痕迹。
+Những trải nghiệm gần đây sẽ dần lắng đọng thành giai đoạn, chương và ký ức dài hạn; sự thật cũ có thể bị thay thế bởi sự thật mới, nhưng vẫn để lại dấu vết lịch sử từng tồn tại.
 
-**这个世界会记住重要的事，也会让已经过去的东西真正成为过去。**
+**Thế giới này sẽ ghi nhớ những việc quan trọng, cũng sẽ để những thứ đã qua thực sự trở thành quá khứ.**
 
-新闻、论坛、公开消息与流言，则构成了世界自己的声音。
+Tin tức, diễn đàn, thông tin công khai và tin đồn tạo nên tiếng nói riêng của thế giới.
 
-有些舆情来自真正发生的事件，有些只是普通人在街头、论坛与社群里聊起的琐碎日常。它们可以被围观、被讨论、被误解，却不会因为一条传闻就擅自改写世界真相。
+Một số dư luận đến từ các sự kiện thực sự xảy ra, một số chỉ là những chuyện vặt vãnh thường ngày mà những người bình thường nói đến trên đường phố, diễn đàn và cộng đồng. Chúng có thể bị vây xem, bị thảo luận, bị hiểu lầm, nhưng sẽ không vì một tin đồn mà tự ý viết lại sự thật của thế giới.
 
-世界推演、人物观测、长期记忆、暗流、回声、纪事、世界舆情、世界书人物与独立模型路由……这些最终都只服务于同一件事：
+Suy diễn thế giới, quan sát nhân vật, ký ức dài hạn, dòng chảy ngầm, tiếng vang, biên niên sử, dư luận thế giới, nhân vật Worldbook và định tuyến mô hình độc lập... tất cả những điều này cuối cùng chỉ phục vụ cho một việc:
 
-## 让世界不再只是正文这一刻临时生成出来的布景。
+## Để thế giới không còn chỉ là bối cảnh được tạo ra tạm thời tại thời điểm của nội dung chính.
 
-它有自己的过去。
+Nó có quá khứ của riêng mình.
 
-有正在发生的现在。
+Có hiện tại đang diễn ra.
 
-也有即使没有玩家注视，仍会继续抵达的明天。
+Cũng có ngày mai sẽ tiếp tục đến ngay cả khi không có người chơi chú ý.
 
-**它不替正文决定故事，但负责决定镜头之外的世界发生了什么。**
+**Nó không quyết định câu chuyện thay cho nội dung chính, nhưng chịu trách nhiệm quyết định những gì đã xảy ra trong thế giới ngoài ống kính.**
 
-已经结算的世界事实不是“可选剧情建议”：人物在哪、事件已经造成什么后果、世界时间走到了哪里，都必须保持连续。显露度只决定这些事实什么时候、以什么方式进入镜头，不决定它们是否存在。
+Sự thật thế giới đã được giải quyết không phải là "đề xuất cốt truyện tùy chọn": nhân vật ở đâu, sự kiện đã gây ra hậu quả gì, thời gian thế giới đã đi đến đâu, tất cả đều phải giữ được tính liên tục. Mức độ hiển thị chỉ quyết định khi nào và bằng cách nào những sự thật này đi vào ống kính, không quyết định việc chúng có tồn tại hay không.
 
-这就是世界背面。
+Đây chính là Mặt trái thế giới.
 
-当前版本：`1.3.0` 正式版
+Phiên bản hiện tại: `1.3.0` Phiên bản chính thức
 
-## 1.3.0 正式版
+## 1.3.0 Phiên bản chính thức
 
-这一版重新把“世界”放回世界背面的中心：正文不再是唯一事实源，镜头外已经结算的结果也会正式成为权威世界状态。
+Phiên bản này đưa "thế giới" trở lại trung tâm của Mặt trái thế giới: nội dung chính không còn là nguồn sự thật duy nhất, kết quả đã được giải quyết ngoài ống kính cũng sẽ chính thức trở thành trạng thái thế giới chuẩn.
 
-- 新增 schema 14 的“世界事实结算层”：人物位置/行动/身体与资源状态、已结算事件结果以及无法落到旧字段的稳定结果，都可形成独立 `worldFacts`；旧存档升级时不会把可能已经过时的人物位置直接硬化成权威事实；已有终态事件可安全保留，人物状态会在第一次 1.3 推演时结合最新正文重新协调，不伪造角色认知。
-- 正文与后台改成双向协调：正文明确产生的新移动、状态和时间会回写世界；后台已经结算的事实会作为正文连续性约束稳定注入。无过渡的冲突不再静默覆盖，而会进入一致性记录供诊断。
-- 强化时间自动校准：已建立的世界钟会继续读取正文新的明确年月日；专门的“时间与地点”栏给出同日更晚钟点时也会直接跟随，旧时间不会把世界钟反向拖回。
-- 重新划清“暗流 / 回声 / 纪事”：暗流负责未结算过程；回声负责已形成结果与正文的接触；未显露并正式归档的结果会离开回声，只保留在纪事。
-- 舆情加入模块内“自动更新”开关，并按公开事件信息签名自动刷新；记忆整理、普通 UI 状态变化等无关 revision 不再让同一份舆情反复过期。
-- 暗流页加入模块内“自动运行”开关；轻量 / 均衡 / 深入现在只控制后台运转范围，不改变世界事实是否成立。原“世界事实参与正文”改为“后台结果自然显露”：它只控制结果是否主动靠近镜头，权威世界状态在世界引擎开启时始终负责正文连续性。
-- 设置与记忆页面整体减负：移除默认界面的 L0～L3 算法说明、token/快照式解释与重复提示，只保留状态、作用和用户能操作的内容。
-- 修复独立 API 经酒馆转发时“HTTP 200 + Too Many Requests”的误导提示；区分 rate-limit 与 quota-exhausted，并把最近世界任务与最近独立 API 操作拆开记录在安全诊断中。
-- 版本升级到 1.3.0；插件版本、包版本与 manifest 同步，入口保持正式 `index.js`，不依赖任何热修覆盖脚本。
+- Thêm "lớp giải quyết sự thật thế giới" của schema 14: vị trí/hành động/cơ thể và trạng thái tài nguyên của nhân vật, kết quả sự kiện đã giải quyết và kết quả ổn định không thể rơi vào các trường dữ liệu cũ, đều có thể tạo thành `worldFacts` độc lập; khi nâng cấp bản lưu cũ sẽ không trực tiếp làm cứng vị trí nhân vật có thể đã lỗi thời thành sự thật chuẩn; các sự kiện trạng thái cuối hiện có có thể được giữ lại an toàn, trạng thái nhân vật sẽ được điều phối lại kết hợp với nội dung chính mới nhất trong lần suy diễn 1.3 đầu tiên, không làm giả nhận thức nhân vật.
+- Nội dung chính và chạy ngầm được đổi thành điều phối hai chiều: di chuyển, trạng thái và thời gian mới được tạo ra rõ ràng bởi nội dung chính sẽ được ghi lại vào thế giới; sự thật đã được giải quyết chạy ngầm sẽ được chèn ổn định như một ràng buộc liên tục của nội dung chính. Xung đột không có chuyển tiếp sẽ không còn bị ghi đè trong im lặng, mà sẽ đi vào bản ghi tính nhất quán để chẩn đoán.
+- Tăng cường tự động hiệu chuẩn thời gian: đồng hồ thế giới đã thiết lập sẽ tiếp tục đọc ngày tháng năm rõ ràng mới của nội dung chính; mục "Thời gian và địa điểm" chuyên dụng cũng sẽ trực tiếp theo dõi khi đưa ra giờ muộn hơn trong cùng một ngày, thời gian cũ sẽ không kéo ngược đồng hồ thế giới lại.
+- Phân định lại "Dòng chảy ngầm / Tiếng vang / Biên niên sử": dòng chảy ngầm chịu trách nhiệm cho quá trình chưa giải quyết; tiếng vang chịu trách nhiệm cho sự tiếp xúc giữa kết quả đã hình thành và nội dung chính; kết quả chưa hiển thị và được lưu trữ chính thức sẽ rời khỏi tiếng vang, chỉ giữ lại trong biên niên sử.
+- Dư luận thêm công tắc "Tự động cập nhật" trong mô-đun, và tự động làm mới theo chữ ký thông tin sự kiện công khai; sắp xếp ký ức, thay đổi trạng thái UI thông thường, v.v. không liên quan đến revision sẽ không còn làm cho cùng một dư luận hết hạn lặp đi lặp lại.
+- Trang dòng chảy ngầm thêm công tắc "Tự động chạy" trong mô-đun; gọn nhẹ / cân bằng / chuyên sâu hiện chỉ kiểm soát phạm vi hoạt động chạy ngầm, không thay đổi việc sự thật thế giới có được thiết lập hay không. "Sự thật thế giới tham gia nội dung chính" ban đầu được đổi thành "Kết quả chạy ngầm hiển thị tự nhiên": nó chỉ kiểm soát việc kết quả có chủ động tiếp cận ống kính hay không, trạng thái thế giới chuẩn luôn chịu trách nhiệm cho tính liên tục của nội dung chính khi công cụ thế giới được bật.
+- Giảm tải tổng thể cho trang cài đặt và ký ức: xóa giải thích thuật toán L0～L3, giải thích kiểu token/bản ghi nhanh và lời nhắc lặp lại của giao diện mặc định, chỉ giữ lại trạng thái, tác dụng và nội dung người dùng có thể thao tác.
+- Sửa lỗi lời nhắc gây hiểu lầm "HTTP 200 + Too Many Requests" khi API độc lập được chuyển tiếp qua Tavern; phân biệt rate-limit và quota-exhausted, đồng thời tách riêng việc ghi lại nhiệm vụ thế giới gần đây và thao tác API độc lập gần đây trong chẩn đoán an toàn.
+- Nâng cấp phiên bản lên 1.3.0; phiên bản plugin, phiên bản gói và manifest được đồng bộ hóa, điểm vào giữ nguyên `index.js` chính thức, không phụ thuộc vào bất kỳ tập lệnh ghi đè hotfix nào.
 
-## 1.2.1 正式版
+## 1.2.1 Phiên bản chính thức
 
-- 调整 API 方案与独立接口按钮排版，保存方案区域更紧凑。
-- 日历设置收口为单独日历，数据备份移入「高级与维护」。
-- 舆情页补上更明确的运行态：点「随便逛逛～」只会显示闲逛正在生成；点「刷新世界舆情」只会显示正史舆情正在生成。
-- 优化闲逛快照的收起按钮样式，避免文字裸奔。
+- Điều chỉnh bố cục của phương án API và nút giao diện độc lập, khu vực lưu phương án nhỏ gọn hơn.
+- Cài đặt lịch được thu gọn thành lịch riêng biệt, sao lưu dữ liệu được chuyển vào "Nâng cao và bảo trì".
+- Trang dư luận bổ sung trạng thái chạy rõ ràng hơn: nhấp vào "Đi dạo một chút～" sẽ chỉ hiển thị nội dung đi dạo đang được tạo; nhấp vào "Làm mới dư luận thế giới" sẽ chỉ hiển thị dư luận chính sử đang được tạo.
+- Tối ưu hóa kiểu nút thu gọn của bản ghi nhanh đi dạo, tránh việc văn bản bị hiển thị trần trụi.
 
-## 1.2.0 正式版
+## 1.2.0 Phiên bản chính thức
 
-这一版把 1.1.x 期间逐步长出来的新骨架正式收拢成稳定版本～世界不只会继续运转，也开始更清楚地记得、忘记、传播与区分“真相”和“认知”。 `(｡•̀ᴗ-)✧`
+Phiên bản này chính thức thu gọn bộ khung mới dần phát triển trong giai đoạn 1.1.x thành một phiên bản ổn định～ Thế giới không chỉ tiếp tục vận hành, mà còn bắt đầu ghi nhớ, quên đi, lan truyền và phân biệt rõ ràng hơn giữa "sự thật" và "nhận thức". `(｡•̀ᴗ-)✧`
 
-- NPC 认知账本、事件因果链、身体/情绪/资源约束与重抽快照继续作为世界演算底座；世界事实变化不会让所有角色瞬间同步知道答案。
-- 长期事实支持更新、替代与失效；伏笔拥有发展、触发、回收与放下的生命周期；L0～L3 分层记忆会巩固重要内容，也允许普通旧碎片逐渐淡出。
-- 世界舆情加入新闻、论坛与 NON-CANON“闲逛”娱乐层；正史消息遵守事件可见性与表面痕迹，纯娱乐内容不会污染世界事实、人物认知、记忆或正文因果。
-- 世界书人物支持搜索、疑似人物识别、筛选、批量选择与结构化导入；人物资料不再整坨塞进人格锚点。
-- API 连接支持方案保存与模块级分流；本版继续收紧 API 方案卡片与操作区排版，让方案名称和按钮在窄设置栏里也不再互相挤压。
-- 设置页继续拍平无意义的二级折叠：日历现在就是独立的“日历”模块，数据备份移入“高级与维护”；观测设置默认全部收起。
-- 长档分支快照与记忆存储继续使用轻量策略，避免聊天越长、每楼复制的历史状态越膨胀。
-- README 项目介绍与 `internal-compat.js` 继续视为用户维护内容，发版只更新版本号与日志，不再覆盖。
+- Sổ cái nhận thức của NPC, chuỗi nhân quả sự kiện, ràng buộc cơ thể/cảm xúc/tài nguyên và bản ghi nhanh tạo lại tiếp tục đóng vai trò là nền tảng tính toán thế giới; sự thay đổi sự thật thế giới sẽ không khiến tất cả nhân vật đồng thời biết được câu trả lời ngay lập tức.
+- Sự thật dài hạn hỗ trợ cập nhật, thay thế và vô hiệu hóa; phục bút có vòng đời phát triển, kích hoạt, thu hồi và buông bỏ; bộ nhớ phân tầng L0～L3 sẽ củng cố nội dung quan trọng, đồng thời cho phép các mảnh vỡ cũ thông thường dần phai nhạt.
+- Dư luận thế giới thêm tin tức, diễn đàn và lớp giải trí "đi dạo" NON-CANON; tin tức chính sử tuân thủ khả năng hiển thị sự kiện và dấu vết bề mặt, nội dung giải trí thuần túy sẽ không làm ô nhiễm sự thật thế giới, nhận thức nhân vật, ký ức hoặc nhân quả của nội dung chính.
+- Nhân vật Worldbook hỗ trợ tìm kiếm, nhận dạng nhân vật nghi ngờ, lọc, chọn hàng loạt và nhập có cấu trúc; dữ liệu nhân vật không còn bị nhét toàn bộ vào điểm neo nhân cách.
+- Kết nối API hỗ trợ lưu phương án và phân luồng cấp mô-đun; phiên bản này tiếp tục thắt chặt bố cục của thẻ phương án API và khu vực thao tác, để tên phương án và các nút không còn chèn ép lẫn nhau trong thanh cài đặt hẹp.
+- Trang cài đặt tiếp tục làm phẳng các nếp gấp cấp hai vô nghĩa: lịch hiện là mô-đun "Lịch" độc lập, sao lưu dữ liệu được chuyển vào "Nâng cao và bảo trì"; cài đặt quan sát mặc định được thu gọn toàn bộ.
+- Bản ghi nhanh nhánh tệp dài và lưu trữ ký ức tiếp tục sử dụng chiến lược gọn nhẹ, tránh việc trò chuyện càng dài, trạng thái lịch sử được sao chép ở mỗi tầng càng phình to.
+- Giới thiệu dự án README và `internal-compat.js` tiếp tục được coi là nội dung do người dùng bảo trì, việc phát hành phiên bản chỉ cập nhật số phiên bản và nhật ký, không ghi đè nữa.
 
-## 1.1.10 正式版
+## 1.1.10 Phiên bản chính thức
 
-- “刷新世界舆情”不再让人空手回家：只要存在正史候选，舆情模型必须至少选 1 条自然可传播的内容生成新闻或论坛讨论；影响较小时可以只是本地、小圈层、低热度话题，不会硬抬成大新闻。
-- 当前世界完全没有可传播候选时，刷新按钮会自动转去生成 NON-CANON 的“闲逛”内容，并自动切到闲逛页；真事没有也能有点东西逛，但娱乐内容绝不会混进正史。
-- 如果正史候选存在、模型却仍返回了空数组或内容全部被安全校验淘汰，也会自动回退到闲逛，不再显示“无事发生”就结束。
-- 闲逛提示词补上最低产量：至少 1 条轻新闻 + 2 个论坛主题，继续保持纯娱乐沙盒，不写入世界事实、NPC 认知、记忆或正文因果。
+- "Làm mới dư luận thế giới" không còn khiến mọi người về tay không: miễn là có ứng cử viên chính sử, mô hình dư luận phải chọn ít nhất 1 nội dung có thể lan truyền tự nhiên để tạo tin tức hoặc thảo luận trên diễn đàn; khi ảnh hưởng nhỏ, nó có thể chỉ là chủ đề địa phương, vòng tròn nhỏ, độ hot thấp, sẽ không bị ép thành tin tức lớn.
+- Khi thế giới hiện tại hoàn toàn không có ứng cử viên có thể lan truyền, nút làm mới sẽ tự động chuyển sang tạo nội dung "đi dạo" NON-CANON và tự động chuyển sang trang đi dạo; ngay cả khi không có sự thật, vẫn có thứ gì đó để đi dạo, nhưng nội dung giải trí tuyệt đối sẽ không lẫn vào chính sử.
+- Nếu ứng cử viên chính sử tồn tại, nhưng mô hình vẫn trả về mảng trống hoặc nội dung bị loại bỏ hoàn toàn bởi kiểm tra an toàn, nó cũng sẽ tự động lùi về đi dạo, không còn hiển thị "không có chuyện gì xảy ra" rồi kết thúc.
+- Lời nhắc đi dạo bổ sung sản lượng tối thiểu: ít nhất 1 tin tức nhẹ + 2 chủ đề diễn đàn, tiếp tục duy trì hộp cát giải trí thuần túy, không ghi vào sự thật thế giới, nhận thức nhân vật của NPC, ký ức hoặc nhân quả của nội dung chính.
 
-## 1.1.9 正式版
+## 1.1.9 Phiên bản chính thức
 
-- 舆情页重新收紧版面：顶部说明、快照信息与操作按钮合并成紧凑工具条，减少空白和大块说明占位。
-- 新闻 / 论坛 / 闲逛改为同一行三栏切换，不再因为第三个入口换行占掉额外高度。
-- 已有内容时的提示改为轻量胶囊状态；闲逛已有内容时不再重复显示与当前闲逛无关的“世界很安静”提示。
-- 新闻、论坛与闲逛的空状态整体缩短，让页面优先把空间留给真正的舆情内容。
+- Trang dư luận thắt chặt lại bố cục: phần giải thích trên cùng, thông tin bản ghi nhanh và các nút thao tác được hợp nhất thành một thanh công cụ nhỏ gọn, giảm khoảng trắng và các khối giải thích chiếm chỗ.
+- Tin tức / Diễn đàn / Đi dạo được đổi thành chuyển đổi ba cột trên cùng một hàng, không còn vì lối vào thứ ba xuống dòng mà chiếm thêm chiều cao.
+- Lời nhắc khi đã có nội dung được đổi thành trạng thái viên nang gọn nhẹ; khi đi dạo đã có nội dung, sẽ không lặp lại lời nhắc "thế giới rất yên tĩnh" không liên quan đến việc đi dạo hiện tại.
+- Trạng thái trống của tin tức, diễn đàn và đi dạo được rút ngắn tổng thể, để trang ưu tiên dành không gian cho nội dung dư luận thực sự.
 
-## 1.1.8 正式版
+## 1.1.8 Phiên bản chính thức
 
-- 修正“刷新世界舆情”无候选时的误导体验：没有公开/痕迹事件时不再弹“刷新成功”，而会明确提示本轮未调用 API，并显示公开、痕迹与隐藏事件数量；想纯吃瓜可直接用“随便逛逛～”。
-- 世界推演补强事件可见性判定：真正完全不可被外界察觉才使用 hidden；原因仍保密但已经出现封路、异常车流、公开损坏、突然停业等外在迹象时必须使用 trace + public_trace，让后续舆情能自然接住。
-- 这次不把隐藏事件强行公开，也不对旧存档做危险的自动改判；旧事件会在后续真正被推演触及时按新规则更新。
+- Sửa trải nghiệm gây hiểu lầm khi "Làm mới dư luận thế giới" không có ứng cử viên: khi không có sự kiện công khai/dấu vết, sẽ không còn bật lên "Làm mới thành công", mà sẽ nhắc nhở rõ ràng rằng vòng này chưa gọi API, và hiển thị số lượng sự kiện công khai, dấu vết và ẩn; nếu muốn thuần túy hóng hớt, có thể trực tiếp dùng "Đi dạo một chút～".
+- Suy diễn thế giới tăng cường đánh giá khả năng hiển thị sự kiện: chỉ sử dụng hidden khi thực sự hoàn toàn không thể bị thế giới bên ngoài nhận biết; khi nguyên nhân vẫn được giữ bí mật nhưng đã xuất hiện các dấu hiệu bên ngoài như phong tỏa đường, lưu lượng xe bất thường, hư hỏng công khai, đột ngột đóng cửa, v.v., phải sử dụng trace + public_trace, để dư luận tiếp theo có thể tiếp nối tự nhiên.
+- Lần này không ép buộc công khai các sự kiện ẩn, cũng không tự động đánh giá lại nguy hiểm đối với các bản lưu cũ; các sự kiện cũ sẽ được cập nhật theo quy tắc mới khi thực sự bị chạm đến bởi suy diễn sau này.
 
-## 1.1.7 正式版
+## 1.1.7 Phiên bản chính thức
 
-这版给世界背面的记忆装上了“新陈代谢”，顺便给舆情加了一个完全不碰正史的快乐闲逛角落～ `(｡•̀ᴗ-)✧`
+Phiên bản này trang bị "sự trao đổi chất" cho ký ức của Mặt trái thế giới, nhân tiện thêm một góc đi dạo vui vẻ hoàn toàn không chạm đến chính sử cho dư luận～ `(｡•̀ᴗ-)✧`
 
-- 长期事实继续使用稳定 key 更迭：新值会替代旧值，旧版本退出活跃记忆并留下轻量变化理由；事实更新不会自动同步到 NPC 认知账本。
-- 伏笔生命周期扩展为等待、发展、触发、回收与放下；已经完成、被证明无用或方向废弃的伏笔会退出活跃区，不再永远挂着。
-- 分层经历在建立上层 L1/L2/L3 后，会先把普通、未锁定的下层摘要压成轻量占位；离开近期窗口后这些旧碎片可以真正淡出活动记忆，只保留上层总结与对应消息范围，原始聊天仍可回看。
-- 历史整理提示明确加入“更新 / 替代 / 淡出 / 放下”规则；普通枝节可以从持续摘要中淡出，锁定、重要、长期关系、重大承诺、身份与未完成线索继续保护。
-- 记忆整理仍按原来的低优先级间隔运行，不会每轮额外打一遍 API；核心世界推演永远优先。
-- 舆情新增“🍿 闲逛”娱乐沙盒：可以单独抽取和主线无关的日常新闻、论坛水帖、小广告和生活八卦；所有内容强制标记 NON-CANON，不写入世界事实、事件、记忆、NPC 认知或正文因果。
-- 状态 schema 升级到 13；README 的“世界自传”项目介绍与 `internal-compat.js` 继续保持用户维护版本不变。
+- Sự thật dài hạn tiếp tục sử dụng key ổn định để thay đổi: giá trị mới sẽ thay thế giá trị cũ, phiên bản cũ rời khỏi ký ức hoạt động và để lại lý do thay đổi gọn nhẹ; cập nhật sự thật sẽ không tự động đồng bộ hóa vào sổ cái nhận thức của NPC.
+- Vòng đời của phục bút được mở rộng thành chờ đợi, phát triển, kích hoạt, thu hồi và buông bỏ; phục bút đã hoàn thành, được chứng minh là vô dụng hoặc hướng đi bị loại bỏ sẽ rời khỏi khu vực hoạt động, không còn treo mãi mãi.
+- Sau khi thiết lập L1/L2/L3 lớp trên, trải nghiệm phân tầng sẽ trước tiên nén các bản tóm tắt lớp dưới thông thường, chưa khóa thành chỗ dành sẵn gọn nhẹ; sau khi rời khỏi cửa sổ gần đây, những mảnh vỡ cũ này có thể thực sự phai nhạt khỏi ký ức hoạt động, chỉ giữ lại bản tóm tắt lớp trên và phạm vi tin nhắn tương ứng, cuộc trò chuyện gốc vẫn có thể xem lại.
+- Lời nhắc sắp xếp lịch sử bổ sung rõ ràng quy tắc "cập nhật / thay thế / phai nhạt / buông bỏ"; các chi tiết phụ thông thường có thể phai nhạt khỏi bản tóm tắt liên tục, trong khi các sự thật bị khóa, quan trọng, mối quan hệ dài hạn, cam kết quan trọng, thân phận và manh mối chưa hoàn thành tiếp tục được bảo vệ.
+- Sắp xếp ký ức vẫn chạy theo khoảng thời gian ưu tiên thấp như cũ, sẽ không gọi thêm API mỗi vòng; suy diễn thế giới cốt lõi luôn được ưu tiên.
+- Dư luận thêm hộp cát giải trí "🍿 Đi dạo": có thể trích xuất riêng các tin tức thường ngày, bài đăng rác trên diễn đàn, quảng cáo nhỏ và tin đồn đời sống không liên quan đến tuyến truyện chính; tất cả nội dung bị buộc đánh dấu NON-CANON, không ghi vào sự thật thế giới, sự kiện, ký ức, nhận thức nhân vật của NPC hoặc nhân quả của nội dung chính.
+- Schema trạng thái nâng cấp lên 13; giới thiệu dự án "Tự truyện thế giới" của README và `internal-compat.js` tiếp tục giữ nguyên phiên bản do người dùng bảo trì.
 
-## 1.1.6 正式版
+## 1.1.6 Phiên bản chính thức
 
-这一版主要把舆情的“可见痕迹”接回来，也把最后一只公文腔小气泡抓走啦～ `(｡•̀ᴗ-)✧`
+Phiên bản này chủ yếu đưa "dấu vết có thể nhìn thấy" của dư luận trở lại, và cũng bắt đi bong bóng nhỏ mang giọng điệu công văn cuối cùng rồi nha～ `(｡•̀ᴗ-)✧`
 
-- 舆情候选不再只接受 `known / direct`：`trace` 级事件也可以作为“小道消息的表面迹象”进入论坛候选，因此后台明明有动静时不再那么容易秒出“无事发生”。
-- `trace` 仍严格保护幕后真相：只把 `public_trace`（外界真正能观察到的表面迹象）交给舆情；旧事件没有该字段时只提供“某地出现异常迹象”的保守提示，不暴露事件标题、原因、私密行动、summary/result。
-- `trace` 只能生成非官方论坛讨论，不能生成新闻；归一化阶段再次强制 `source_type=unofficial`，并把 claim_status 限制为 `mixed / rumor`，即使模型格式跑偏也不会把痕迹升级成事实。
-- 世界推演新增 `public_trace`：当事件可见性为 `trace` 时，只记录陌生旁观者实际能感知到的公开表象；隐藏事件必须保持为空。
-- 悬浮球小气泡的等待、推演、失败、记忆整理与安静状态统一换成世界背面的可爱语气，不再只剩“最新正文等待推演”这种冷冰冰提示。
-- 状态 schema 升级到 12；`internal-compat.js` 与 README 的“世界自传”项目介绍继续保持用户维护版本不变。
-
-## 1.1.5 正式版
+- Ứng cử viên dư luận không còn chỉ chấp nhận `known / direct`: sự kiện cấp `trace` cũng có thể vào ứng cử viên diễn đàn như "dấu hiệu bề mặt của tin đồn", do đó khi chạy ngầm rõ ràng có động tĩnh sẽ không còn dễ dàng hiện ra "không có chuyện gì xảy ra" trong giây lát.
+- `trace` vẫn bảo vệ nghiêm ngặt sự thật hậu trường: chỉ giao `public_trace` (dấu hiệu bề mặt mà người ngoài thực sự có thể quan sát được) cho dư luận; khi sự kiện cũ không có trường dữ liệu này, chỉ cung cấp lời nhắc bảo thủ "xuất hiện dấu hiệu bất thường ở một nơi nào đó", không tiết lộ tiêu đề sự kiện, nguyên nhân, hành động riêng tư, summary/result.
+- `trace` chỉ có thể tạo thảo luận diễn đàn không chính thức, không thể tạo tin tức; giai đoạn chuẩn hóa một lần nữa buộc `source_type=unofficial`, và giới hạn claim_status thành `mixed / rumor`, ngay cả khi định dạng mô hình bị lệch cũng sẽ không nâng cấp dấu vết thành sự thật.
+- Suy diễn thế giới thêm `public_trace`: khi khả năng hiển thị sự kiện là `trace`, chỉ ghi lại biểu hiện công khai mà người ngoài cuộc xa lạ thực sự có thể nhận thức được; sự kiện ẩn phải được giữ trống.
+- Trạng thái chờ đợi, suy diễn, thất bại, sắp xếp ký ức và yên tĩnh của bong bóng nhỏ quả cầu lơ lửng được thống nhất đổi thành giọng điệu dễ thương của Mặt trái thế giới, không còn chỉ còn lại lời nhắc lạnh lùng như "nội dung chính mới nhất đang chờ suy diễn".
+- Schema trạng thái nâng cấp lên 12; `internal-compat.js` và giới thiệu dự án "Tự truyện thế giới" của README tiếp tục giữ nguyên phiên bản do người dùng bảo trì.
+
+## 1.1.5 Phiên bản chính thức
 
-这一版主要是发布前稳定性收尾～把长档、API 方案和几个界面小刺一起拔掉 `(｡•̀ᴗ-)✧`
+Phiên bản này chủ yếu là hoàn thiện độ ổn định trước khi phát hành～ nhổ bỏ các gai nhỏ của tệp dài, phương án API và một vài giao diện `(｡•̀ᴗ-)✧`
 
-- 分支/重抽快照改为轻量记忆快照：每条消息不再重复复制整套 L0～L3 分层经历；旧摘要集中保存在当前聊天的一份记忆归档里，恢复分支时再按时间点拼回，长篇聊天的存档体积增长明显收敛。
-- 旧版完整快照继续兼容；恢复点仍保留完整世界状态，不拿“省空间”牺牲真正的安全恢复。
-- 修复编辑已保存 API 方案时，表单里的“测试连接 / 拉取模型”可能误用默认接口 Key、并顺手覆盖默认独立接口的问题。现在草稿测试只读取当前表单；Key 留空会沿用正在编辑的方案自身 Key，不会串配置。
-- 已保存 API 方案新增“模型”快捷按钮，可以直接按该方案自己的 URL / Key 拉取模型列表。
-- 舆情新闻为空时，空状态会跨满双栏并真正居中，不再缩在左半边。
-- “观测设置”默认全部收起；每次重新打开设置都从干净折叠态开始，需要哪块再展开哪块。
-- `internal-compat.js` 继续保持用户自定义版本不变。
-
-## 1.1.4 正式版
-
-- 修复主世界日历在窄设置栏中“小时 / 分钟”输入框被操作按钮挤到几乎不可输入的问题；时间输入固定为两列，校准与手动设定按钮放到下一行。
-
-这一版把长期记忆从“越存越多”正式改成了可追溯的分层压缩～ `(｡•̀ᴗ-)✧`
-
-- 新增四层经历记忆：L0 单轮片段 → L1 阶段小结 → L2 章节总结 → L3 长期经历。
-- 同一批历史整理不额外为每一轮单独调用模型：一次记忆整理会顺手为本批每条 AI 正文生成 L0，减少调用膨胀。
-- 压缩阈值默认固定为：12 条 L0 → 1 条 L1；6 条 L1 → 1 条 L2；3 条 L2 → 1 条 L3。
-- 上层摘要只作为索引，不删除下层来源；每条上层记忆都会保存 `sourceSummaryIds`，下层同时记住 `parentId`，可以一路追溯回具体阶段。
-- 召回改成“高层常驻 + 下层按需”：优先带上当前最新的高层经历维持长线连续，再按人物、地点、事件与关键词召回相关 L0/L1 细节；不会因为记忆更多就整库注入。
-- 记忆压缩继续属于低优先级后台任务：新正文出现时可被核心世界推演抢占，已完成批次立即保存，未完成的压缩不会反过来堵住主线。
-- 新版自动分层只管理升级后的新 L0；旧版阶段经历仍正常可读、可搜索、可召回，但不会在升级后突然触发大量回填 API 调用。
-- 记忆页新增层级标签、L0/L1/L2/L3 统计与来源链展开；删除分层摘要时会同步解除上下层引用，避免留下悬空关系。
-- 状态 schema 升级到 11；`internal-compat.js` 继续保持用户自定义版本不变。
-
-
-## 1.1.2 正式版
-
-这一版主要收拾“后台任务别追着正文跑”、舆情来源层与长篇记忆保留～ `(•̀ᴗ•́)و`
-
-- 核心世界推演正式拥有最高后台优先级：新正文出现时，低优先级的舆情、人物即时观测与历史整理会停在安全边界，避免后台任务越排越长。
-- 世界推演若完成时已经出现更新正文，会把旧轮结果安全存进对应分支，但不会拿旧状态覆盖当前世界；随后直接追赶最新一轮。
-- 舆情生成增加 revision + 最新正文基线校验；过期快照直接丢弃并在核心推演结束后重新整理，不让旧新闻追着新剧情跑。
-- 舆情新增“消息来源层级 + 可能关注人群”：区分官方/权威与非官方/小道来源，并显示传播范围和可能感兴趣的受众；来源权威不等于世界真相，也不会自动写入 NPC 认知。
-- 论坛代表回复改为可展开浏览，默认界面更轻，不会一上来铺满整页。
-- 长期记忆扩充软容量，并改成保留优先策略：锁定/重要事实、未回收伏笔、故事开端与关键阶段优先保留；存储容量和每轮模型调用量继续彻底分开。
-- `internal-compat.js` 继续保持用户自定义版本不变。
-
-
-## 1.1.1 正式版
-
-这一版主要把设置、连接与舆情的日常使用体验收顺啦～ `(｡•̀ᴗ-)✧`
-
-- 设置项支持“点哪个就解释哪个”，正文读取范围增加 1～30 轮自定义档并记住上次数字。
-- 独立 API 支持保存为可复用方案，可编辑、复制、测试、删除；世界推演、人物观测、长期记忆/历史整理、世界舆情可以分别选择默认连接、当前酒馆或指定方案。
-- 状态栏会记录最近一次模型任务实际走的方案与模型，诊断信息继续隐藏 API Key 与接口地址。
-- 舆情新增“仅观察 / 相关时显露”：默认仍安心围观；开启相关显露后，只把与当前镜头确实有关的公开信息作为自然显露候选，论坛猜测不会被当成世界事实。
-- 各模块顶部状态、说明与操作区域统一瘦身，减少手机端纵向占用。
-- 舆情字体正式并入全局阅读字号与字体体系，不再单独偏小。
-- 全局说明、空状态和普通提示改成更轻松的“世界背面”语气，同时保留错误与诊断信息的准确性。
-- `internal-compat.js` 继续保持用户自定义版本不变。
+- Bản ghi nhanh nhánh/tạo lại được đổi thành bản ghi nhanh ký ức gọn nhẹ: mỗi tin nhắn không còn lặp lại việc sao chép toàn bộ bộ trải nghiệm phân tầng L0～L3; bản tóm tắt cũ được lưu tập trung trong một kho lưu trữ ký ức của cuộc trò chuyện hiện tại, khi khôi phục nhánh sẽ ghép lại theo thời điểm, sự gia tăng dung lượng bản lưu của cuộc trò chuyện dài hạn được thu hẹp rõ rệt.
+- Bản ghi nhanh đầy đủ phiên bản cũ tiếp tục tương thích; điểm khôi phục vẫn giữ lại trạng thái thế giới đầy đủ, không lấy việc "tiết kiệm không gian" để hy sinh khả năng khôi phục an toàn thực sự.
+- Sửa lỗi khi chỉnh sửa phương án API đã lưu, "Kiểm tra kết nối / Lấy danh sách mô hình" trong biểu mẫu có thể sử dụng nhầm Key giao diện mặc định, và tiện tay ghi đè giao diện độc lập mặc định. Hiện tại kiểm tra bản nháp chỉ đọc biểu mẫu hiện tại; để trống Key sẽ tiếp tục sử dụng Key của chính phương án đang được chỉnh sửa, không bị lẫn lộn cấu hình.
+- Phương án API đã lưu thêm nút phím tắt "Mô hình", có thể trực tiếp lấy danh sách mô hình theo URL / Key của chính phương án đó.
+- Khi tin tức dư luận trống, trạng thái trống sẽ trải dài khắp hai cột và thực sự căn giữa, không còn co cụm ở nửa bên trái.
+- "Cài đặt quan sát" mặc định được thu gọn toàn bộ; mỗi lần mở lại cài đặt đều bắt đầu từ trạng thái thu gọn sạch sẽ, cần phần nào thì mở rộng phần đó.
+- `internal-compat.js` tiếp tục giữ nguyên phiên bản tùy chỉnh của người dùng.
+
+## 1.1.4 Phiên bản chính thức
+
+- Sửa lỗi ô nhập "giờ / phút" của lịch thế giới chính trong thanh cài đặt hẹp bị các nút thao tác chèn ép đến mức gần như không thể nhập; đầu vào thời gian được cố định thành hai cột, nút hiệu chuẩn và cài đặt thủ công được đặt ở dòng tiếp theo.
+
+Phiên bản này chính thức thay đổi ký ức dài hạn từ "càng lưu càng nhiều" thành nén phân tầng có thể truy xuất～ `(｡•̀ᴗ-)✧`
+
+- Thêm bốn tầng ký ức trải nghiệm: L0 Đoạn đơn vòng → L1 Tóm tắt giai đoạn → L2 Tóm tắt chương → L3 Trải nghiệm dài hạn.
+- Cùng một lô sắp xếp lịch sử không gọi thêm mô hình riêng cho mỗi vòng: một lần sắp xếp ký ức sẽ tiện tay tạo L0 cho mỗi nội dung chính AI của lô này, giảm sự phình to của việc gọi.
+- Ngưỡng nén mặc định được cố định là: 12 L0 → 1 L1; 6 L1 → 1 L2; 3 L2 → 1 L3.
+- Bản tóm tắt lớp trên chỉ đóng vai trò là chỉ mục, không xóa nguồn lớp dưới; mỗi ký ức lớp trên sẽ lưu `sourceSummaryIds`, lớp dưới đồng thời ghi nhớ `parentId`, có thể truy xuất ngược lại giai đoạn cụ thể.
+- Truy xuất được đổi thành "lớp cao thường trú + lớp dưới theo nhu cầu": ưu tiên mang theo trải nghiệm lớp cao mới nhất hiện tại để duy trì tính liên tục dài hạn, sau đó truy xuất các chi tiết L0/L1 liên quan theo nhân vật, địa điểm, sự kiện và từ khóa; sẽ không vì có nhiều ký ức hơn mà chèn toàn bộ cơ sở dữ liệu.
+- Nén ký ức tiếp tục thuộc về nhiệm vụ chạy ngầm ưu tiên thấp: khi nội dung chính mới xuất hiện có thể bị suy diễn thế giới cốt lõi chiếm quyền, lô đã hoàn thành được lưu ngay lập tức, việc nén chưa hoàn thành sẽ không quay lại chặn tuyến truyện chính.
+- Phân tầng tự động phiên bản mới chỉ quản lý L0 mới sau khi nâng cấp; trải nghiệm giai đoạn phiên bản cũ vẫn có thể đọc, tìm kiếm, truy xuất bình thường, nhưng sẽ không đột nhiên kích hoạt một lượng lớn lệnh gọi API điền lại sau khi nâng cấp.
+- Trang ký ức thêm thẻ cấp độ, thống kê L0/L1/L2/L3 và mở rộng chuỗi nguồn; khi xóa bản tóm tắt phân tầng sẽ đồng bộ hủy liên kết tham chiếu lớp trên và lớp dưới, tránh để lại mối quan hệ lơ lửng.
+- Schema trạng thái nâng cấp lên 11; `internal-compat.js` tiếp tục giữ nguyên phiên bản tùy chỉnh của người dùng.
+
+
+## 1.1.2 Phiên bản chính thức
+
+Phiên bản này chủ yếu dọn dẹp "nhiệm vụ chạy ngầm đừng chạy theo nội dung chính", lớp nguồn dư luận và giữ lại ký ức dài hạn～ `(•̀ᴗ•́)و`
+
+- Suy diễn thế giới cốt lõi chính thức có mức độ ưu tiên chạy ngầm cao nhất: khi nội dung chính mới xuất hiện, dư luận, quan sát nhân vật tức thời và sắp xếp lịch sử có mức độ ưu tiên thấp sẽ dừng ở ranh giới an toàn, tránh việc nhiệm vụ chạy ngầm xếp hàng càng lúc càng dài.
+- Nếu suy diễn thế giới hoàn thành khi đã xuất hiện nội dung chính cập nhật, nó sẽ lưu an toàn kết quả vòng cũ vào nhánh tương ứng, nhưng sẽ không lấy trạng thái cũ ghi đè thế giới hiện tại; sau đó trực tiếp đuổi theo vòng mới nhất.
+- Tạo dư luận thêm kiểm tra đường cơ sở revision + nội dung chính mới nhất; bản ghi nhanh hết hạn bị loại bỏ trực tiếp và sắp xếp lại sau khi suy diễn cốt lõi kết thúc, không để tin tức cũ chạy theo cốt truyện mới.
+- Dư luận thêm "cấp độ nguồn tin tức + nhóm người có thể quan tâm": phân biệt nguồn chính thức/có thẩm quyền và nguồn không chính thức/tin đồn, đồng thời hiển thị phạm vi lan truyền và đối tượng có thể quan tâm; nguồn có thẩm quyền không đồng nghĩa với sự thật thế giới, cũng sẽ không tự động ghi vào nhận thức nhân vật của NPC.
+- Phản hồi đại diện của diễn đàn được đổi thành có thể mở rộng để duyệt, giao diện mặc định nhẹ hơn, sẽ không trải dài khắp trang ngay khi vừa mở lên.
+- Ký ức dài hạn mở rộng dung lượng mềm, và đổi thành chiến lược ưu tiên giữ lại: sự thật bị khóa/quan trọng, phục bút chưa thu hồi, khởi đầu câu chuyện và giai đoạn quan trọng được ưu tiên giữ lại; dung lượng lưu trữ và lượng gọi mô hình mỗi vòng tiếp tục được tách biệt hoàn toàn.
+- `internal-compat.js` tiếp tục giữ nguyên phiên bản tùy chỉnh của người dùng.
+
+
+## 1.1.1 Phiên bản chính thức
+
+Phiên bản này chủ yếu làm mượt trải nghiệm sử dụng hàng ngày của cài đặt, kết nối và dư luận～ `(｡•̀ᴗ-)✧`
+
+- Các mục cài đặt hỗ trợ "nhấp vào đâu giải thích đó", phạm vi đọc nội dung chính thêm mức tùy chỉnh 1～30 vòng và ghi nhớ con số lần trước.
+- API độc lập hỗ trợ lưu thành phương án có thể tái sử dụng, có thể chỉnh sửa, sao chép, kiểm tra, xóa; suy diễn thế giới, quan sát nhân vật, ký ức dài hạn/sắp xếp lịch sử, dư luận thế giới có thể chọn riêng kết nối mặc định, Tavern hiện tại hoặc phương án được chỉ định.
+- Thanh trạng thái sẽ ghi lại phương án và mô hình thực tế mà nhiệm vụ mô hình gần đây nhất đã chạy, thông tin chẩn đoán tiếp tục ẩn API Key và địa chỉ API.
+- Dư luận thêm "Chỉ quan sát / Hiển thị khi liên quan": mặc định vẫn an tâm vây xem; sau khi bật hiển thị liên quan, chỉ lấy thông tin công khai thực sự liên quan đến ống kính hiện tại làm ứng cử viên hiển thị tự nhiên, suy đoán trên diễn đàn sẽ không được coi là sự thật thế giới.
+- Trạng thái trên cùng, phần giải thích và khu vực thao tác của mỗi mô-đun được thu gọn thống nhất, giảm việc chiếm dụng theo chiều dọc trên phiên bản di động.
+- Phông chữ dư luận chính thức được hợp nhất vào hệ thống cỡ chữ giao diện và phông chữ đọc toàn cục, không còn nhỏ riêng biệt nữa.
+- Giải thích toàn cục, trạng thái trống và lời nhắc thông thường được đổi thành giọng điệu "Mặt trái thế giới" thoải mái hơn, đồng thời giữ lại tính chính xác của thông tin lỗi và chẩn đoán.
+- `internal-compat.js` tiếp tục giữ nguyên phiên bản tùy chỉnh của người dùng.
 
-## 1.1.0 正式版
+## 1.1.0 Phiên bản chính thức
 
-- 新增“舆情”观察页，分为新闻与论坛两个视图。
-- 舆情快照只从已经公开的事件中生成，不读取隐藏事件。
-- 第一版保持只读：不会改写 NPC 认知、不会制造新事件、不会注入正文。
-- 论坛允许出现猜测与传闻，但会明确标记为“事实 / 混合 / 传闻”，且不会写回世界事实。
-- 舆情快照记录生成时的世界 revision 与世界时间；世界继续变化后会提示快照可能已过期。
-- 默认手动生成/刷新，避免每轮自动请求和状态联动带来的额外噪声。
+- Thêm trang quan sát "Dư luận", chia thành hai chế độ xem tin tức và diễn đàn.
+- Bản ghi nhanh dư luận chỉ được tạo từ các sự kiện đã công khai, không đọc các sự kiện ẩn.
+- Phiên bản đầu tiên giữ nguyên chế độ chỉ đọc: sẽ không viết lại nhận thức nhân vật của NPC, sẽ không tạo sự kiện mới, sẽ không chèn vào nội dung chính.
+- Diễn đàn cho phép xuất hiện suy đoán và tin đồn, nhưng sẽ được đánh dấu rõ ràng là "Sự thật / Hỗn hợp / Tin đồn", và sẽ không ghi lại vào sự thật thế giới.
+- Bản ghi nhanh dư luận ghi lại revision thế giới và thời gian thế giới khi tạo; sau khi thế giới tiếp tục thay đổi sẽ nhắc nhở bản ghi nhanh có thể đã hết hạn.
+- Mặc định tạo/làm mới thủ công, tránh tiếng ồn bổ sung do yêu cầu tự động mỗi vòng và liên kết trạng thái mang lại.
 
-## 1.0.8 正式版
+## 1.0.8 Phiên bản chính thức
 
-- 世界书人物升级为本地浏览器：读取后可按人物名、条目名、主/副关键词、正文、分组/角色元数据与常见结构标签搜索；支持“只看疑似人物”“只看启用条目”“全选当前/取消当前”和选择统计。
-- 新增本地人物识别，不调用 API：综合 `<character>` 等结构标签、姓名/年龄/性格/外貌/背景等字段与条目关键词给出“疑似人物”标记；只做候选提示，不会自动导入或改写世界书。
-- 修复世界书导入把整段角色设定塞进“人格锚点”的问题。导入时会尽量拆分为身份锚点、外貌设定、人格锚点、背景与关系、说话习惯、行为边界，并保留完整世界书原始设定供折叠查看。
-- 人物编辑新增“外貌设定”“背景与关系”；这两项与其他稳定角色约束一起进入世界推演/即时观测，但原始世界书全文不会整段注入模型，避免上下文膨胀。
-- 世界书扫描上限由 240 条提升到 1000 条，适合大型世界书；筛选与搜索只在本地进行。
-- 重做人物编辑底部“删除人物”按钮：改为低权重圆角危险操作，默认克制，悬停/聚焦时才显红，与“保存人物卡”按钮保持同一视觉体系。
-- 状态 schema 升级到 10；旧存档会自动补齐新的静态人物资料字段，不影响认知账本、因果链、重抽快照或已有世界状态。
-- `internal-compat.js` 继续保持用户自定义版本不变。
+- Nhân vật Worldbook được nâng cấp thành trình duyệt cục bộ: sau khi đọc có thể tìm kiếm theo tên nhân vật, tên mục, từ khóa chính/phụ, nội dung chính, siêu dữ liệu nhóm/nhân vật và các thẻ cấu trúc phổ biến; hỗ trợ "Chỉ xem nhân vật nghi ngờ", "Chỉ xem mục đã bật", "Chọn tất cả hiện tại/Hủy hiện tại" và thống kê lựa chọn.
+- Thêm nhận dạng nhân vật cục bộ, không gọi API: tổng hợp các thẻ cấu trúc như `<character>`, các trường dữ liệu như họ tên/tuổi tác/tính cách/ngoại hình/bối cảnh và từ khóa mục để đưa ra đánh dấu "Nhân vật nghi ngờ"; chỉ làm lời nhắc ứng cử viên, sẽ không tự động nhập hoặc viết lại Worldbook.
+- Sửa lỗi nhập Worldbook nhét toàn bộ đoạn thiết lập nhân vật vào "Điểm neo nhân cách". Khi nhập sẽ cố gắng chia thành điểm neo thân phận, cài đặt ngoại hình, điểm neo nhân cách, bối cảnh và mối quan hệ, thói quen nói chuyện, ranh giới hành vi, và giữ lại toàn bộ thiết lập gốc của Worldbook để thu gọn xem.
+- Chỉnh sửa nhân vật thêm "Cài đặt ngoại hình", "Bối cảnh và mối quan hệ"; hai mục này cùng với các ràng buộc nhân vật ổn định khác sẽ đi vào suy diễn thế giới/quan sát tức thời, nhưng toàn văn Worldbook gốc sẽ không được chèn toàn bộ vào mô hình, tránh phình to ngữ cảnh.
+- Giới hạn quét Worldbook được nâng từ 240 mục lên 1000 mục, phù hợp với Worldbook quy mô lớn; lọc và tìm kiếm chỉ được thực hiện cục bộ.
+- Làm lại nút "Xóa nhân vật" ở dưới cùng của phần chỉnh sửa nhân vật: đổi thành thao tác nguy hiểm góc bo tròn trọng số thấp, kiềm chế mặc định, chỉ hiện màu đỏ khi di chuột/tập trung, duy trì cùng một hệ thống hình ảnh với nút "Lưu thẻ nhân vật".
+- Schema trạng thái nâng cấp lên 10; bản lưu cũ sẽ tự động bổ sung các trường dữ liệu nhân vật tĩnh mới, không ảnh hưởng đến sổ cái nhận thức, chuỗi nhân quả, bản ghi nhanh tạo lại hoặc trạng thái thế giới hiện có.
+- `internal-compat.js` tiếp tục giữ nguyên phiên bản tùy chỉnh của người dùng.
 
-## 1.0.7 正式版
+## 1.0.7 Phiên bản chính thức
 
-- 正式把昨晚测试的 schema 9“认知账本 / 因果链”新骨架与 1.0.6 的 UI、标签过滤、悬浮球、自愈与人物 ID 修复合并为同一主线，不再存在“新底盘 / 旧界面”两个分支。
-- 保留 NPC `known_event_ids / known_fact_keys / known_clue_ids`、事件 `known_by / caused_by`、人物身体/情绪/资源状态，以及即时观测的知识边界过滤。
-- 保留 1.0.6 的手动标签自动提取、无意义二级折叠拍平、悬浮球自愈、重复人物 ID 修复与连续 5 次重抽压力保护。
-- 设置面板中的版本标识改为从插件版本号传入，避免以后更新 manifest / index 后界面角标仍停留在旧版本。
-- `internal-compat.js` 保持用户自定义版本不变。
+- Chính thức hợp nhất bộ khung mới schema 9 "Sổ cái nhận thức / Chuỗi nhân quả" được thử nghiệm tối qua với UI, lọc thẻ, quả cầu lơ lửng, tự phục hồi và sửa ID nhân vật của 1.0.6 thành cùng một tuyến truyện chính, không còn tồn tại hai nhánh "Khung gầm mới / Giao diện cũ".
+- Giữ lại `known_event_ids / known_fact_keys / known_clue_ids` của NPC, `known_by / caused_by` của sự kiện, trạng thái cơ thể/cảm xúc/tài nguyên của nhân vật, cũng như lọc ranh giới kiến thức của quan sát tức thời.
+- Giữ lại tính năng tự động trích xuất thẻ thủ công, làm phẳng nếp gấp cấp hai vô nghĩa, tự phục hồi quả cầu lơ lửng, sửa ID nhân vật trùng lặp và bảo vệ áp lực tạo lại 5 lần liên tiếp của 1.0.6.
+- Định danh phiên bản trong bảng cài đặt được đổi thành truyền vào từ số phiên bản plugin, tránh việc góc giao diện vẫn dừng ở phiên bản cũ sau khi cập nhật manifest / index sau này.
+- `internal-compat.js` giữ nguyên phiên bản tùy chỉnh của người dùng.
 
-## 1.0.6 正式版
+## 1.0.6 Phiên bản chính thức
 
-- 以 v1.0.5 的认知账本 / 因果链 schema 9 为基线继续增强，不回退 NPC 知识边界、事件 `caused_by`、人物身体/情绪/资源状态与即时观测过滤。
-- 修复重复人物 ID 导致“点 A 编辑却打开 B”的串位问题；状态整理时会为冲突人物重新生成唯一稳定 ID。
-- 标签过滤新增手动“自动提取”：可扫描最新正文或最近 5 条，先列候选、标记宽泛结构与已添加项，再由用户勾选确认，不会后台自动改规则。
-- 设置页拍平无意义的单层二级折叠，例如“连接 → 连接方式”和“世界书人物 → 人物导入”；真正的条件配置与高级维护仍保留折叠。
-- 悬浮球新增自愈挂载与视口校正：页面重绘、切换可见性、重新聚焦后会检查入口是否仍存在，并把坐标限制回当前屏幕。
-- 新增连续 5 次重抽压力测试，以及 schema 9 认知账本 / 因果链 / 人物观测知识隔离回归测试。
+- Lấy schema 9 sổ cái nhận thức / chuỗi nhân quả của v1.0.5 làm đường cơ sở để tiếp tục tăng cường, không lùi lại ranh giới kiến thức của NPC, `caused_by` của sự kiện, trạng thái cơ thể/cảm xúc/tài nguyên của nhân vật và lọc quan sát tức thời.
+- Sửa lỗi ID nhân vật trùng lặp dẫn đến vấn đề "nhấp vào A để chỉnh sửa nhưng lại mở B"; khi sắp xếp trạng thái sẽ tạo lại ID ổn định duy nhất cho nhân vật bị xung đột.
+- Lọc thẻ thêm "Tự động trích xuất" thủ công: có thể quét nội dung chính mới nhất hoặc 5 tin nhắn gần đây, liệt kê ứng cử viên trước, đánh dấu cấu trúc rộng và các mục đã thêm, sau đó do người dùng đánh dấu xác nhận, sẽ không tự động thay đổi quy tắc chạy ngầm.
+- Trang cài đặt làm phẳng các nếp gấp cấp hai một lớp vô nghĩa, ví dụ "Kết nối → Phương thức kết nối" và "Nhân vật Worldbook → Nhập nhân vật"; cấu hình điều kiện thực sự và bảo trì nâng cao vẫn giữ lại nếp gấp.
+- Quả cầu lơ lửng thêm gắn kết tự phục hồi và hiệu chỉnh khung nhìn: sau khi vẽ lại trang, chuyển đổi khả năng hiển thị, tập trung lại sẽ kiểm tra xem lối vào có còn tồn tại hay không, và giới hạn tọa độ trở lại màn hình hiện tại.
+- Thêm kiểm tra áp lực tạo lại 5 lần liên tiếp, cũng như kiểm tra hồi quy cách ly kiến thức sổ cái nhận thức / chuỗi nhân quả / quan sát nhân vật của schema 9.
 
-## 1.0.5 正式版
+## 1.0.5 Phiên bản chính thức
 
-- 新增 NPC 认知账本：人物分别记录已知事件、长期事实与伏笔；不再把“玩家知道/后台知道”默认当作 NPC 知道。
-- 事件新增 `known_by`、`actors`、`cause`、`caused_by`，把玩家显露边界与 NPC 知情边界彻底分离，并保存事件因果链。
-- 人物新增身体、情绪与资源状态；世界推演要求状态变化真实影响行动与执行能力，禁止凭空恢复、凭空获得能力或资源。
-- 人物即时观测优先使用该人物自己的认知账本；最近正文只作为时间线背景，未亲历/未获知的信息不会自动进入第一视角。
-- 已有 v1.0.4 存档自动升级 schema 9；旧人物/事件保持兼容，认知账本会从后续可靠推演开始逐步建立。
-- 不改重抽时间快照、独立人物观测的非注入性质、事件递交逻辑、主世界时钟与现有 UI。
+- Thêm sổ cái nhận thức của NPC: nhân vật ghi lại riêng biệt các sự kiện đã biết, sự thật dài hạn và phục bút; không còn mặc định coi "người chơi biết/chạy ngầm biết" là NPC biết.
+- Sự kiện thêm `known_by`, `actors`, `cause`, `caused_by`, tách biệt hoàn toàn ranh giới hiển thị của người chơi và ranh giới biết chuyện của NPC, đồng thời lưu chuỗi nhân quả của sự kiện.
+- Nhân vật thêm trạng thái cơ thể, cảm xúc và tài nguyên; suy diễn thế giới yêu cầu thay đổi trạng thái thực sự ảnh hưởng đến hành động và khả năng thực thi, cấm phục hồi từ hư không, nhận được khả năng hoặc tài nguyên từ hư không.
+- Quan sát nhân vật tức thời ưu tiên sử dụng sổ cái nhận thức của chính nhân vật đó; nội dung chính gần đây chỉ đóng vai trò là bối cảnh dòng thời gian, thông tin chưa đích thân trải qua/chưa biết được sẽ không tự động đi vào góc nhìn thứ nhất.
+- Bản lưu v1.0.4 hiện có tự động nâng cấp schema 9; nhân vật/sự kiện cũ giữ nguyên tính tương thích, sổ cái nhận thức sẽ dần được thiết lập từ các suy diễn đáng tin cậy tiếp theo.
+- Không thay đổi bản ghi nhanh thời gian tạo lại, tính chất không chèn của quan sát nhân vật độc lập, logic gửi sự kiện, đồng hồ thế giới chính và UI hiện có.
 
-## 1.0.4 正式版
+## 1.0.4 Phiên bản chính thức
 
-- 修复设置页二级折叠后独立接口填写区不再自动展开的问题；切换“独立接口”会直接展开配置。
-- 拉取模型列表现在只要求接口地址与 Key，不再错误要求先填写模型名。
+- Sửa lỗi khu vực điền giao diện độc lập không còn tự động mở rộng sau khi gấp cấp hai trên trang cài đặt; chuyển đổi "Giao diện độc lập" sẽ trực tiếp mở rộng cấu hình.
+- Lấy danh sách mô hình hiện chỉ yêu cầu địa chỉ API và Key, không còn yêu cầu sai lầm phải điền tên mô hình trước.
 
-- 世界主时钟稳定为后台唯一时间轴：支持首次日期锚定、剧情耗时推进、重抽不重复推进，以及“与正文校准”的手动强制对表。
-- 人物即时观测使用独立后台请求与角色自身 POV；长度截断会自动重试，残句不会写入缓存。
-- 人物、暗流、回声、纪事、长期事实、伏笔与阶段经历统一使用摘要/详情折叠，展开状态会在重绘后保留。
-- 长期事实优先按关联人物聚合，伏笔按关联人物/地点/线索聚合；UI 只做归组，底层记忆仍逐条保存，不自动合并。
-- 修正人物内部 ID（例如 `ling`）被直接显示为分组标题的问题；能关联人物卡时统一显示角色可读名称。
-- 暗流、回声、纪事、人物与记忆均支持手动修正；危险操作继续使用撤销保护，手动编辑不推进世界时间。
-- 设置页统一为“主模块 → 小版块”两层折叠；标签过滤、安全恢复与故障诊断归入“高级与维护”，不再暴露已废弃的前台 preset 桥接入口。
-- 源码级 `internal-compat.js` 作为固定兼容层，随后由世界背面任务 system 锁定 JSON、时间、玩家边界与人物观测 POV。
-- 日/夜快捷键固定为直接互切；自动主题仍可在设置页启用。桌面与移动端的字号、折叠卡片、操作按钮和弹层排版统一收尾。
+- Đồng hồ chính của thế giới ổn định thành dòng thời gian duy nhất chạy ngầm: hỗ trợ neo ngày lần đầu, tiến hành tiêu tốn thời gian của cốt truyện, tạo lại không tiến hành lặp lại, và buộc đối chiếu đồng hồ thủ công "Hiệu chuẩn với nội dung chính".
+- Quan sát nhân vật tức thời sử dụng yêu cầu chạy ngầm độc lập và POV của chính nhân vật; cắt bớt độ dài sẽ tự động thử lại, câu không hoàn chỉnh sẽ không được ghi vào bộ nhớ cache.
+- Nhân vật, dòng chảy ngầm, tiếng vang, biên niên sử, sự thật dài hạn, phục bút và trải nghiệm giai đoạn thống nhất sử dụng thu gọn tóm tắt/chi tiết, trạng thái mở rộng sẽ được giữ lại sau khi vẽ lại.
+- Sự thật dài hạn ưu tiên tổng hợp theo nhân vật liên kết, phục bút tổng hợp theo nhân vật/địa điểm/manh mối liên kết; UI chỉ làm việc nhóm, ký ức cơ bản vẫn được lưu từng mục, không tự động hợp nhất.
+- Sửa lỗi ID nội bộ của nhân vật (ví dụ `ling`) bị hiển thị trực tiếp làm tiêu đề nhóm; khi có thể liên kết thẻ nhân vật sẽ thống nhất hiển thị tên có thể đọc được của nhân vật.
+- Dòng chảy ngầm, tiếng vang, biên niên sử, nhân vật và ký ức đều hỗ trợ sửa chữa thủ công; thao tác nguy hiểm tiếp tục sử dụng bảo vệ hoàn tác, chỉnh sửa thủ công không tiến hành thời gian thế giới chính.
+- Trang cài đặt thống nhất thành nếp gấp hai lớp "Mô-đun chính → Phiên bản nhỏ"; lọc thẻ, khôi phục an toàn và chẩn đoán sự cố được đưa vào "Nâng cao và bảo trì", không còn phơi bày lối vào cầu nối preset tiền sảnh đã bị loại bỏ.
+- `internal-compat.js` cấp mã nguồn đóng vai trò là lớp tương thích cố định, sau đó system nhiệm vụ Mặt trái thế giới khóa JSON, thời gian, ranh giới người chơi và POV quan sát nhân vật.
+- Phím tắt ban ngày/ban đêm được cố định thành chuyển đổi trực tiếp; chủ đề tự động vẫn có thể được bật trong trang cài đặt. Cỡ chữ, thẻ thu gọn, nút thao tác và bố cục lớp bật lên trên máy tính để bàn và thiết bị di động được hoàn thiện thống nhất.
 
-## 0.9.4-dev 设置页二级折叠与高级收纳
+## 0.9.4-dev Nếp gấp cấp hai của trang cài đặt và lưu trữ nâng cao
 
-- 所有主设置模块都改成“主模块 → 功能小版块”的两层折叠结构，避免展开一个模块就铺满整页。
-- 连接拆为“连接方式 / 独立接口配置”；界面拆为“界面 / 显露”；自动推演拆为“推演开关 / 自动触发 / 失败与输出 / NPC 与玩家边界 / 上下文与时间”。
-- 世界书人物、长期记忆、日历与数据也统一使用二级折叠；记忆整理运行或报错时会自动展开“历史档案”。
-- “标签过滤”不再占用主设置层级，移入最底部“高级与维护”；预设桥接也归入“预设兼容”。
-- 二级折叠的展开状态会在设置页重渲染时保留，避免改一个选项后刚打开的小版块突然合上。
-- 统一二级卡片的间距、圆角、标题与说明字号，桌面和手机都使用同一套层级排版。
+- Tất cả các mô-đun cài đặt chính đều được đổi thành cấu trúc nếp gấp hai lớp "Mô-đun chính → Phiên bản nhỏ chức năng", tránh việc mở rộng một mô-đun sẽ trải khắp trang.
+- Kết nối được chia thành "Phương thức kết nối / Cấu hình giao diện độc lập"; giao diện được chia thành "Giao diện / Hiển thị"; tự động suy diễn được chia thành "Công tắc suy diễn / Tự động kích hoạt / Thất bại và đầu ra / Ranh giới NPC và người chơi / Ngữ cảnh và thời gian".
+- Nhân vật Worldbook, ký ức dài hạn, lịch và dữ liệu cũng thống nhất sử dụng nếp gấp cấp hai; khi sắp xếp ký ức đang chạy hoặc báo lỗi sẽ tự động mở rộng "Hồ sơ lịch sử".
+- "Lọc thẻ" không còn chiếm cấp độ cài đặt chính, được chuyển vào "Nâng cao và bảo trì" ở dưới cùng; cầu nối preset cũng được đưa vào "Tương thích preset".
+- Trạng thái mở rộng của nếp gấp cấp hai sẽ được giữ lại khi trang cài đặt hiển thị lại, tránh việc phiên bản nhỏ vừa mở đột nhiên đóng lại sau khi thay đổi một tùy chọn.
+- Thống nhất khoảng cách, góc bo tròn, cỡ chữ tiêu đề và giải thích của thẻ cấp hai, máy tính để bàn và điện thoại di động đều sử dụng cùng một bộ bố cục phân cấp.
 
-## 0.9.3-dev 人物观测截断保护
+## 0.9.3-dev Bảo vệ cắt bớt quan sát nhân vật
 
-- 人物即时观测的输出预算由 1200 提高到 4096 token；若仍疑似撞到长度上限，会自动用 8192 token 再试一次。
-- 独立 API 若明确返回 `finish_reason: length` / `MAX_TOKENS`，人物观测不再把半截文本当成功结果保存。
-- 跟随酒馆的 `generateRaw` 无法直接取得 `finish_reason` 时，会检查观测片段是否完整收句；明显停在半句话时自动重试。
-- 两次都截断时会明确报错并保留旧观测，不再把“她咬在床”这类残句写进缓存。
-- 人物观测提示要求优先完整收束，宁可稍短，也不要在句中停止。
+- Ngân sách đầu ra của quan sát nhân vật tức thời được tăng từ 1200 lên 4096 token; nếu vẫn nghi ngờ chạm đến giới hạn độ dài, sẽ tự động thử lại một lần nữa với 8192 token.
+- Nếu API độc lập trả về rõ ràng `finish_reason: length` / `MAX_TOKENS`, quan sát nhân vật không còn lưu nửa đoạn văn bản làm kết quả thành công.
+- Khi `generateRaw` theo Tavern không thể trực tiếp lấy được `finish_reason`, sẽ kiểm tra xem đoạn quan sát có kết thúc câu hoàn chỉnh hay không; khi rõ ràng dừng ở nửa câu sẽ tự động thử lại.
+- Khi cả hai lần đều bị cắt bớt sẽ báo lỗi rõ ràng và giữ lại quan sát cũ, không còn ghi những câu không hoàn chỉnh như "cô ấy cắn trên giường" vào bộ nhớ cache.
+- Lời nhắc quan sát nhân vật yêu cầu ưu tiên kết thúc hoàn chỉnh, thà ngắn một chút, cũng đừng dừng giữa câu.
 
-## 0.9.2-dev 设置页收纳
+## 0.9.2-dev Lưu trữ trang cài đặt
 
-- 新增最底部“高级与维护”，把安全恢复与故障诊断从“日历与数据”移入维护区。
-- “安全恢复 / 故障诊断”改成内部二级折叠，默认收起，设置页只在需要维护时展开。
-- 删除设置页“世界背面兼容 system（可选）”输入框及对应请求组装；源码级 `internal-compat.js` 继续作为唯一固定兼容层。
-- 该版当时的主顺序为：连接 → 界面与显露 → 自动推演 → 世界书人物 → 长期记忆 → 日历与数据 → 标签过滤 → 高级与维护；0.9.4 起标签过滤已收进“高级与维护”。
+- Thêm "Nâng cao và bảo trì" ở dưới cùng, chuyển khôi phục an toàn và chẩn đoán sự cố từ "Lịch và dữ liệu" vào khu vực bảo trì.
+- "Khôi phục an toàn / Chẩn đoán sự cố" được đổi thành nếp gấp cấp hai bên trong, mặc định thu gọn, trang cài đặt chỉ mở rộng khi cần bảo trì.
+- Xóa ô nhập "system tương thích Mặt trái thế giới (tùy chọn)" trên trang cài đặt và lắp ráp yêu cầu tương ứng; `internal-compat.js` cấp mã nguồn tiếp tục đóng vai trò là lớp tương thích cố định duy nhất.
+- Thứ tự chính của phiên bản này lúc đó là: Kết nối → Giao diện và hiển thị → Tự động suy diễn → Nhân vật Worldbook → Ký ức dài hạn → Lịch và dữ liệu → Lọc thẻ → Nâng cao và bảo trì; từ 0.9.4 trở đi lọc thẻ đã được thu vào "Nâng cao và bảo trì".
 
-## 0.8.9-dev 时间同步修复
+## 0.8.9-dev Sửa lỗi đồng bộ thời gian
 
-- 修复世界钟只接受“年月日 + 精确钟点”导致明确日期无法建立锚点的问题。
-- 明确年月日可以独立建立历法锚点；钟点不足时不再误判 `null` 为 `00:00`。
-- 迁移 0.8.8 及更早版本中误锚定的 `主世界历 1年1月1日` 占位时钟。
-- 未校准时即使模型漏填 `clock_anchor`，也会从正文明确年月日做日期兜底。
-- 加强正文注入：把权威 year/month/day/time 独立给出，并要求“时间与地点”栏逐项同步年月日。
+- Sửa lỗi đồng hồ thế giới chỉ chấp nhận "năm tháng ngày + giờ chính xác" dẫn đến việc ngày tháng rõ ràng không thể thiết lập điểm neo.
+- Ngày tháng năm rõ ràng có thể thiết lập điểm neo lịch pháp độc lập; khi không đủ giờ sẽ không còn đánh giá sai `null` thành `00:00`.
+- Di chuyển đồng hồ giữ chỗ `Lịch thế giới chính ngày 1 tháng 1 năm 1` bị neo nhầm trong phiên bản 0.8.8 và các phiên bản cũ hơn.
+- Khi chưa hiệu chuẩn, ngay cả khi mô hình bỏ sót `clock_anchor`, cũng sẽ lấy ngày tháng năm rõ ràng của nội dung chính làm ngày tháng dự phòng.
+- Tăng cường chèn nội dung chính: đưa ra year/month/day/time chuẩn một cách độc lập, và yêu cầu mục "Thời gian và địa điểm" đồng bộ ngày tháng năm từng mục.
 
 
 
-## 0.8.9-dev 全模块手动修正
+## 0.8.9-dev Sửa chữa thủ công toàn mô-đun
 
-- “此刻”的世界概况可直接编辑。
-- “回声”支持编辑结果、地点、可见边界与递交状态，也可删除并撤销。
-- “纪事”支持编辑与删除；与事件关联的回声修改会同步相关纪事副本。
-- 暗流、回声、纪事统一补齐胶囊操作按钮，删除仅在悬停时强调危险色。
-- 人物与记忆沿用已有编辑器；手动修正均不推进主世界时间。
-
-## 0.8.7-dev 暗流可编辑补丁
-
-- “暗流”完整列表中的事件新增“编辑暗流”和“删除”操作。
-- 编辑可修改事件名称、地点、当前内容、预计结果、计时方式、耗时与可见边界；只改文字不会重置已有进度。
-- 修改计时方式或耗时会沿用事件原始开始时间重新计算，避免偷偷把事件起点挪到当前时刻。
-- 删除会从当前世界状态移除该事件，并继续使用现有 9 秒手动撤销机制，误删可以立刻恢复。
-
-## 0.8.5-dev 内置兼容 system 槽位
-
-- 新增源码文件 `internal-compat.js`，提供不显示在普通设置 UI 中的固定 system 槽位。
-- 需要自定义时，只编辑 `INTERNAL_COMPAT_SYSTEM_PROMPT` 的模板字符串内容，不要修改变量名。
-- 组装顺序固定为：高级预设桥接 → 内置兼容 system → 当前世界背面任务 system。
-- 世界背面任务 system 始终最后加入，继续负责锁定世界推演 JSON、时间规则、玩家边界，以及人物即时观测的第一人称 POV。
-- 默认内置兼容 system 为空，因此未手动填写源码时行为与 0.8.4-dev 一致。
-
-
-
-## 0.8.4-dev 独立观测 / 专用 system 试验版
-
-- 世界背面默认不再桥接当前正文预设的 system；预设桥接降级为高级兼容开关并默认关闭。
-- 人物“即时观测”改为世界背面自己的独立上下文请求，固定使用被观测 NPC 的第一人称 POV，不再跟随正文的第二人称、`<content>`、MVU 或 JSONPatch 输出协议。
-- 人物观测增加基础污染检测：若结果混入主正文标签、变量更新协议，或明显把玩家当作叙述主体，会直接报错而不是写入观测缓存。
-- 从 0.8.2 / 0.8.3 升级时会把旧的预设桥接自动关闭一次，避免旧设置继续污染人物观测。
-
-## 0.8.3-dev 世界主时钟试验版
-
-- 新增“世界钟”时间模式，并在升级时默认切换到该模式：首次推演从近期故事上下文建立可靠的绝对时间锚点；之后不再每轮照抄正文时间栏，而是根据本轮实际发生的行动、路程、等待、睡眠与工作估算经过时长。
-- 新增 `clock_anchor` 绝对时间校准协议。首次建立时允许结合明确日期与模糊时段做一次保守推断；主时钟建立后，只有正文新内容明确给出高置信绝对时间事实时才允许重新校准。
-- 旧版残留的默认“主世界历 1年1月1日”会识别为占位时钟并重新进入待校准状态，不会继续把假纪元当真实剧情时间。
-- 主世界时间继续作为唯一进度轴。重抽仍从该 swipe 的推演前快照重新结算，不沿用被放弃分支已经推进的分钟数。
-- 世界状态注入会要求下一轮正文的“时间与地点”栏服从权威主世界时钟，从而把校准后的时间反向同步回正文。
-- 首次尚未建立锚点时，界面显示“等待首次校准”，不再展示误导性的 `1年1月1日 08:00`。
+- Tổng quan thế giới "Lúc này" có thể chỉnh sửa trực tiếp.
+- "Tiếng vang" hỗ trợ chỉnh sửa kết quả, địa điểm, ranh giới hiển thị và trạng thái gửi, cũng có thể xóa và hoàn tác.
+- "Biên niên sử" hỗ trợ chỉnh sửa và xóa; sửa đổi tiếng vang liên kết với sự kiện sẽ đồng bộ bản sao biên niên sử liên quan.
+- Dòng chảy ngầm, tiếng vang, biên niên sử thống nhất bổ sung nút thao tác viên nang, xóa chỉ nhấn mạnh màu nguy hiểm khi di chuột.
+- Nhân vật và ký ức tiếp tục sử dụng trình chỉnh sửa hiện có; sửa chữa thủ công đều không tiến hành thời gian thế giới chính.
+
+## 0.8.7-dev Bản vá có thể chỉnh sửa dòng chảy ngầm
+
+- Sự kiện trong danh sách đầy đủ "Dòng chảy ngầm" thêm thao tác "Chỉnh sửa dòng chảy ngầm" và "Xóa".
+- Chỉnh sửa có thể sửa đổi tên sự kiện, địa điểm, nội dung hiện tại, kết quả dự kiến, phương thức tính giờ, thời gian tiêu tốn và ranh giới hiển thị; chỉ sửa chữ sẽ không đặt lại tiến độ hiện có.
+- Sửa đổi phương thức tính giờ hoặc thời gian tiêu tốn sẽ tiếp tục sử dụng thời gian bắt đầu gốc của sự kiện để tính toán lại, tránh việc lén lút dời điểm bắt đầu sự kiện đến thời điểm hiện tại.
+- Xóa sẽ loại bỏ sự kiện đó khỏi trạng thái thế giới hiện tại, và tiếp tục sử dụng cơ chế hoàn tác thủ công 9 giây hiện có, xóa nhầm có thể khôi phục ngay lập tức.
+
+## 0.8.5-dev Khe cắm system tương thích tích hợp
+
+- Thêm tệp mã nguồn `internal-compat.js`, cung cấp khe cắm system cố định không hiển thị trong UI cài đặt thông thường.
+- Khi cần tùy chỉnh, chỉ chỉnh sửa nội dung chuỗi mẫu của `INTERNAL_COMPAT_SYSTEM_PROMPT`, không sửa đổi tên biến.
+- Thứ tự lắp ráp được cố định là: Cầu nối preset nâng cao → system tương thích tích hợp → system nhiệm vụ Mặt trái thế giới hiện tại.
+- system nhiệm vụ Mặt trái thế giới luôn thêm vào cuối cùng, tiếp tục chịu trách nhiệm khóa JSON suy diễn thế giới, quy tắc thời gian, ranh giới người chơi, cũng như POV ngôi thứ nhất của quan sát nhân vật tức thời.
+- system tương thích tích hợp mặc định để trống, do đó khi chưa điền mã nguồn thủ công, hành vi nhất quán với 0.8.4-dev.
+
+
+
+## 0.8.4-dev Phiên bản thử nghiệm quan sát độc lập / system chuyên dụng
+
+- Mặt trái thế giới mặc định không còn kết nối system của preset nội dung chính hiện tại; cầu nối preset bị hạ cấp thành công tắc tương thích nâng cao và mặc định tắt.
+- "Quan sát tức thời" nhân vật được đổi thành yêu cầu ngữ cảnh độc lập của riêng Mặt trái thế giới, cố định sử dụng POV ngôi thứ nhất của NPC được quan sát, không còn theo ngôi thứ hai, `<content>`, MVU hoặc giao thức đầu ra JSONPatch của nội dung chính.
+- Quan sát nhân vật thêm phát hiện ô nhiễm cơ bản: nếu kết quả bị lẫn thẻ nội dung chính, giao thức cập nhật biến, hoặc rõ ràng coi người chơi là chủ thể trần thuật, sẽ trực tiếp báo lỗi thay vì ghi vào bộ nhớ cache quan sát.
+- Khi nâng cấp từ 0.8.2 / 0.8.3 sẽ tự động tắt cầu nối preset cũ một lần, tránh việc cài đặt cũ tiếp tục làm ô nhiễm quan sát nhân vật.
+
+## 0.8.3-dev Phiên bản thử nghiệm đồng hồ chính thế giới
+
+- Thêm chế độ thời gian "Đồng hồ thế giới", và mặc định chuyển sang chế độ này khi nâng cấp: lần suy diễn đầu tiên thiết lập điểm neo thời gian tuyệt đối đáng tin cậy từ ngữ cảnh câu chuyện gần đây; sau đó không còn sao chép mục thời gian của nội dung chính mỗi vòng, mà ước tính thời gian trôi qua dựa trên hành động, quãng đường, chờ đợi, giấc ngủ và công việc thực tế xảy ra trong vòng này.
+- Thêm giao thức hiệu chuẩn thời gian tuyệt đối `clock_anchor`. Khi thiết lập lần đầu cho phép kết hợp ngày tháng rõ ràng và khoảng thời gian mơ hồ để đưa ra suy luận bảo thủ một lần; sau khi đồng hồ chính được thiết lập, chỉ khi nội dung mới của nội dung chính đưa ra rõ ràng sự thật thời gian tuyệt đối có độ tin cậy cao mới cho phép hiệu chuẩn lại.
+- "Lịch thế giới chính ngày 1 tháng 1 năm 1" mặc định còn sót lại của phiên bản cũ sẽ được nhận dạng là đồng hồ giữ chỗ và vào lại trạng thái chờ hiệu chuẩn, sẽ không tiếp tục coi kỷ nguyên giả là thời gian cốt truyện thực.
+- Thời gian thế giới chính tiếp tục đóng vai trò là trục tiến độ duy nhất. Tạo lại vẫn giải quyết lại từ bản ghi nhanh trước suy diễn của swipe đó, không tiếp tục sử dụng số phút đã tiến hành của nhánh bị từ bỏ.
+- Chèn trạng thái thế giới sẽ yêu cầu mục "Thời gian và địa điểm" của nội dung chính vòng tiếp theo phục tùng đồng hồ thế giới chính chuẩn, từ đó đồng bộ ngược thời gian đã hiệu chuẩn về nội dung chính.
+- Khi chưa thiết lập điểm neo lần đầu, giao diện hiển thị "Chờ hiệu chuẩn lần đầu", không còn hiển thị `ngày 1 tháng 1 năm 1 08:00` gây hiểu lầm.
 
-## 0.8.1 连续发送稳定性补丁
+## 0.8.1 Bản vá độ ổn định gửi liên tục
 
-- 上一轮世界推演还没结束时，可以继续发送下一轮；新正文会安全排队，不会抢跑或覆盖前一轮结果。
-- 排队正文不再提前绑定旧世界状态，而是在真正轮到它时接续最新完成的状态，保证时间、人物、事件与记忆按顺序发展。
-- 每个任务会记住所属聊天、楼层、重抽分支和正文版本；切换聊天、重抽或修改正文后，旧任务不会误写到新页面。
-- 推演中可继续正常生成正文，世界状态注入不会在后台请求期间长时间消失。
-- 顶部状态与提示条会显示还有多少轮待处理；取消当前推演后，其余正文仍保留为待同步，不会悄悄丢失。
+- Khi suy diễn thế giới vòng trước chưa kết thúc, có thể tiếp tục gửi vòng tiếp theo; nội dung chính mới sẽ xếp hàng an toàn, sẽ không chạy trước hoặc ghi đè kết quả vòng trước.
+- Nội dung chính xếp hàng không còn liên kết trước trạng thái thế giới cũ, mà sẽ tiếp nối trạng thái hoàn thành mới nhất khi thực sự đến lượt nó, đảm bảo thời gian, nhân vật, sự kiện và ký ức phát triển theo thứ tự.
+- Mỗi nhiệm vụ sẽ ghi nhớ cuộc trò chuyện, tầng, nhánh tạo lại và phiên bản nội dung chính thuộc về nó; sau khi chuyển đổi cuộc trò chuyện, tạo lại hoặc sửa đổi nội dung chính, nhiệm vụ cũ sẽ không ghi nhầm vào trang mới.
+- Trong quá trình suy diễn có thể tiếp tục tạo nội dung chính bình thường, chèn trạng thái thế giới sẽ không biến mất trong thời gian dài trong quá trình yêu cầu chạy ngầm.
+- Trạng thái trên cùng và thanh nhắc nhở sẽ hiển thị còn bao nhiêu vòng chờ xử lý; sau khi hủy suy diễn hiện tại, các nội dung chính còn lại vẫn được giữ lại là chờ đồng bộ, sẽ không lặng lẽ bị mất.
 
-## 0.8.0 安全恢复与诊断
+## 0.8.0 Khôi phục an toàn và chẩn đoán
 
-- 每个聊天最多保留 3 个长期恢复点；升级旧数据或导入世界状态前会自动保存，也可以随时手动创建。
-- “恢复最近保存”会先替当前状态再留一份保险，然后把世界恢复到目标状态，避免恢复错了无路可退。
-- 新增“一键复制诊断信息”：只包含版本、设备、接口模式、功能开关、状态数量与最近错误，不包含 API Key、接口地址、聊天正文、身份锚点或自定义提示词。
-- 插件内操作统一使用更醒目的状态提示卡，成功、提醒、警告和失败会显示不同颜文字；酒馆提示只在插件界面尚未加载时兜底。
-- 设置页提供“看看提示样式”，不用故意制造错误也能直接预览颜文字弹窗。
-- 恢复点按聊天隔离，不会进入世界状态导出文件，也不会复制整套正文分支快照。
+- Mỗi cuộc trò chuyện giữ lại tối đa 3 điểm khôi phục dài hạn; trước khi nâng cấp dữ liệu cũ hoặc nhập trạng thái thế giới sẽ tự động lưu, cũng có thể tạo thủ công bất cứ lúc nào.
+- "Khôi phục bản lưu gần nhất" sẽ trước tiên giữ lại một bản bảo hiểm cho trạng thái hiện tại, sau đó khôi phục thế giới về trạng thái mục tiêu, tránh việc khôi phục sai không có đường lui.
+- Thêm "Sao chép thông tin chẩn đoán bằng một cú nhấp chuột": chỉ bao gồm phiên bản, thiết bị, chế độ giao diện, công tắc chức năng, số lượng trạng thái và lỗi gần đây, không bao gồm API Key, địa chỉ API, nội dung trò chuyện, điểm neo thân phận hoặc từ nhắc tùy chỉnh.
+- Thao tác trong plugin thống nhất sử dụng thẻ nhắc nhở trạng thái bắt mắt hơn, thành công, nhắc nhở, cảnh báo và thất bại sẽ hiển thị các biểu tượng cảm xúc khác nhau; lời nhắc Tavern chỉ dự phòng khi giao diện plugin chưa được tải.
+- Trang cài đặt cung cấp "Xem kiểu nhắc nhở", không cần cố ý tạo lỗi cũng có thể xem trước trực tiếp cửa sổ bật lên biểu tượng cảm xúc.
+- Điểm khôi phục được cách ly theo cuộc trò chuyện, sẽ không đi vào tệp xuất trạng thái thế giới, cũng sẽ không sao chép toàn bộ bản ghi nhanh nhánh nội dung chính.
 
-## 0.7.3 手机接口与全角色身份热修
+## 0.7.3 Giao diện di động và hotfix thân phận toàn bộ nhân vật
 
-- 独立 API 的旧 Key 不再写回输入框，避免手机浏览器把旧地址与密码一起自动填充。
-- 新增“清空重填”、Key 显示切换与安全草稿；保存新 Key 后立即从界面草稿移除明文。
-- 玩家与其他角色统一在人物卡内维护“角色身份锚点”，支持性别身份、称谓/代词、外貌表达、身体设定、物种、年龄阶段与社会身份；旧设置会安全迁移到玩家人物卡，不再保留重复入口。
-- 玩家与 NPC 的身份锚点都会进入世界推演、人物观测与历史记忆整理；外貌、衣着、身体或物种不会被当作性别判断依据。
-- 清理提示词中对玩家和通用 NPC 默认使用女性代词的表述；未设置锚点时改用中性表述。
+- Key cũ của API độc lập không còn ghi lại vào ô nhập, tránh việc trình duyệt di động tự động điền địa chỉ cũ cùng với mật khẩu.
+- Thêm "Xóa và điền lại", chuyển đổi hiển thị Key và bản nháp an toàn; sau khi lưu Key mới sẽ xóa ngay văn bản gốc khỏi bản nháp giao diện.
+- Người chơi và các nhân vật khác thống nhất duy trì "Điểm neo thân phận nhân vật" trong thẻ nhân vật, hỗ trợ thân phận giới tính, danh xưng/đại từ, biểu đạt ngoại hình, cài đặt cơ thể, loài, giai đoạn tuổi và thân phận xã hội; cài đặt cũ sẽ được di chuyển an toàn sang thẻ nhân vật người chơi, không còn giữ lại lối vào lặp lại.
+- Điểm neo thân phận của người chơi và NPC đều sẽ đi vào suy diễn thế giới, quan sát nhân vật và sắp xếp ký ức lịch sử; ngoại hình, trang phục, cơ thể hoặc loài sẽ không được coi là cơ sở phán đoán giới tính.
+- Dọn dẹp các biểu đạt trong lời nhắc mặc định sử dụng đại từ nữ cho người chơi và NPC chung; khi chưa thiết lập điểm neo sẽ đổi sang biểu đạt trung tính.
 
-## 0.7.2 全局字号修补
+## 0.7.2 Sửa chữa cỡ chữ toàn cục
 
-- 将正文、人物状态、事件说明、回声、记忆、观测结果和设置提示统一纳入字号控制，默认档不再依赖 8—10px 小字。
-- “紧凑 / 标准 / 大字”现在覆盖全部主要模块；大字档的正文、辅助信息和按钮都有清晰可见的变化。
-- 设置项“阅读大小”改称“界面字号”，并明确说明“均衡”只控制剧情显露频率，与字体无关。
-- 编辑已经推演过的最新正文时先保留原世界状态，并显示带颜文字的选择提示；可以按修改后正文重推，也可以在只修错字时保留原推演。
+- Đưa nội dung chính, trạng thái nhân vật, giải thích sự kiện, tiếng vang, ký ức, kết quả quan sát và lời nhắc cài đặt vào kiểm soát cỡ chữ thống nhất, mức mặc định không còn phụ thuộc vào chữ nhỏ 8—10px.
+- "Nhỏ gọn / Tiêu chuẩn / Chữ lớn" hiện bao phủ toàn bộ các mô-đun chính; nội dung chính, thông tin phụ trợ và nút của mức chữ lớn đều có thay đổi rõ ràng có thể nhìn thấy.
+- Mục cài đặt "Kích thước đọc" đổi tên thành "Cỡ chữ giao diện", và giải thích rõ ràng "Cân bằng" chỉ kiểm soát tần suất hiển thị cốt truyện, không liên quan đến phông chữ.
+- Khi chỉnh sửa nội dung chính AI mới nhất đã được suy diễn, trước tiên giữ lại trạng thái thế giới gốc, và hiển thị lời nhắc lựa chọn kèm biểu tượng cảm xúc; có thể suy diễn lại theo nội dung chính sau khi sửa đổi, cũng có thể giữ lại suy diễn gốc khi chỉ sửa lỗi chính tả.
 
-## 0.7.1 阅读与观测修补
+## 0.7.1 Sửa chữa đọc và quan sát
 
-- 切换模块时从顶部开始阅读，修复人物卡被状态栏裁切的错觉。
-- 放大回声与记忆卡片文字，字号跟随阅读大小设置明显变化。
-- 收拢记忆操作区并隐藏内部检索标签，标签仍可用于搜索。
-- “看看 TA 在做什么”只排除本轮实际在场者；单纯被提及、回忆或谈论不再误判为出场。
-- 人物观测会按正文分支与世界状态缓存，关闭再打开不会重复请求。
-- 人物观测改用可撤回的“自然显露”开关：关闭时只观看，开启后仅在后续语境合适时作为正文候选，不承诺紧接下一轮出现。
-- 状态提示按成功、提醒、警告和失败显示克制的颜文字标记，更容易一眼辨认结果。
-- 关闭记忆系统会阻止正在途中的推演或历史整理继续写入记忆。
+- Khi chuyển đổi mô-đun sẽ bắt đầu đọc từ trên cùng, sửa ảo giác thẻ nhân vật bị thanh trạng thái cắt xén.
+- Phóng to chữ của thẻ tiếng vang và ký ức, cỡ chữ thay đổi rõ rệt theo cài đặt kích thước đọc.
+- Thu gọn khu vực thao tác ký ức và ẩn thẻ tìm kiếm bên trong, thẻ vẫn có thể dùng để tìm kiếm.
+- "Xem TA đang làm gì" chỉ loại trừ những người thực sự có mặt trong vòng này; việc đơn thuần được nhắc đến, nhớ lại hoặc bàn luận không còn bị đánh giá sai là xuất hiện.
+- Quan sát nhân vật sẽ được lưu vào bộ nhớ cache theo nhánh nội dung chính và trạng thái thế giới, đóng rồi mở lại sẽ không yêu cầu lặp lại.
+- Quan sát nhân vật đổi sang sử dụng công tắc "Hiển thị tự nhiên" có thể rút lại: khi tắt chỉ xem, sau khi bật chỉ làm ứng cử viên nội dung chính khi ngữ cảnh tiếp theo phù hợp, không cam kết xuất hiện ngay vòng tiếp theo.
+- Lời nhắc trạng thái hiển thị các dấu hiệu biểu tượng cảm xúc kiềm chế theo thành công, nhắc nhở, cảnh báo và thất bại, dễ dàng nhận ra kết quả trong nháy mắt hơn.
+- Tắt hệ thống ký ức sẽ ngăn chặn suy diễn hoặc sắp xếp lịch sử đang diễn ra tiếp tục ghi vào ký ức.
 
-## 0.7.0 人物约束与交互收尾
+## 0.7.0 Ràng buộc nhân vật và hoàn thiện tương tác
 
-- “手动”现在是唯一的自动推演关闭方式，不再同时出现含义重复的“暂停自动推演”；正在运行的任务会把推演按钮变成“停止推演”。
-- 世界推演支持真正中途取消：自定义接口会中断网络请求，跟随酒馆时会请求停止安静生成；取消后时间、人物、事件和记忆全部保持推演前状态，正文仍标为待同步。
-- 人物卡新增人格锚点、说话习惯与行为边界。世界推演和“看看 TA”都会读取这些约束，普通模型结果不能擅自改写用户维护的人设。
-- 新增世界书人物桥接：手动选择一本世界书、读取条目预览，再勾选确实代表人物的条目导入；不会每轮扫描，也不会自动让所有世界书 NPC 同时活动。
-- 人物编辑器重做为独立人物卡编辑台；编辑按钮、推演按钮与停止状态重新设计，悬浮球运行效果改为更慢、更克制的轨道漂移。
-- 阅读大小三档重新拉开差距，大字档同步放大正文、设置说明、表单与人物详情，并增加行距和卡片留白。
-- 手机人物详情继续按动态视口停靠，长人格约束强制换行，关闭按钮固定在抽屉内部；桌面设置页、人物编辑器与窄屏详情已完成渲染复查。
-- 新增 220 轮长篇压力测试；人物、事件、长期事实、伏笔和阶段摘要均会按容量收束，相关人物与线索仍能进入后续推演提示。
-- DeepSeek V4/DS4 Flash 的结构化任务会请求关闭思考，避免思考耗尽额度后只返回空正文；兼容更多 OpenAI/Responses 风格正文结构。
-- 历史记忆遇到空正文或截断 JSON 时会先切换极简格式，再自动把批次从 6 轮缩小到 3 轮、1 轮重试；已成功的批次不会回滚。
+- "Thủ công" hiện là cách duy nhất để tắt tự động suy diễn, không còn xuất hiện "Tạm dừng tự động suy diễn" có ý nghĩa lặp lại; nhiệm vụ đang chạy sẽ biến nút suy diễn thành "Dừng suy diễn".
+- Suy diễn thế giới hỗ trợ thực sự hủy giữa chừng: giao diện tùy chỉnh sẽ ngắt yêu cầu mạng, khi theo Tavern sẽ yêu cầu dừng tạo yên tĩnh; sau khi hủy, thời gian, nhân vật, sự kiện và ký ức đều giữ nguyên trạng thái trước suy diễn, nội dung chính vẫn được đánh dấu là chờ đồng bộ.
+- Thẻ nhân vật thêm điểm neo nhân cách, thói quen nói chuyện và ranh giới hành vi. Suy diễn thế giới và "Xem TA" đều sẽ đọc các ràng buộc này, kết quả mô hình thông thường không thể tự ý viết lại thiết lập nhân vật do người dùng bảo trì.
+- Thêm cầu nối nhân vật Worldbook: chọn thủ công một cuốn Worldbook, đọc bản xem trước mục, sau đó đánh dấu các mục thực sự đại diện cho nhân vật để nhập; sẽ không quét mỗi vòng, cũng sẽ không tự động để tất cả NPC Worldbook hoạt động đồng thời.
+- Trình chỉnh sửa nhân vật được làm lại thành bàn chỉnh sửa thẻ nhân vật độc lập; nút chỉnh sửa, nút suy diễn và trạng thái dừng được thiết kế lại, hiệu ứng chạy của quả cầu lơ lửng được đổi thành trôi dạt quỹ đạo chậm hơn, kiềm chế hơn.
+- Ba mức kích thước đọc được kéo giãn khoảng cách lại, mức chữ lớn đồng bộ phóng to nội dung chính, giải thích cài đặt, biểu mẫu và chi tiết nhân vật, đồng thời tăng khoảng cách dòng và khoảng trắng của thẻ.
+- Chi tiết nhân vật trên điện thoại di động tiếp tục neo theo khung nhìn động, ràng buộc nhân cách dài buộc xuống dòng, nút đóng cố định bên trong ngăn kéo; trang cài đặt trên máy tính để bàn, trình chỉnh sửa nhân vật và chi tiết màn hình hẹp đã hoàn thành kiểm tra lại kết xuất.
+- Thêm kiểm tra áp lực tệp dài 220 vòng; nhân vật, sự kiện, sự thật dài hạn, phục bút và tóm tắt giai đoạn đều sẽ thu hẹp theo dung lượng, nhân vật và manh mối liên quan vẫn có thể đi vào lời nhắc suy diễn tiếp theo.
+- Nhiệm vụ có cấu trúc của DeepSeek V4/DS4 Flash sẽ yêu cầu tắt suy nghĩ, tránh việc sau khi suy nghĩ cạn kiệt hạn mức chỉ trả về nội dung chính trống; tương thích với nhiều cấu trúc nội dung chính phong cách OpenAI/Responses hơn.
+- Ký ức lịch sử khi gặp nội dung chính trống hoặc JSON bị cắt bớt sẽ trước tiên chuyển sang định dạng tối giản, sau đó tự động thu nhỏ lô từ 6 vòng xuống 3 vòng, 1 vòng để thử lại; lô đã thành công sẽ không bị khôi phục.
 
-## 0.6.0 模块分离与可控后台
+## 0.6.0 Tách biệt mô-đun và chạy ngầm có thể kiểm soát
 
-- 世界推演与长期记忆分别拥有启用开关和正文注入开关；关闭注入只影响主对话，后台生成、保存和查看仍照常工作，停用模块也不会删除已有数据。
-- 新增“暂停自动推演”。暂停期间继续累计有效正文，手动推演仍可使用；已经发出的自动请求即使返回，也不会提交时间、NPC 或事件变化。
-- 空回复、失败回复、占位回复不再建立快照、推进世界或进入记忆计数；编辑最新 AI 正文后改为等待用户确认并手动同步，不再自动重推。
-- 记忆页支持手动新增、编辑、删除、锁定和重要标记；锁定记忆不会被后续自动整理覆盖、失效或删除。
-- “看看 TA 在做什么”按“人物 + 正文分支 + 世界状态”缓存；默认是不会推进世界、写记忆或进入正文的纯观看结果，只有用户点“安排到下一轮显露”后才成为正文候选。
-- 每条可见事件增加“下一轮显露”按钮。用户点名的事件会优先进入下一轮正文提示，取消后不再注入；真正写进正文前仍不会误记为已承接。
-- 人物页支持手动添加和编辑后台 NPC，可设置当前位置、行动、短期意图、长期目标、知识边界、重要程度、是否参与镜头外推演及核心设定锁定。
-- 兼容接口可在填写地址与 Key 后自动拉取模型列表，同时保留模型名手动输入；转发和浏览器直连两种方式均可使用。
-- 每次成功推演后可展开查看透明摘要：时间、人物、事件和记忆变化，以及估算上下文、模型输出、正文注入长度和请求次数。
-- 兼容接口报告 `MAX_TOKENS` 时不再直接丢弃非空结果：完整 JSON 可以正常提交，真实截断才进入精简重试；支持自动或自定义最高 16000 输出 token。
-- 正文注入超过安全长度时按完整信息行压缩并保留闭合边界，不再从一句话中间硬截断；透明摘要会显示是否发生过压缩。
-- 手机人物详情和所有底部表单统一使用动态视觉视口与安全区，彻底清除外部主题残留的方向偏移；长内容在弹层内部滚动，不再被推到屏幕顶端之外。
-
-## 0.5.9 人物详情与事件表单热修
-
-- 人物详情抽屉不再使用会被部分酒馆主题识别为侧栏的 `aside` 元素，修复其被压成顶部或底部细条的问题。
-- 为手机人物详情增加独立的尺寸、滚动、可见性与裁剪保护，确保人物状态、目标、心声及知识边界完整显示。
-- 同步加固“放入一条暗流”事件表单，避免它被通用 `form`、弹层或对话框样式压缩，提前消除同类问题。
-- 代码中已不再保留任何 `aside` 弹层；设置、人物详情和事件表单均使用各自隔离结构。
-
-## 0.5.8 手机入口避让酒馆底栏
-
-- 手机悬浮球的首次位置从视口右下角改到右侧中段，避开酒馆固定输入栏、发送键、浏览器底栏及常见扩展悬浮按钮。
-- 升级时会一次性清除旧版保存的悬浮球坐标，避免沿用已经落在手机固定控件下面的位置。
-- 第一次拖动后才启用自定义位置；拖动开始时锁定当前视觉坐标，不会从中段突然跳回右下角。
-- 自定义位置仍会保存、左右吸附并在横竖屏变化后自动限制到可视区域内。
-
-## 0.5.7 手机悬浮球常驻修复
-
-- 手机悬浮球不再因主面板或设置页打开而隐藏，并提升到插件内部最高显示层级。
-- 面板打开时保持约 31px、94% 不透明，增加主题色描边和阴影，避免在浅色背景上看起来像没有出现。
-- 悬浮球现在可以在主面板与设置页打开期间继续拖动；拖动后不会误触关闭，并会吸附到屏幕左右边缘。
-- 面板关闭时保持 34—38px 的完整入口，横竖屏切换后仍会限制在当前可视区域内。
-
-## 0.5.6 手机设置页与悬浮球热修
-
-- 撤回手机端运行时搬动设置面板的做法；设置页从渲染开始就是主窗口之外的独立层，避免换主题、重渲染或横竖屏切换后结构漂移。
-- 设置容器不再使用容易被酒馆主题识别为侧栏的 `aside` 元素，修复设置页被压成约 34px 高的顶部白条、正文仍从下方露出的问题。
-- 设置层按 Visual Viewport、系统安全区和当前可用尺寸铺开，在 320px 窄屏与触屏横屏下仍能完整滚动，不产生横向页面溢出。
-- 手机悬浮球缩小到 34—38px：面板关闭时强制保持可见、可点，面板打开时缩小并抬到底部导航上方，打开设置时自动隐藏以免挡住选项。
-
-## 0.5.5 手机端适配加固
-
-- 手机设置页改为独立顶层面板，不再嵌在带动画与裁剪的主窗口中，修复部分主题或 WebView 下设置内容只剩顶部一条、主页面从下方穿出的情况。
-- 按动态视口与系统安全区适配顶部状态栏、刘海、横竖屏和左右边缘；顶部标题、日历与操作按钮会随可用宽度弹性收缩。
-- 提高主浮层的隔离层级，避免酒馆主题或其他扩展的悬浮控件盖住世界背面；移动端滚动条改为细窄的插件配色。
-- 手机悬浮球按当前视口短边自动缩放到 36—42px，拖动和旋转保留，屏幕旋转或视口变化后仍会被限制在可见区域内。
-
-## 0.5.4 兼容接口 JSON 稳定性
-
-- 修复部分 Gemini/OpenAI 兼容接口返回代码围栏、尾逗号或字符串裸换行时，明明有结果却被判定为“不可读取 JSON”的问题。
-- 接口明确报告 `length` / `MAX_TOKENS` 等输出上限时，会给出准确原因；自动重试会逐次提高输出额度、降低随机性，并要求模型返回更精简且完整闭合的 JSON。
-- 真正被截断、没有闭合的对象仍会拒绝写入，不会把残缺结果应用到世界时间、人物或记忆状态。
-
-## 0.5.3 心声卡片精简
-
-- 人物心声不再重复显示单独的世界时间，减少卡片里的视觉噪声；列表、人物卡片和详情抽屉保持一致。
-- 心声产生时刻仍保存在分支状态中，可继续用于重抽快照和以后可能的历史视图，不会丢失已有数据。
-
-## 0.5.2 模块切换舒适度
-
-- 修复切换人物、暗流、回声、记忆等模块时，整个面板重复播放首次打开动画而产生的明暗闪烁。
-- 页面内容切换不再从透明状态淡入，只保留 2px 的短距离位移提示，连续切换时亮度保持稳定。
-- 新增回归检查，确保模块重绘不会再次触发面板入场动画，内容区、面板和遮罩在动画中间帧均保持完全不透明。
-
-## 0.5.1 体验收尾
-
-- 记忆页默认只展示有效事实与待回收伏笔，每类先渲染 12 条；支持按事实、伏笔、经历、全部筛选，支持关键词搜索和渐进加载，长篇聊天不会一次生成数百张卡片。
-- 后台反馈会准确区分世界推演、人物即时观测、独立接口测试和记忆整理；设置页显示尚未整理的 AI 正文数量与自动阈值。
-- 观测设置折叠为连接、界面与显露、自动推演、长期记忆、日历与数据五组，保留用户已经展开的分组与滚动位置。
-- 面板和页面切换增加短促动效，按钮增加按压反馈；支持点击面板外空白处关闭，同时保留 Esc 分层关闭和系统“减少动画”设置。
-- 手动校准/推进时间、新建暗流或导入状态后提供 9 秒撤销入口；正文分支改变后自动取消，避免把旧分支状态撤回当前分支。
-- 手机底部导航修正为六等分，顶部保留紧凑月历。390px 宽度实测六个入口保持单行，页面没有横向溢出。
-
-## 0.5.0 世界日历与分层记忆
-
-- 顶部时间改为真正的世界日历，可自定义历法名称、年、月、日、时、分；日期跟随唯一权威时钟自动跨日、跨月和跨年。
-- “伏笔”升级为“记忆”，分成持续摘要、长期事实、伏笔簿和阶段经历四层。伏笔负责未来呼应，阶段摘要负责保存一段已经发生的经历，两者不再混作一份小总结。
-- 长期事实使用稳定键和来源楼层。新正文改变旧事实时保留旧版本并标记“已被替代”；真假未定时并列标为“有争议”；明确否定时标为“已失效”。
-- 相关记忆会按人物、地点、标签、文字重合、重要度和新旧程度召回。高重要度信息衰减更慢，普通旧细节会逐渐让位给更相关的新记忆。
-- 正文状态注入只回送与当前场景相关、且角色已经有资格知道的长期事实与线索；隐藏伏笔、幕后摘要和角色独白继续留在幕后。
-- 自动记忆整理可设为手动、每 5/10/20 条 AI 正文或自定义 N 条。每达到一次阈值，就整理新增正文、生成阶段摘要、改写持续摘要并更新事实与伏笔。
-- 悬浮球在世界推演、人物即时观测、连接测试或记忆整理期间会旋转，结束后自动停下。
-
-## 0.8.2-dev 预设桥接试验版
-
-- 世界推演与历史建档的后台请求不再只发送单独的 `user` 消息；任务身份会提升为真正的 `system` 消息。
-- 新增“桥接当前预设 system”。插件会尝试读取当前 Chat Completion 预设中已启用的 system 提示，同时跳过角色资料、世界书、聊天历史等结构槽位，避免把整套前台上下文复制到后台。
-- 独立接口仍使用自己的 URL、Key 与模型，但可以复用上述共享 system 提示；不会硬编码任何特定预设。
-- 新增可选“世界背面附加 system”，用于个别模型/预设兼容；默认留空。
-- 设置卡会在首次后台请求后显示最近实际桥接到的 system 提示条数。若当前 SillyTavern 版本没有暴露可读取的 Prompt Manager 数据，自动桥接会安全降级为仅使用世界背面自己的 system 与手动附加 system。
-
-## 0.4.0 长篇记忆与独立接口
-
-- 世界推演可以选择“跟随酒馆”或真正独立的 OpenAI 兼容接口。
-- 独立接口单独保存地址、API Key、模型名与连接方式，不继承主聊天模型、预设和上下文。
-- 支持分批扫描当前重抽分支，建立阶段摘要与带来源楼层、swipe 的伏笔簿；中途失败会从已保存批次继续。
-- 每次世界推演会根据当前人物、地点和物品回捞相关旧伏笔，而不是只依赖最近五轮。
-- 人物详情增加“看看 TA 在做什么”；只对本轮没有进入镜头的 NPC 提供，生成结果不写入主聊天、不推进世界时间。
-- 人物心声卡片移除“第一视角”说明字样；0.5.3 进一步隐藏重复的世界时间。
-- 自动推演支持手动、轻量、均衡、深入四种方式，以及每 1/2/3/5 轮或自定义 N 轮触发；累计正文会按顺序合并处理。
-- 推演失败可设置自动重试 0—5 次。重试始终复用同一份推演前快照，合法结果返回前不会推进时间。
-- 后台 NPC 可设置每次最多主动推进 0—12 人；默认 4 人，其余保持休眠，群体变化优先合并为势力或地点事件。
-- 可追加自定义推演侧重点，同时保留时间证据、知识边界和玩家意志等硬规则。
-
-## 0.3.0 人物与时间更新
-
-- “后台结算”改称“世界推演”，界面表达更自然。
-- 玩家角色的内心描写默认关闭，可在设置中单独开启。
-- 人物新增稳定的长期目标；只有目标真正建立、完成、放弃或转向时才更新。
-- 正文读取范围可选最近 1、3 或 5 轮；这是理解因果的上下文。0.4 还可单独设置累计多少轮新正文后触发。
-- 时间推进默认使用世界钟模式：首次从故事上下文建立时间锚点，之后按本轮实际事件耗时连续推进；仍可手动切回严格、克制或开放模式。
-- 增加紧凑、舒适、大字三档阅读大小，并修复人物轨迹长文字撑出卡片的问题。
-
-## 0.2.0 使用体验更新
-
-- 悬浮球现在可以拖动，并会自动吸附到屏幕左右边缘、记住位置。
-- 世界推演会明确显示排队、成功或失败，不再只有“点了好像没反应”。
-- 观测设置会显示当前继承的酒馆 API、模型和连接档案；插件仍不单独保存 API Key。
-- 结算改用独立的最新一轮正文上下文，减少无关聊天与世界书造成的干扰。
-- 界面刷新会保留当前滚动位置、表单草稿和输入焦点。
-- 第一视角独白增加端到端自动检查：生成结果、分支快照、幕后显示和正文隔离均被覆盖。
-
-## 这版解决了什么
-
-- **主世界时间是唯一进度轴。** AI 回复只触发结算，本身不增加一分钟。
-- **重抽从同一个时间起点重新出发。** 每条 AI 回复及其每个 swipe 都有独立的推演前、推演后快照。
-- **预计 12 小时就是主世界里的 12 小时。** 时钟没走，进度就不会因为多聊几轮而变成 100%。
-- **事件到时会离开“进行中”。** 它会进入待确认或结果状态，不长期卡在 99%/100%。
-- **后台发生不等于正文已知。** 结果只有真的写进正文、被角色感知或留下痕迹后，才标记为“已由正文承接”。
-- **保留角色第一视角独白。** 独白只在“幕后视角”显示，不注入正文、不变成主角知识，也不冒充长期记忆。
-- **日间、夜间、自动主题。** 自动主题跟随主世界时钟，而不是电脑系统时间。
-
-## 安装
-
-### 从 GitHub 安装（推荐）
-
-1. 打开 SillyTavern 的扩展管理页面，选择“安装扩展”。
-2. 粘贴仓库地址：
+- Suy diễn thế giới và ký ức dài hạn lần lượt có công tắc bật và công tắc chèn nội dung chính; tắt chèn chỉ ảnh hưởng đến cuộc trò chuyện chính, việc tạo, lưu và xem chạy ngầm vẫn hoạt động bình thường, vô hiệu hóa mô-đun cũng sẽ không xóa dữ liệu hiện có.
+- Thêm "Tạm dừng tự động suy diễn". Trong thời gian tạm dừng tiếp tục tích lũy nội dung chính hợp lệ, suy diễn thủ công vẫn có thể sử dụng; yêu cầu tự động đã gửi đi ngay cả khi trả về, cũng sẽ không gửi thay đổi thời gian, NPC hoặc sự kiện.
+- Phản hồi trống, phản hồi thất bại, phản hồi giữ chỗ không còn tạo bản ghi nhanh, tiến hành thế giới hoặc đi vào đếm ký ức; sau khi chỉnh sửa nội dung chính AI mới nhất được đổi thành chờ người dùng xác nhận và đồng bộ thủ công, không còn tự động suy diễn lại.
+- Trang ký ức hỗ trợ thêm mới, chỉnh sửa, xóa, khóa và đánh dấu quan trọng thủ công; ký ức bị khóa sẽ không bị sắp xếp tự động tiếp theo ghi đè, vô hiệu hóa hoặc xóa.
+- "Xem TA đang làm gì" được lưu vào bộ nhớ cache theo "Nhân vật + Nhánh nội dung chính + Trạng thái thế giới"; mặc định là kết quả thuần túy xem không tiến hành thế giới, ghi ký ức hoặc đi vào nội dung chính, chỉ sau khi người dùng nhấp vào "Sắp xếp hiển thị vào vòng tiếp theo" mới trở thành ứng cử viên nội dung chính.
+- Mỗi sự kiện có thể nhìn thấy thêm nút "Hiển thị vòng tiếp theo". Sự kiện được người dùng chỉ định sẽ ưu tiên đi vào lời nhắc nội dung chính vòng tiếp theo, sau khi hủy sẽ không chèn nữa; trước khi thực sự viết vào nội dung chính vẫn sẽ không bị ghi nhầm là đã tiếp nối.
+- Trang nhân vật hỗ trợ thêm và chỉnh sửa thủ công NPC chạy ngầm, có thể thiết lập vị trí hiện tại, hành động, ý định ngắn hạn, mục tiêu dài hạn, ranh giới kiến thức, mức độ quan trọng, có tham gia suy diễn ngoài ống kính hay không và khóa thiết lập cốt lõi.
+- Giao diện tương thích có thể tự động lấy danh sách mô hình sau khi điền địa chỉ và Key, đồng thời giữ lại nhập thủ công tên mô hình; cả hai phương thức chuyển tiếp và kết nối trực tiếp qua trình duyệt đều có thể sử dụng.
+- Sau mỗi lần suy diễn thành công có thể mở rộng xem tóm tắt minh bạch: thay đổi thời gian, nhân vật, sự kiện và ký ức, cũng như ước tính ngữ cảnh, đầu ra mô hình, độ dài chèn nội dung chính và số lượng yêu cầu.
+- Giao diện tương thích khi báo cáo `MAX_TOKENS` không còn trực tiếp loại bỏ kết quả không trống: JSON hoàn chỉnh có thể được gửi bình thường, cắt bớt thực sự mới đi vào thử lại tinh gọn; hỗ trợ tự động hoặc tùy chỉnh tối đa 16000 token đầu ra.
+- Chèn nội dung chính khi vượt quá độ dài an toàn sẽ nén theo dòng thông tin hoàn chỉnh và giữ lại ranh giới đóng, không còn cắt bớt cứng từ giữa một câu; tóm tắt minh bạch sẽ hiển thị xem có xảy ra nén hay không.
+- Chi tiết nhân vật trên điện thoại di động và tất cả các biểu mẫu dưới cùng thống nhất sử dụng khung nhìn trực quan động và khu vực an toàn, xóa hoàn toàn độ lệch hướng do chủ đề bên ngoài để lại; nội dung dài cuộn bên trong lớp bật lên, không còn bị đẩy ra ngoài đỉnh màn hình.
+
+## 0.5.9 Hotfix chi tiết nhân vật và biểu mẫu sự kiện
+
+- Ngăn kéo chi tiết nhân vật không còn sử dụng phần tử `aside` dễ bị một số chủ đề Tavern nhận dạng là thanh bên, sửa lỗi nó bị ép thành dải mỏng ở trên cùng hoặc dưới cùng.
+- Thêm bảo vệ kích thước, cuộn, khả năng hiển thị và cắt xén độc lập cho chi tiết nhân vật trên điện thoại di động, đảm bảo trạng thái nhân vật, mục tiêu, tiếng lòng và ranh giới kiến thức hiển thị đầy đủ.
+- Đồng bộ gia cố biểu mẫu sự kiện "Đưa vào một dòng chảy ngầm", tránh việc nó bị nén bởi `form` chung, lớp bật lên hoặc kiểu hộp thoại, loại bỏ sớm các vấn đề tương tự.
+- Trong mã không còn giữ lại bất kỳ lớp bật lên `aside` nào; cài đặt, chi tiết nhân vật và biểu mẫu sự kiện đều sử dụng cấu trúc cách ly riêng.
+
+## 0.5.8 Lối vào di động tránh thanh dưới cùng của Tavern
+
+- Vị trí lần đầu của quả cầu lơ lửng trên điện thoại di động được đổi từ góc dưới bên phải của khung nhìn sang đoạn giữa bên phải, tránh thanh nhập cố định, phím gửi, thanh dưới cùng của trình duyệt và các nút lơ lửng tiện ích mở rộng phổ biến của Tavern.
+- Khi nâng cấp sẽ xóa một lần tọa độ quả cầu lơ lửng được lưu bởi phiên bản cũ, tránh việc tiếp tục sử dụng vị trí đã rơi xuống dưới các điều khiển cố định của điện thoại di động.
+- Sau lần kéo đầu tiên mới bật vị trí tùy chỉnh; khi bắt đầu kéo sẽ khóa tọa độ trực quan hiện tại, sẽ không đột nhiên nhảy về góc dưới bên phải từ đoạn giữa.
+- Vị trí tùy chỉnh vẫn sẽ được lưu, hút sang trái phải và tự động giới hạn trong khu vực có thể nhìn thấy sau khi thay đổi màn hình ngang dọc.
+
+## 0.5.7 Sửa lỗi thường trú quả cầu lơ lửng trên điện thoại di động
+
+- Quả cầu lơ lửng trên điện thoại di động không còn bị ẩn do mở bảng điều khiển chính hoặc trang cài đặt, và được nâng lên cấp độ hiển thị cao nhất bên trong plugin.
+- Khi mở bảng điều khiển giữ khoảng 31px, độ mờ 94%, thêm viền màu chủ đề và bóng đổ, tránh việc trông như không xuất hiện trên nền sáng.
+- Quả cầu lơ lửng hiện có thể tiếp tục kéo trong khi mở bảng điều khiển chính và trang cài đặt; sau khi kéo sẽ không chạm nhầm đóng, và sẽ hút vào mép trái phải của màn hình.
+- Khi đóng bảng điều khiển giữ lối vào hoàn chỉnh 34—38px, sau khi chuyển đổi màn hình ngang dọc vẫn sẽ bị giới hạn trong khu vực có thể nhìn thấy hiện tại.
+
+## 0.5.6 Hotfix trang cài đặt và quả cầu lơ lửng trên điện thoại di động
+
+- Rút lại cách làm di chuyển bảng cài đặt khi chạy trên thiết bị di động; trang cài đặt từ khi kết xuất đã là một lớp độc lập ngoài cửa sổ chính, tránh việc trôi dạt cấu trúc sau khi đổi chủ đề, kết xuất lại hoặc chuyển đổi màn hình ngang dọc.
+- Vùng chứa cài đặt không còn sử dụng phần tử `aside` dễ bị chủ đề Tavern nhận dạng là thanh bên, sửa lỗi trang cài đặt bị ép thành dải trắng trên cùng cao khoảng 34px, nội dung chính vẫn lộ ra từ bên dưới.
+- Lớp cài đặt trải ra theo Visual Viewport, khu vực an toàn của hệ thống và kích thước khả dụng hiện tại, vẫn có thể cuộn đầy đủ dưới màn hình hẹp 320px và màn hình ngang cảm ứng, không tạo ra tràn trang theo chiều ngang.
+- Quả cầu lơ lửng trên điện thoại di động thu nhỏ xuống 34—38px: khi đóng bảng điều khiển buộc giữ hiển thị, có thể nhấp, khi mở bảng điều khiển thu nhỏ và nâng lên trên điều hướng dưới cùng, khi mở cài đặt tự động ẩn để tránh che khuất các tùy chọn.
+
+## 0.5.5 Gia cố thích ứng thiết bị di động
+
+- Trang cài đặt trên điện thoại di động được đổi thành bảng điều khiển lớp trên cùng độc lập, không còn nhúng trong cửa sổ chính có hoạt ảnh và cắt xén, sửa lỗi dưới một số chủ đề hoặc WebView nội dung cài đặt chỉ còn một dải trên cùng, trang chính xuyên qua từ bên dưới.
+- Thích ứng thanh trạng thái trên cùng, tai thỏ, màn hình ngang dọc và mép trái phải theo khung nhìn động và khu vực an toàn của hệ thống; tiêu đề trên cùng, lịch và nút thao tác sẽ co giãn đàn hồi theo chiều rộng khả dụng.
+- Nâng cao cấp độ cách ly của lớp nổi chính, tránh việc chủ đề Tavern hoặc các điều khiển lơ lửng của tiện ích mở rộng khác che khuất Mặt trái thế giới; thanh cuộn trên thiết bị di động được đổi thành phối màu plugin hẹp và mỏng.
+- Quả cầu lơ lửng trên điện thoại di động tự động thu phóng thành 36—42px theo cạnh ngắn của khung nhìn hiện tại, giữ lại kéo và xoay, sau khi xoay màn hình hoặc thay đổi khung nhìn vẫn sẽ bị giới hạn trong khu vực có thể nhìn thấy.
+
+## 0.5.4 Độ ổn định JSON của giao diện tương thích
+
+- Sửa lỗi khi một số giao diện tương thích Gemini/OpenAI trả về hàng rào mã, dấu phẩy đuôi hoặc chuỗi xuống dòng trần, rõ ràng có kết quả nhưng bị đánh giá là "JSON không thể đọc".
+- Khi giao diện báo cáo rõ ràng giới hạn đầu ra như `length` / `MAX_TOKENS`, sẽ đưa ra nguyên nhân chính xác; tự động thử lại sẽ tăng dần hạn mức đầu ra, giảm tính ngẫu nhiên, và yêu cầu mô hình trả về JSON tinh gọn hơn và đóng hoàn chỉnh.
+- Đối tượng thực sự bị cắt bớt, không đóng vẫn sẽ từ chối ghi, sẽ không áp dụng kết quả không hoàn chỉnh vào thời gian thế giới, nhân vật hoặc trạng thái ký ức.
+
+## 0.5.3 Tinh giản thẻ tiếng lòng
+
+- Tiếng lòng nhân vật không còn lặp lại hiển thị thời gian thế giới riêng biệt, giảm tiếng ồn hình ảnh trong thẻ; danh sách, thẻ nhân vật và ngăn kéo chi tiết giữ sự nhất quán.
+- Thời điểm tạo ra tiếng lòng vẫn được lưu trong trạng thái nhánh, có thể tiếp tục sử dụng cho bản ghi nhanh tạo lại và chế độ xem lịch sử có thể có sau này, sẽ không làm mất dữ liệu hiện có.
+
+## 0.5.2 Sự thoải mái khi chuyển đổi mô-đun
+
+- Sửa lỗi nhấp nháy sáng tối do toàn bộ bảng điều khiển lặp lại phát hoạt ảnh mở lần đầu khi chuyển đổi các mô-đun như nhân vật, dòng chảy ngầm, tiếng vang, ký ức, v.v.
+- Chuyển đổi nội dung trang không còn mờ dần từ trạng thái trong suốt, chỉ giữ lại lời nhắc dịch chuyển khoảng cách ngắn 2px, độ sáng giữ ổn định khi chuyển đổi liên tục.
+- Thêm kiểm tra hồi quy, đảm bảo việc vẽ lại mô-đun sẽ không kích hoạt lại hoạt ảnh vào sân của bảng điều khiển, khu vực nội dung, bảng điều khiển và mặt nạ đều giữ hoàn toàn không trong suốt ở khung hình giữa của hoạt ảnh.
+
+## 0.5.1 Hoàn thiện trải nghiệm
+
+- Trang ký ức mặc định chỉ hiển thị sự thật hợp lệ và phục bút chờ thu hồi, mỗi loại kết xuất 12 mục trước; hỗ trợ lọc theo sự thật, phục bút, trải nghiệm, tất cả, hỗ trợ tìm kiếm từ khóa và tải dần, trò chuyện dài hạn sẽ không tạo ra hàng trăm thẻ cùng một lúc.
+- Phản hồi chạy ngầm sẽ phân biệt chính xác suy diễn thế giới, quan sát nhân vật tức thời, kiểm tra giao diện độc lập và sắp xếp ký ức; trang cài đặt hiển thị số lượng nội dung chính AI chưa được sắp xếp và ngưỡng tự động.
+- Cài đặt quan sát được thu gọn thành năm nhóm: kết nối, giao diện và hiển thị, tự động suy diễn, ký ức dài hạn, lịch và dữ liệu, giữ lại nhóm và vị trí cuộn mà người dùng đã mở rộng.
+- Chuyển đổi bảng điều khiển và trang thêm hiệu ứng động ngắn, nút thêm phản hồi nhấn; hỗ trợ nhấp vào khoảng trống ngoài bảng điều khiển để đóng, đồng thời giữ lại đóng phân tầng Esc và cài đặt "Giảm hoạt ảnh" của hệ thống.
+- Sau khi hiệu chuẩn/tiến hành thời gian thủ công, tạo dòng chảy ngầm mới hoặc nhập trạng thái cung cấp lối vào hoàn tác 9 giây; sau khi nhánh nội dung chính thay đổi sẽ tự động hủy, tránh việc hoàn tác trạng thái nhánh cũ về nhánh hiện tại.
+- Điều hướng dưới cùng trên điện thoại di động được sửa thành chia sáu phần bằng nhau, trên cùng giữ lại lịch tháng nhỏ gọn. Chiều rộng 390px thực tế đo được sáu lối vào giữ một dòng, trang không có tràn theo chiều ngang.
+
+## 0.5.0 Lịch thế giới và ký ức phân tầng
+
+- Thời gian trên cùng được đổi thành lịch thế giới thực sự, có thể tùy chỉnh tên lịch pháp, năm, tháng, ngày, giờ, phút; ngày tháng tự động qua ngày, qua tháng và qua năm theo đồng hồ chuẩn duy nhất.
+- "Phục bút" được nâng cấp thành "Ký ức", chia thành bốn tầng: tóm tắt liên tục, sự thật dài hạn, sổ phục bút và trải nghiệm giai đoạn. Phục bút chịu trách nhiệm hô ứng tương lai, tóm tắt giai đoạn chịu trách nhiệm lưu một đoạn trải nghiệm đã xảy ra, cả hai không còn lẫn lộn thành một bản tóm tắt nhỏ.
+- Sự thật dài hạn sử dụng khóa ổn định và tầng nguồn. Khi nội dung chính mới thay đổi sự thật cũ sẽ giữ lại phiên bản cũ và đánh dấu "Đã bị thay thế"; khi thật giả chưa định sẽ đánh dấu song song là "Có tranh cãi"; khi phủ định rõ ràng sẽ đánh dấu là "Đã vô hiệu".
+- Ký ức liên quan sẽ được truy xuất theo nhân vật, địa điểm, thẻ, trùng lặp văn bản, độ quan trọng và mức độ mới cũ. Thông tin có độ quan trọng cao suy giảm chậm hơn, chi tiết cũ thông thường sẽ dần nhường chỗ cho ký ức mới liên quan hơn.
+- Chèn trạng thái nội dung chính chỉ gửi lại sự thật dài hạn và manh mối liên quan đến bối cảnh hiện tại, và nhân vật đã có tư cách biết; phục bút ẩn, tóm tắt hậu trường và độc thoại nhân vật tiếp tục ở lại hậu trường.
+- Sắp xếp ký ức tự động có thể được đặt thành thủ công, mỗi 5/10/20 nội dung chính AI hoặc tùy chỉnh N mục. Mỗi khi đạt đến ngưỡng, sẽ sắp xếp nội dung chính mới thêm, tạo tóm tắt giai đoạn, viết lại tóm tắt liên tục và cập nhật sự thật cùng phục bút.
+- Quả cầu lơ lửng sẽ xoay trong quá trình suy diễn thế giới, quan sát nhân vật tức thời, kiểm tra kết nối hoặc sắp xếp ký ức, và tự động dừng lại sau khi kết thúc.
+
+## 0.8.2-dev Phiên bản thử nghiệm cầu nối preset
+
+- Yêu cầu chạy ngầm của suy diễn thế giới và xây dựng hồ sơ lịch sử không còn chỉ gửi tin nhắn `user` riêng lẻ; thân phận nhiệm vụ sẽ được nâng cấp thành tin nhắn `system` thực sự.
+- Thêm "Cầu nối system preset hiện tại". Plugin sẽ cố gắng đọc lời nhắc system đã bật trong preset Chat Completion hiện tại, đồng thời bỏ qua các khe cắm cấu trúc như dữ liệu nhân vật, Worldbook, lịch sử trò chuyện, v.v., tránh việc sao chép toàn bộ ngữ cảnh tiền sảnh sang chạy ngầm.
+- Giao diện độc lập vẫn sử dụng URL, Key và mô hình riêng, nhưng có thể tái sử dụng lời nhắc system chia sẻ nói trên; sẽ không mã hóa cứng bất kỳ preset cụ thể nào.
+- Thêm "system bổ sung Mặt trái thế giới" tùy chọn, dùng để tương thích với một số mô hình/preset riêng lẻ; mặc định để trống.
+- Thẻ cài đặt sẽ hiển thị số lượng lời nhắc system thực tế được kết nối gần đây sau yêu cầu chạy ngầm đầu tiên. Nếu phiên bản SillyTavern hiện tại không phơi bày dữ liệu Prompt Manager có thể đọc được, cầu nối tự động sẽ hạ cấp an toàn thành chỉ sử dụng system riêng của Mặt trái thế giới và system bổ sung thủ công.
+
+## 0.4.0 Ký ức dài hạn và giao diện độc lập
+
+- Suy diễn thế giới có thể chọn "Theo preset của Tavern" hoặc giao diện tương thích OpenAI thực sự độc lập.
+- Giao diện độc lập lưu riêng địa chỉ, API Key, tên mô hình và phương thức kết nối, không kế thừa mô hình trò chuyện chính, preset và ngữ cảnh.
+- Hỗ trợ quét theo lô nhánh tạo lại hiện tại, thiết lập tóm tắt giai đoạn và sổ phục bút có tầng nguồn, swipe; thất bại giữa chừng sẽ tiếp tục từ lô đã lưu.
+- Mỗi lần suy diễn thế giới sẽ vớt lại phục bút cũ liên quan dựa trên nhân vật, địa điểm và vật phẩm hiện tại, thay vì chỉ phụ thuộc vào năm vòng gần đây.
+- Chi tiết nhân vật thêm "Xem TA đang làm gì"; chỉ cung cấp cho NPC không vào ống kính trong vòng này, kết quả tạo ra không ghi vào trò chuyện chính, không tiến hành thời gian thế giới.
+- Thẻ tiếng lòng nhân vật xóa chữ giải thích "Góc nhìn thứ nhất"; 0.5.3 tiếp tục ẩn thời gian thế giới lặp lại.
+- Tự động suy diễn hỗ trợ bốn phương thức: thủ công, gọn nhẹ, cân bằng, chuyên sâu, cũng như kích hoạt mỗi 1/2/3/5 vòng hoặc tùy chỉnh N vòng; nội dung chính tích lũy sẽ được hợp nhất xử lý theo thứ tự.
+- Suy diễn thất bại có thể thiết lập tự động thử lại 0—5 lần. Thử lại luôn tái sử dụng cùng một bản ghi nhanh trước suy diễn, trước khi trả về kết quả hợp lệ sẽ không tiến hành thời gian.
+- NPC chạy ngầm có thể thiết lập mỗi lần chủ động tiến hành tối đa 0—12 người; mặc định 4 người, phần còn lại giữ trạng thái ngủ, thay đổi nhóm ưu tiên hợp nhất thành sự kiện thế lực hoặc địa điểm.
+- Có thể thêm trọng tâm suy diễn tùy chỉnh, đồng thời giữ lại các quy tắc cứng như bằng chứng thời gian, ranh giới kiến thức và ý chí người chơi.
+
+## 0.3.0 Cập nhật nhân vật và thời gian
+
+- "Giải quyết chạy ngầm" đổi tên thành "Suy diễn thế giới", biểu đạt giao diện tự nhiên hơn.
+- Miêu tả nội tâm người chơi mặc định tắt, có thể bật riêng trong cài đặt.
+- Nhân vật thêm mục tiêu dài hạn ổn định; chỉ cập nhật khi mục tiêu thực sự được thiết lập, hoàn thành, từ bỏ hoặc chuyển hướng.
+- Phạm vi đọc nội dung chính có thể chọn 1, 3 hoặc 5 vòng gần đây; đây là ngữ cảnh để hiểu nhân quả. 0.4 còn có thể thiết lập riêng tích lũy bao nhiêu vòng nội dung chính mới thì kích hoạt.
+- Tiến hành thời gian mặc định sử dụng chế độ đồng hồ thế giới: lần đầu thiết lập điểm neo thời gian từ ngữ cảnh câu chuyện, sau đó tiến hành liên tục theo thời gian tiêu tốn thực tế của sự kiện trong vòng này; vẫn có thể chuyển thủ công về chế độ nghiêm ngặt, kiềm chế hoặc mở.
+- Thêm ba mức kích thước đọc: nhỏ gọn, thoải mái, chữ lớn, và sửa lỗi văn bản dài của quỹ đạo nhân vật làm bung thẻ.
+
+## 0.2.0 Cập nhật trải nghiệm sử dụng
+
+- Quả cầu lơ lửng hiện có thể kéo, và sẽ tự động hút vào mép trái phải của màn hình, ghi nhớ vị trí.
+- Suy diễn thế giới sẽ hiển thị rõ ràng xếp hàng, thành công hoặc thất bại, không còn chỉ có "nhấp vào hình như không có phản ứng".
+- Cài đặt quan sát sẽ hiển thị API Tavern, mô hình và hồ sơ kết nối được kế thừa hiện tại; plugin vẫn không lưu riêng API Key.
+- Giải quyết đổi sang sử dụng ngữ cảnh nội dung chính vòng mới nhất độc lập, giảm nhiễu do trò chuyện không liên quan và Worldbook gây ra.
+- Làm mới giao diện sẽ giữ lại vị trí cuộn hiện tại, bản nháp biểu mẫu và tiêu điểm nhập liệu.
+- Độc thoại góc nhìn thứ nhất thêm kiểm tra tự động đầu cuối: kết quả tạo ra, bản ghi nhanh nhánh, hiển thị hậu trường và cách ly nội dung chính đều được bao phủ.
+- Ban ngày, ban đêm, chủ đề tự động. Chủ đề tự động theo đồng hồ thế giới chính, thay vì thời gian hệ thống máy tính.
+
+## Phiên bản này giải quyết vấn đề gì
+
+- **Dòng thời gian thế giới chính là trục tiến độ duy nhất.** Phản hồi AI chỉ kích hoạt giải quyết, bản thân nó không tăng thêm một phút nào.
+- **Tạo lại xuất phát lại từ cùng một điểm bắt đầu thời gian.** Mỗi phản hồi AI và mỗi swipe của nó đều có bản ghi nhanh trước suy diễn, sau suy diễn độc lập.
+- **Dự kiến 12 giờ chính là 12 giờ trong thế giới chính.** Đồng hồ không chạy, tiến độ sẽ không vì trò chuyện thêm vài vòng mà biến thành 100%.
+- **Sự kiện đến giờ sẽ rời khỏi "Đang tiến hành".** Nó sẽ đi vào trạng thái chờ xác nhận hoặc kết quả, không kẹt lâu ở 99%/100%.
+- **Xảy ra chạy ngầm không đồng nghĩa với nội dung chính đã biết.** Kết quả chỉ khi thực sự viết vào nội dung chính, được nhân vật nhận thức hoặc để lại dấu vết, mới được đánh dấu là "Đã được tiếp nối bởi nội dung chính".
+- **Giữ lại độc thoại góc nhìn thứ nhất của nhân vật.** Độc thoại chỉ hiển thị ở "Góc nhìn hậu trường", không chèn vào nội dung chính, không biến thành kiến thức của nhân vật chính, cũng không mạo danh ký ức dài hạn.
+- **Ban ngày, ban đêm, chủ đề tự động.** Chủ đề tự động theo đồng hồ thế giới chính, thay vì thời gian hệ thống máy tính.
+
+## Cài đặt
+
+### Cài đặt từ GitHub (Khuyến nghị)
+
+1. Mở trang quản lý tiện ích mở rộng của SillyTavern, chọn "Cài đặt tiện ích mở rộng".
+2. Dán địa chỉ kho lưu trữ:
 
    ```text
    https://github.com/h675786161-prog/world-backstage
    ```
 
-3. 确认安装并重新加载 SillyTavern 页面。
-4. 在扩展设置中启用“世界背面”，或点击页面右下角的世界球。
+3. Xác nhận cài đặt và tải lại trang SillyTavern.
+4. Trong cài đặt tiện ích mở rộng bật "Mặt trái thế giới", hoặc nhấp vào quả cầu thế giới ở góc dưới bên phải trang.
 
-以后发布新版本时，可以继续通过 SillyTavern 的扩展管理页面更新。
+Sau này khi phát hành phiên bản mới, có thể tiếp tục cập nhật thông qua trang quản lý tiện ích mở rộng của SillyTavern.
 
-### 下载发布包安装
+### Tải gói phát hành để cài đặt
 
-1. 在 GitHub Releases 下载最新版 ZIP 并解压。
-2. 把里面的 `world-backstage` 文件夹放到：
+1. Tải xuống tệp ZIP phiên bản mới nhất trong GitHub Releases và giải nén.
+2. Đặt thư mục `world-backstage` bên trong vào:
 
    ```text
-   SillyTavern/data/<你的用户目录>/extensions/world-backstage/
+   SillyTavern/data/<Thư mục người dùng của bạn>/extensions/world-backstage/
    ```
 
-3. 确认最终路径里直接存在：
+3. Xác nhận trong đường dẫn cuối cùng có trực tiếp:
 
    ```text
    world-backstage/manifest.json
@@ -539,125 +540,127 @@
    world-backstage/style.css
    ```
 
-4. 重新加载 SillyTavern 页面。
-5. 在扩展设置中启用“世界背面”，或点击页面右下角的世界球。
+4. Tải lại trang SillyTavern.
+5. Trong cài đặt tiện ích mở rộng bật "Mặt trái thế giới", hoặc nhấp vào quả cầu thế giới ở góc dưới bên phải trang.
 
-> 如果解压后出现 `world-backstage/world-backstage/manifest.json`，说明多套了一层目录，需要把内层文件夹移上来。
+> Nếu sau khi giải nén xuất hiện `world-backstage/world-backstage/manifest.json`, nghĩa là có thêm một lớp thư mục, cần di chuyển thư mục bên trong lên.
 
-## 第一次使用
+## Lần đầu sử dụng
 
-1. 打开右下角的世界球。
-2. 在观测设置里选择跟随酒馆或独立接口；独立接口先保存并测试连接。
-3. 填写历法名称并校准主世界的年、月、日、时、分。
-4. 对已有长聊天点击一次“建立初始记忆档案”。
-5. 保持“正文状态注入”开启，并把自动推演方式设为“均衡”。
-6. 正常聊天。默认每次 AI 正文完成后，扩展会安静做一次结构化推演；也可改为累计 N 轮后合并推演。
-7. 在“暗流”里可以手动建立一个“预计 12 小时”的事件做测试。
+1. Mở quả cầu thế giới ở góc dưới bên phải.
+2. Trong cài đặt quan sát chọn theo Tavern hoặc giao diện độc lập; giao diện độc lập trước tiên lưu và kiểm tra kết nối.
+3. Điền tên lịch pháp và hiệu chuẩn năm, tháng, ngày, giờ, phút của thế giới chính.
+4. Đối với trò chuyện dài hiện có, nhấp một lần vào "Thiết lập hồ sơ ký ức ban đầu".
+5. Giữ "Chèn trạng thái nội dung chính" bật, và đặt phương thức tự động suy diễn thành "Cân bằng".
+6. Trò chuyện bình thường. Mặc định sau mỗi lần nội dung chính AI hoàn thành, tiện ích mở rộng sẽ lặng lẽ thực hiện một lần suy diễn có cấu trúc; cũng có thể đổi thành tích lũy N vòng rồi hợp nhất suy diễn.
+7. Trong "Dòng chảy ngầm" có thể tạo thủ công một sự kiện "Dự kiến 12 giờ" để kiểm tra.
 
-自动推演会使用观测设置中选定的连接额外请求，因此会消耗额外 token；它不会在聊天记录里生成可见消息。若想节省调用，可选择轻量模式、提高累计轮数或改为手动，之后再点击“推演最新正文”。
+Tự động suy diễn sẽ sử dụng kết nối được chọn trong cài đặt quan sát để yêu cầu thêm, do đó sẽ tiêu tốn thêm token; nó sẽ không tạo tin nhắn có thể nhìn thấy trong lịch sử trò chuyện. Nếu muốn tiết kiệm lệnh gọi, có thể chọn chế độ gọn nhẹ, tăng số vòng tích lũy hoặc đổi thành thủ công, sau đó nhấp vào "Suy diễn nội dung chính mới nhất".
 
-如需独立接口，在“观测设置 → 世界推演连接”中选择“独立接口”，填写：
+Nếu cần giao diện độc lập, trong "Cài đặt quan sát → Kết nối suy diễn thế giới" chọn "Giao diện độc lập", điền:
 
-- OpenAI 兼容接口地址（填到 `/v1` 或服务商自己的版本层）；
-- API Key；
-- 模型名称；
-- 连接方式。默认“经酒馆服务器转发”以避免浏览器跨域，但模型、Key 和上下文仍完全使用插件自己的配置。
+- Địa chỉ giao diện tương thích OpenAI (điền đến `/v1` hoặc lớp phiên bản riêng của nhà cung cấp dịch vụ);
+- API Key;
+- Tên mô hình;
+- Phương thức kết nối. Mặc định "Chuyển tiếp qua máy chủ Tavern" để tránh lỗi cross-domain của trình duyệt, nhưng mô hình, Key và ngữ cảnh vẫn hoàn toàn sử dụng cấu hình riêng của plugin.
 
-保存后点击“测试连接”。接口信息不包含在世界状态导出文件中。
+Sau khi lưu nhấp vào "Kiểm tra kết nối". Thông tin giao diện không được bao gồm trong tệp xuất trạng thái thế giới.
 
-长篇旧聊天可在同一页面点击“建立初始记忆档案”。插件按批读取当前分支，每批成功后立即保存持续摘要、长期事实、阶段经历与伏笔；以后既可以手动补扫新增正文，也可以设为每新增 N 条 AI 正文自动整理。
+Trò chuyện cũ dài hạn có thể nhấp vào "Thiết lập hồ sơ ký ức ban đầu" trên cùng một trang. Plugin đọc nhánh hiện tại theo lô, sau mỗi lô thành công sẽ lưu ngay tóm tắt liên tục, sự thật dài hạn, trải nghiệm giai đoạn và phục bút; sau này vừa có thể quét bổ sung thủ công nội dung chính mới thêm, vừa có thể thiết lập tự động sắp xếp mỗi khi thêm N nội dung chính AI.
 
-## 自动推演与 NPC 很多的世界书
+## Tự động suy diễn và Worldbook có rất nhiều NPC
 
-不需要让世界书中的每个名字都在每轮活动。世界背面采用分层处理：
+Không cần để mỗi cái tên trong Worldbook đều hoạt động mỗi vòng. Mặt trái thế giới áp dụng xử lý phân tầng:
 
-- 本批正文实际入镜的人物始终更新，不占后台 NPC 预算；
-- 镜头外只推进与当前地点、人物、事件或伏笔最相关的少量 NPC，默认最多 4 人；
-- 没被选中的人物保留原状态，不会被删除，也不会为了“世界很热闹”而凭空行动；
-- 同阵营、同组织或同地点的大批人物发生共同变化时，优先合并成一条势力/地点事件；
-- 某个名字重新被提及、地点接近、关联事件到时或伏笔命中后，个人会重新进入候选范围。
+- Nhân vật thực sự vào ống kính trong lô nội dung chính này luôn được cập nhật, không chiếm ngân sách NPC chạy ngầm;
+- Ngoài ống kính chỉ tiến hành một số lượng nhỏ NPC liên quan nhất đến địa điểm, nhân vật, sự kiện hoặc phục bút hiện tại, mặc định tối đa 4 người;
+- Nhân vật không được chọn giữ nguyên trạng thái gốc, sẽ không bị xóa, cũng sẽ không hành động từ hư không chỉ để "thế giới rất náo nhiệt";
+- Khi một lượng lớn nhân vật cùng phe phái, cùng tổ chức hoặc cùng địa điểm xảy ra thay đổi chung, ưu tiên hợp nhất thành một sự kiện thế lực/địa điểm;
+- Khi một cái tên nào đó được nhắc lại, địa điểm gần, sự kiện liên kết đến giờ hoặc phục bút trúng đích, cá nhân đó sẽ vào lại phạm vi ứng cử viên.
 
-普通角色卡建议使用“均衡 + 每轮或每 2 轮 + 后台 4 人 + 重试 1 次”。NPC 特别多时，先保持 4 人预算；只有确实希望多个远方支线同步前进时再提高到 8 人。预算设为 0 时仍会记录入镜人物，但不主动推进任何镜头外 NPC。
+Thẻ nhân vật thông thường khuyên dùng "Cân bằng + Mỗi vòng hoặc mỗi 2 vòng + Chạy ngầm 4 người + Thử lại 1 lần". Khi có đặc biệt nhiều NPC, trước tiên giữ ngân sách 4 người; chỉ khi thực sự muốn nhiều tuyến truyện phụ ở xa đồng bộ tiến lên mới tăng lên 8 người. Khi ngân sách đặt là 0 vẫn sẽ ghi lại nhân vật vào ống kính, nhưng không chủ động tiến hành bất kỳ NPC ngoài ống kính nào.
 
-## 四种计时方式
+## Bốn phương thức tính giờ
 
-| 方式 | 如何增长 | 适合 |
+| Phương thức | Cách tăng trưởng | Phù hợp cho |
 |---|---|---|
-| 自然流逝 | 主世界时钟前进多少，就经过多少 | 旅程、发酵、维修等待、信件送达 |
-| 有效工时 | 只有正文确认人物实际投入工作时才累计 | 锻造、研究、训练、手工制作 |
-| 预定时间 | 到一个明确的世界时间点触发 | 班车、约会、仪式、截止时间 |
-| 条件等待 | 不看百分比，等待条件成立 | 等某人答复、等材料、等情报 |
+| Trôi qua tự nhiên | Đồng hồ thế giới chính tiến lên bao nhiêu, thì trôi qua bấy nhiêu | Hành trình, lên men, chờ sửa chữa, thư từ được giao |
+| Giờ làm việc hiệu quả | Chỉ tích lũy khi nội dung chính xác nhận nhân vật thực sự đầu tư vào công việc | Rèn, nghiên cứu, huấn luyện, chế tác thủ công |
+| Thời gian dự định | Kích hoạt khi đến một thời điểm thế giới rõ ràng | Xe buýt, hẹn hò, nghi thức, thời hạn chót |
+| Chờ điều kiện | Không xem phần trăm, chờ điều kiện thành lập | Chờ ai đó trả lời, chờ vật liệu, chờ tình báo |
 
-## 人物心声
+## Tiếng lòng nhân vật
 
-世界推演会在人物处境、目标或情绪真正发生变化时，更新她当前的一小段心声。
+Suy diễn thế giới sẽ cập nhật một đoạn tiếng lòng ngắn hiện tại của nhân vật khi hoàn cảnh, mục tiêu hoặc cảm xúc của cô ấy thực sự xảy ra thay đổi.
 
-- 只在“人物 → 幕后视角”可见；
-- “角色所知”视角会隐藏它；
-- 正文注入包中不包含独白原文；
-- 重抽到另一个 swipe 时，会恢复那个分支自己的独白；
-- 心声卡片只显示独白正文，不再显示“第一视角”标签或重复的世界时间。
+- Chỉ hiển thị ở "Nhân vật → Góc nhìn hậu trường";
+- Góc nhìn "Những gì nhân vật biết" sẽ ẩn nó;
+- Gói chèn nội dung chính không bao gồm nguyên văn độc thoại;
+- Khi tạo lại sang một swipe khác, sẽ khôi phục độc thoại của riêng nhánh đó;
+- Thẻ tiếng lòng chỉ hiển thị nội dung chính độc thoại, không còn hiển thị thẻ "Góc nhìn thứ nhất" hoặc thời gian thế giới lặp lại.
 
-镜头外 NPC 的人物详情还会显示“看看 TA 在做什么”。这会额外生成一段使用“我”的即时片段，但不会提交进聊天、修改人物状态或推进时间；已经出现在本轮正文的人物不提供该入口。
+Chi tiết nhân vật của NPC ngoài ống kính còn hiển thị "Xem TA đang làm gì". Điều này sẽ tạo thêm một đoạn tức thời sử dụng "Tôi", nhưng sẽ không gửi vào trò chuyện, sửa đổi trạng thái nhân vật hoặc tiến hành thời gian; nhân vật đã xuất hiện trong nội dung chính vòng này không cung cấp lối vào này.
 
-## 重抽与编辑
+## Tạo lại và chỉnh sửa
 
-- 新重抽从这条 AI 消息的推演前快照重新开始，不沿用被放弃回复推进过的时间。
-- 切回旧 swipe，会恢复旧 swipe 对应的世界状态。
-- 编辑较早消息会把后续快照标为过期，并回到编辑点之前的最后一个合法状态。
-- 删除消息后会恢复聊天中仍然存在的最新合法快照。
+- Tạo lại mới bắt đầu lại từ bản ghi nhanh trước suy diễn của tin nhắn AI này, không tiếp tục sử dụng thời gian đã tiến hành của phản hồi bị từ bỏ.
+- Chuyển về swipe cũ, sẽ khôi phục trạng thái thế giới tương ứng với swipe cũ.
+- Chỉnh sửa tin nhắn cũ hơn sẽ đánh dấu bản ghi nhanh tiếp theo là hết hạn, và quay lại trạng thái hợp lệ cuối cùng trước điểm chỉnh sửa.
+- Sau khi xóa tin nhắn sẽ khôi phục bản ghi nhanh hợp lệ mới nhất vẫn còn tồn tại trong cuộc trò chuyện.
 
-## 前台与后台的边界
+## Ranh giới giữa tiền sảnh và chạy ngầm
 
-正文只会收到：
+Nội dung chính sẽ chỉ nhận được:
 
-- 权威主世界时间；
-- 与当前上下文相关的人物位置和行动；
-- 已经形成、且有资格自然显露的少量结果。
+- Thời gian thế giới chính chuẩn;
+- Vị trí và hành động của nhân vật liên quan đến ngữ cảnh hiện tại;
+- Một số lượng nhỏ kết quả đã hình thành và có tư cách hiển thị tự nhiên.
 
-正文不会收到：
+Nội dung chính sẽ không nhận được:
 
-- 角色幕后心声；
-- 完整后台账本；
-- 隐藏事件的结果；
-- “世界背面正在运行”之类的系统说明。
+- Tiếng lòng hậu trường của nhân vật;
+- Sổ cái chạy ngầm đầy đủ;
+- Kết quả của sự kiện ẩn;
+- Các giải thích hệ thống như "Mặt trái thế giới đang chạy".
 
-## 数据与备份
+## Dữ liệu và sao lưu
 
-- 当前世界状态保存在该聊天的 metadata 中。
-- 每个 AI swipe 的分支快照保存在对应消息的 `extra` 中。
-- 在观测设置里可以导出或导入 JSON 备份。
-- 独立 API 配置保存在本机 SillyTavern 的扩展设置中，不会进入聊天正文或世界状态导出文件。
-- 持续摘要、长期事实、阶段经历、伏笔簿与整理进度保存在该聊天自己的 metadata 和分支快照中。
+- Trạng thái thế giới hiện tại được lưu trong metadata của cuộc trò chuyện đó.
+- Bản ghi nhanh nhánh của mỗi swipe AI được lưu trong `extra` của tin nhắn tương ứng.
+- Trong cài đặt quan sát có thể xuất hoặc nhập bản sao lưu JSON.
+- Cấu hình API độc lập được lưu trong cài đặt tiện ích mở rộng của SillyTavern trên máy cục bộ, sẽ không đi vào nội dung trò chuyện hoặc tệp xuất trạng thái thế giới.
+- Tóm tắt liên tục, sự thật dài hạn, trải nghiệm giai đoạn, sổ phục bút và tiến độ sắp xếp được lưu trong metadata và bản ghi nhanh nhánh của riêng cuộc trò chuyện đó.
 
-## 建议的首轮试用
+## Đề xuất dùng thử vòng đầu tiên
 
-确定性测试可以这样做：
+Kiểm tra tính xác định có thể làm như sau:
 
-1. 把主世界日历校准到故事采用的历法与日期，例如“帝国历 1024 年 3 月 17 日 08:00”。
-2. 新建“修复通讯器”，计时选择“自然流逝”，预计耗时填 12 小时。
-3. 连续聊几轮但不让正文经过时间，确认进度仍是 0%。
-4. 手动推进 6 小时，确认进度约 50%。
-5. 再推进 6 小时，确认事件离开“暗流”，进入“回声”。
-6. 重抽一条明确经过时间的 AI 回复，确认新分支从重抽前的时钟开始。
-7. 查看人物页，确认幕后视角有第一视角独白，而角色所知视角没有。
+1. Hiệu chuẩn lịch thế giới chính theo lịch pháp và ngày tháng mà câu chuyện sử dụng, ví dụ "Đế quốc lịch ngày 17 tháng 3 năm 1024 08:00".
+2. Tạo mới "Sửa chữa máy liên lạc", tính giờ chọn "Trôi qua tự nhiên", thời gian tiêu tốn dự kiến điền 12 giờ.
+3. Trò chuyện liên tục vài vòng nhưng không để nội dung chính trôi qua thời gian, xác nhận tiến độ vẫn là 0%.
+4. Tiến hành thủ công 6 giờ, xác nhận tiến độ khoảng 50%.
+5. Tiến hành thêm 6 giờ, xác nhận sự kiện rời khỏi "Dòng chảy ngầm", đi vào "Tiếng vang".
+6. Tạo lại một phản hồi AI có thời gian trôi qua rõ ràng, xác nhận nhánh mới bắt đầu từ đồng hồ trước khi tạo lại.
+7. Xem trang nhân vật, xác nhận góc nhìn hậu trường có độc thoại góc nhìn thứ nhất, trong khi góc nhìn những gì nhân vật biết thì không có.
 
-完整检查项见 [docs/TEST-CHECKLIST.md](docs/TEST-CHECKLIST.md)。
+Xem danh sách kiểm tra đầy đủ tại [docs/TEST-CHECKLIST.md](docs/TEST-CHECKLIST.md).
 
-## 当前边界
+## Ranh giới hiện tại
 
-- 后台状态抽取仍受所选模型遵循 JSON 和时间判断能力影响；世界钟模式会把首次锚定与后续耗时推断分开，并只接受高置信的后续绝对时间校准。
-- 当前使用轻量的标签、文字片段、重要度与时间衰减进行相关性回捞，不包含向量数据库，也不会跨聊天共享记忆。
-- 旧聊天建议先手动点击一次“建立初始记忆档案”；整理只读取当前选择的重抽分支。
-- 极端情况下世界推演失败，插件会保留推演前快照并显示“等待推演”，不会自行猜一个时间。
+- Trích xuất trạng thái chạy ngầm vẫn bị ảnh hưởng bởi khả năng tuân thủ JSON và phán đoán thời gian của mô hình được chọn; chế độ đồng hồ thế giới sẽ tách biệt việc neo lần đầu và suy luận thời gian tiêu tốn sau đó, và chỉ chấp nhận hiệu chuẩn thời gian tuyệt đối sau đó có độ tin cậy cao.
+- Hiện tại sử dụng thẻ gọn nhẹ, đoạn văn bản, độ quan trọng và suy giảm thời gian để vớt lại tính liên quan, không bao gồm cơ sở dữ liệu vector, cũng sẽ không chia sẻ ký ức giữa các cuộc trò chuyện.
+- Trò chuyện cũ khuyên nên nhấp thủ công một lần vào "Thiết lập hồ sơ ký ức ban đầu" trước; sắp xếp chỉ đọc nhánh tạo lại được chọn hiện tại.
+- Trong trường hợp cực đoan suy diễn thế giới thất bại, plugin sẽ giữ lại bản ghi nhanh trước suy diễn và hiển thị "Đang chờ suy diễn", sẽ không tự đoán một thời gian.
 
-## 开发检查
+## Kiểm tra phát triển
 
-需要 Node.js 20 或更新版本：
+Cần Node.js 20 hoặc phiên bản mới hơn:
 
 ```bash
 npm run check
 npm test
 ```
 
-设计说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+Xem giải thích thiết kế tại [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+---END TEXT---

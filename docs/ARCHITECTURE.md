@@ -1,198 +1,198 @@
-# 世界背面 0.8.1 架构说明
+# Mặt trái thế giới 0.8.1 Hướng dẫn kiến trúc
 
-## 0.8.1 连续正文与串行提交
+## 0.8.1 Nội dung chính liên tục và gửi nối tiếp
 
-- 世界推演仍使用单条串行链，但排队项升级为不可变任务描述，固定聊天、消息楼层、swipe、正文哈希、触发原因和本轮显露候选。相同来源任务只保留一份。
-- 当前任务运行时到达的新 AI 正文只写入 `pending` 标记，不提前创建 `base`；真正轮到该正文时才从上一份已提交快照派生，避免旧快照覆盖先完成的世界变化。
-- 执行前再次核对聊天标识、swipe 与正文哈希；执行中切换聊天或修改分支时，返回结果不会写入当前页面，异常和取消也不会改动另一个聊天的 store。
-- 独立 API 从不清空酒馆正文注入；酒馆原生安静请求只在创建请求的瞬间暂时隔离自身注入，随后立即恢复，不等待后台模型返回。
-- 当前任务失败时，只有确实存在更晚正文才会尝试合并追赶；用户主动取消不会自动重启被取消的任务。
-- 叙事提取层可选标签过滤：`filterNarrativeText` 在推演 / 记忆 / 人物观测读取正文时剔除 HTML 注释与用户配置的开闭标签；分支哈希与可用性判断仍使用原文。
+- Suy diễn thế giới vẫn sử dụng chuỗi nối tiếp đơn, nhưng mục xếp hàng được nâng cấp thành mô tả nhiệm vụ không thể thay đổi, cố định trò chuyện, tầng tin nhắn, swipe, hash nội dung chính, nguyên nhân kích hoạt và ứng viên hiển thị vòng này. Nhiệm vụ cùng nguồn chỉ giữ lại một bản.
+- Nội dung chính AI mới đến khi nhiệm vụ hiện tại đang chạy chỉ ghi thẻ `pending`, không tạo trước `base`; khi thực sự đến lượt nội dung chính đó mới dẫn xuất từ bản ghi nhanh đã gửi trước đó, tránh bản ghi nhanh cũ ghi đè lên thay đổi thế giới đã hoàn thành trước.
+- Trước khi thực thi sẽ kiểm tra lại định danh trò chuyện, swipe và hash nội dung chính; khi chuyển đổi trò chuyện hoặc sửa đổi nhánh trong quá trình thực thi, kết quả trả về sẽ không được ghi vào trang hiện tại, ngoại lệ và hủy bỏ cũng sẽ không thay đổi store của cuộc trò chuyện khác.
+- API độc lập không bao giờ xóa chèn nội dung chính của Tavern; yêu cầu im lặng gốc của Tavern chỉ tạm thời cách ly chèn của chính nó trong khoảnh khắc tạo yêu cầu, sau đó khôi phục ngay lập tức, không chờ mô hình chạy ngầm trả về.
+- Khi nhiệm vụ hiện tại thất bại, chỉ khi thực sự tồn tại nội dung chính muộn hơn mới thử hợp nhất để bắt kịp; người dùng chủ động hủy sẽ không tự động khởi động lại nhiệm vụ đã bị hủy.
+- Lớp trích xuất tự sự có thể chọn lọc thẻ: `filterNarrativeText` khi suy diễn / ký ức / quan sát nhân vật đọc nội dung chính sẽ loại bỏ chú thích HTML và thẻ đóng mở do người dùng cấu hình; hash nhánh và đánh giá tính khả dụng vẫn sử dụng văn bản gốc.
 
-## 0.8.0 恢复点与隐私安全诊断
+## 0.8.0 Điểm khôi phục và chẩn đoán bảo mật quyền riêng tư
 
-- 每个聊天的主 store 最多保留 3 个恢复点。恢复点只保存当时的权威 `currentState`，不复制 API 配置、正文或整套分支快照，避免无限放大聊天 metadata。
-- `getStore()` 在旧 `schemaVersion` 首次升级前创建一次恢复点；导入状态在确认替换后、真正写入前创建恢复点。恢复操作本身也先保存当前状态。
-- 恢复后把目标状态写入当前正文锚点的 `branchOverrides`，因此只影响当前聊天和当前分支，不会穿透到其他 swipe。
-- 诊断报告只汇总插件/数据结构版本、设备视口、接口模式、功能开关、状态数量和最近任务错误；Key、URL、正文、身份锚点与自定义提示词不进入报告。最近错误只记录 `invalid-json`、`output-limit`、`network` 等类别，不复制模型返回片段。
-- 插件内 `notify` 是状态提示的唯一正常出口，按 tone 显示标题与颜文字；SillyTavern toastr 只在界面尚未初始化时作为兜底。
+- store chính của mỗi cuộc trò chuyện giữ tối đa 3 điểm khôi phục. Điểm khôi phục chỉ lưu `currentState` chuẩn tại thời điểm đó, không sao chép cấu hình API, nội dung chính hoặc toàn bộ bản ghi nhanh nhánh, tránh phóng to vô hạn metadata của cuộc trò chuyện.
+- `getStore()` tạo một điểm khôi phục trước khi nâng cấp lần đầu `schemaVersion` cũ; trạng thái nhập tạo điểm khôi phục sau khi xác nhận thay thế, trước khi thực sự ghi vào. Bản thân thao tác khôi phục cũng lưu trạng thái hiện tại trước.
+- Sau khi khôi phục sẽ ghi trạng thái mục tiêu vào `branchOverrides` của điểm neo nội dung chính hiện tại, do đó chỉ ảnh hưởng đến cuộc trò chuyện hiện tại và nhánh hiện tại, sẽ không xuyên qua các swipe khác.
+- Báo cáo chẩn đoán chỉ tổng hợp phiên bản plugin/cấu trúc dữ liệu, khung nhìn thiết bị, chế độ giao diện, công tắc chức năng, số lượng trạng thái và lỗi nhiệm vụ gần đây; Key, URL, nội dung chính, điểm neo thân phận và từ nhắc tùy chỉnh không đưa vào báo cáo. Lỗi gần đây chỉ ghi lại các danh mục như `invalid-json`, `output-limit`, `network`, không sao chép đoạn trả về của mô hình.
+- `notify` trong plugin là lối ra bình thường duy nhất của nhắc nhở trạng thái, hiển thị tiêu đề và biểu tượng cảm xúc theo tone; toastr của SillyTavern chỉ làm phương án dự phòng khi giao diện chưa được khởi tạo.
 
-## 0.7.0 可取消事务、人物锚点与世界书桥接
+## 0.7.0 Giao dịch có thể hủy, điểm neo nhân vật và cầu nối Worldbook
 
-- 每次世界推演持有独立 `AbortController`。取消只终止当前请求，合法 JSON 在应用前还会再次检查取消信号；取消分支保留 `pending`，不会进入 `applySimulationResult`。
-- `personalityAnchor`、`speakingStyle` 与 `behaviorBoundaries` 是用户维护的稳定人物约束。它们进入推演与人物观测提示，但已有值不会被普通 `people_upsert` 覆盖。
-- 世界书桥接调用酒馆扩展上下文公开的 `getWorldInfoNames()` 与 `loadWorldInfo()`；读取结果只放在运行时预览中，用户勾选后才转为本聊天的手动人物卡。
-- 世界书导入不会进入自动调度链。导入人物仍通过同一后台 NPC 预算和知识边界参与后续推演。
+- Mỗi lần suy diễn thế giới giữ một `AbortController` độc lập. Hủy bỏ chỉ chấm dứt yêu cầu hiện tại, JSON hợp lệ trước khi áp dụng sẽ kiểm tra lại tín hiệu hủy; nhánh hủy bỏ giữ lại `pending`, sẽ không vào `applySimulationResult`.
+- `personalityAnchor`, `speakingStyle` và `behaviorBoundaries` là các ràng buộc nhân vật ổn định do người dùng duy trì. Chúng đi vào prompt suy diễn và quan sát nhân vật, nhưng giá trị đã có sẽ không bị ghi đè bởi `people_upsert` thông thường.
+- Cầu nối Worldbook gọi `getWorldInfoNames()` và `loadWorldInfo()` được công khai bởi ngữ cảnh mở rộng của Tavern; kết quả đọc chỉ đặt trong bản xem trước khi chạy, sau khi người dùng chọn mới chuyển thành thẻ nhân vật thủ công của cuộc trò chuyện này.
+- Nhập Worldbook sẽ không vào chuỗi điều độ tự động. Nhân vật nhập vẫn tham gia suy diễn tiếp theo thông qua cùng ngân sách NPC chạy ngầm và ranh giới kiến thức.
 
-## 0.5.5 移动视口与设置层
+## 0.5.5 Khung nhìn di động và lớp cài đặt
 
-- 移动布局同时使用动态视口单位、系统 `safe-area` 和 `VisualViewport` 偏移；不按手机品牌或型号分支，横竖屏和可用区域变化统一走同一套边界计算。
-- 手机设置面板在渲染后提升为根节点的直接子元素，脱离主窗口的 `overflow` 与动画 containing block；旋转回桌面布局时会原位放回窗口。
-- 根浮层使用浏览器可接受的最高层级并保持空白区域穿透，避免第三方悬浮按钮盖住面板，同时不阻断插件关闭时的酒馆页面操作。
-- 悬浮球尺寸由当前可视区域短边计算，手机范围为 36—42px；已保存坐标、拖动吸边和旋转后的位置都会按 `VisualViewport` 重新夹取。
+- Bố cục di động đồng thời sử dụng đơn vị khung nhìn động, `safe-area` của hệ thống và độ lệch `VisualViewport`; không phân nhánh theo thương hiệu hoặc kiểu điện thoại, màn hình ngang dọc và thay đổi khu vực khả dụng thống nhất đi theo cùng một bộ tính toán ranh giới.
+- Bảng cài đặt điện thoại sau khi kết xuất được nâng lên thành phần tử con trực tiếp của nút gốc, thoát khỏi `overflow` của cửa sổ chính và containing block của hoạt ảnh; khi xoay về bố cục máy tính để bàn sẽ đặt lại vị trí cũ vào cửa sổ.
+- Lớp nổi gốc sử dụng cấp độ cao nhất mà trình duyệt có thể chấp nhận và giữ cho khu vực trống có thể xuyên qua, tránh nút lơ lửng của bên thứ ba che khuất bảng điều khiển, đồng thời không chặn thao tác trang Tavern khi đóng plugin.
+- Kích thước quả cầu lơ lửng được tính toán từ cạnh ngắn của khu vực hiển thị hiện tại, phạm vi điện thoại là 36—42px; tọa độ đã lưu, kéo hút cạnh và vị trí sau khi xoay đều sẽ được kẹp lại theo `VisualViewport`.
 
-## 0.5.4 兼容接口 JSON 恢复
+## 0.5.4 Khôi phục JSON giao diện tương thích
 
-- 独立接口会读取 OpenAI 兼容响应里的 `finish_reason`；`length`、`MAX_TOKENS` 等原因会被识别为输出截断，而不是笼统报告 JSON 无效。
-- 世界推演与历史整理的自动重试按尝试次数增加输出额度，每次增加 1800 token、最高 16000，并降低温度；重试提示要求省略未变化的可选项并完整闭合对象。
-- JSON 提取只进行确定性的语法修复：去除对象/数组尾逗号，以及转义字符串中的裸控制字符。缺少闭合括号的截断结果不会被猜测补全或写入状态。
+- Giao diện độc lập sẽ đọc `finish_reason` trong phản hồi tương thích OpenAI; các nguyên nhân như `length`, `MAX_TOKENS` sẽ được nhận diện là đầu ra bị cắt bớt, thay vì báo cáo chung chung là JSON không hợp lệ.
+- Tự động thử lại của suy diễn thế giới và sắp xếp lịch sử tăng hạn mức đầu ra theo số lần thử, mỗi lần tăng 1800 token, tối đa 16000, và giảm nhiệt độ; prompt thử lại yêu cầu bỏ qua các tùy chọn không thay đổi và đóng hoàn chỉnh đối tượng.
+- Trích xuất JSON chỉ thực hiện sửa chữa cú pháp mang tính xác định: loại bỏ dấu phẩy ở cuối đối tượng/mảng, và các ký tự điều khiển trần trong chuỗi thoát. Kết quả bị cắt bớt thiếu dấu ngoặc đóng sẽ không được đoán bổ sung hoặc ghi vào trạng thái.
 
-## 0.5.3 心声显示
+## 0.5.3 Hiển thị tiếng lòng
 
-- `innerVoiceAt` 继续保留在人物状态和分支快照中，但 `renderInnerVoice` 只输出独白正文，不把生成时刻重复渲染为卡片标题。
-- 时间数据与视觉呈现解耦，不改变推演结果迁移、重抽恢复、知识边界或提示构造。
+- `innerVoiceAt` tiếp tục được giữ lại trong trạng thái nhân vật và bản ghi nhanh nhánh, nhưng `renderInnerVoice` chỉ xuất nội dung chính độc thoại, không kết xuất lặp lại thời điểm tạo thành tiêu đề thẻ.
+- Dữ liệu thời gian và trình bày trực quan được tách rời, không thay đổi di chuyển kết quả suy diễn, khôi phục rút lại, ranh giới kiến thức hoặc cấu trúc prompt.
 
-## 0.5.2 模块切换稳定性
+## 0.5.2 Tính ổn định khi chuyển đổi mô-đun
 
-- `panelEntrancePending` 只在主面板从关闭变为打开时置位；设置、状态和模块切换引起的整棵 DOM 重绘不会再次获得 `is-opening`。
-- 面板和遮罩的入场关键帧只绑定 `.wb-panel-scrim.is-opening`，不再绑定每次都会重建的基础类。
-- 模块内容仍可用 2px 位移提示页面发生变化，但关键帧不改变透明度，因此底层 SillyTavern 正文不会在切换瞬间透出。
+- `panelEntrancePending` chỉ được đặt khi bảng điều khiển chính chuyển từ đóng sang mở; vẽ lại toàn bộ cây DOM do cài đặt, trạng thái và chuyển đổi mô-đun gây ra sẽ không nhận lại `is-opening`.
+- Khung hình chính vào sân của bảng điều khiển và mặt nạ chỉ liên kết với `.wb-panel-scrim.is-opening`, không còn liên kết với lớp cơ sở được xây dựng lại mỗi lần.
+- Nội dung mô-đun vẫn có thể dùng dịch chuyển 2px để nhắc nhở trang có thay đổi, nhưng khung hình chính không thay đổi độ trong suốt, do đó nội dung chính SillyTavern ở lớp dưới sẽ không lộ ra trong khoảnh khắc chuyển đổi.
 
-## 0.5.1 体验层
+## 0.5.1 Lớp trải nghiệm
 
-- 记忆页面使用界面本地的筛选、关键词和每类可见条数，不改变底层记忆账本；默认每类只创建 12 张卡片，用户主动点击后才继续扩展 DOM。
-- 设置分组的展开状态、记忆筛选、搜索词和可见条数仅存在当前页面生命周期中，不写入聊天 metadata，也不污染重抽分支。
-- `getSyncStatus` 汇总世界推演状态、记忆整理状态、尚未整理的 AI 正文数和短时撤销状态；界面选择最相关的活动任务展示。
-- 手动操作撤销保存一次前态和当时的聊天/分支锚点，九秒内且锚点未变化时才能恢复；自动推演结果不进入该撤销栈。
-- 面板关闭动画只延迟卸载 145ms，不延迟世界状态保存；系统开启“减少动画”时 CSS 会把动画时长压缩到近乎零。
+- Trang ký ức sử dụng bộ lọc, từ khóa và số mục hiển thị mỗi loại cục bộ của giao diện, không thay đổi sổ cái ký ức ở lớp dưới; mặc định mỗi loại chỉ tạo 12 thẻ, sau khi người dùng chủ động nhấp mới tiếp tục mở rộng DOM.
+- Trạng thái mở rộng của nhóm cài đặt, lọc ký ức, từ tìm kiếm và số mục hiển thị chỉ tồn tại trong vòng đời trang hiện tại, không ghi vào metadata của cuộc trò chuyện, cũng không làm ô nhiễm nhánh rút lại.
+- `getSyncStatus` tổng hợp trạng thái suy diễn thế giới, trạng thái sắp xếp ký ức, số lượng nội dung chính AI chưa sắp xếp và trạng thái hoàn tác ngắn hạn; giao diện chọn nhiệm vụ hoạt động liên quan nhất để hiển thị.
+- Hoàn tác thao tác thủ công lưu một lần trạng thái trước đó và điểm neo trò chuyện/nhánh lúc đó, trong vòng chín giây và điểm neo không thay đổi mới có thể khôi phục; kết quả suy diễn tự động không vào ngăn xếp hoàn tác này.
+- Hoạt ảnh đóng bảng điều khiển chỉ trì hoãn gỡ cài đặt 145ms, không trì hoãn lưu trạng thái thế giới; khi hệ thống bật "giảm hoạt ảnh", CSS sẽ nén thời lượng hoạt ảnh xuống gần bằng không.
 
-## 0.5 新增链路
+## 0.5 Liên kết mới thêm
 
-- 权威时间仍使用绝对分钟计算，`world.calendar` 额外保存历法名称和日期锚点；界面与提示统一通过 `formatWorldCalendar` 映射为年、月、日、时、分。
-- `storyMemory.digest` 是不断改写的持续摘要，`storyMemory.facts` 是带版本关系的长期事实，`storyMemory.summaries` 是阶段经历，`storyMemory.clues` 是等待呼应或回收的伏笔。
-- 自动记忆整理以尚未归档的 AI 正文条数计数，不以用户消息数或总楼层数代替。达到用户设置的 N 条后，仅整理新增区间。
-- 同一事实键出现新值时保留旧版本；确定的新值会替代旧值，未证实的新值会让竞争说法并列进入争议态，明确否定则进入失效态。
-- 世界推演和历史整理均可写入长期事实与伏笔；相关性召回综合实体标签、中文/文本二元片段、重要度、置信度和消息距离衰减。
-- 正文注入是单独的安全出口，只允许 `known` 或 `direct` 的相关事实与线索通过；持续摘要、阶段经历、`hidden`/`trace` 内容不直接注入正文。
-- 悬浮球根据世界推演状态和记忆整理状态切换运行类名，视觉动画不参与任何状态计算。
+- Thời gian chuẩn vẫn sử dụng tính toán phút tuyệt đối, `world.calendar` lưu thêm tên lịch và điểm neo ngày tháng; giao diện và prompt thống nhất thông qua `formatWorldCalendar` ánh xạ thành năm, tháng, ngày, giờ, phút.
+- `storyMemory.digest` là tóm tắt liên tục được viết lại không ngừng, `storyMemory.facts` là sự thật dài hạn kèm quan hệ phiên bản, `storyMemory.summaries` là trải nghiệm giai đoạn, `storyMemory.clues` là phục bút chờ hô ứng hoặc thu hồi.
+- Tự động sắp xếp ký ức đếm theo số lượng nội dung chính AI chưa lưu trữ, không thay thế bằng số tin nhắn người dùng hoặc tổng số tầng. Sau khi đạt N mục do người dùng cài đặt, chỉ sắp xếp khoảng mới thêm.
+- Khi khóa sự thật tương tự xuất hiện giá trị mới sẽ giữ lại phiên bản cũ; giá trị mới được xác định sẽ thay thế giá trị cũ, giá trị mới chưa được xác nhận sẽ khiến các cách nói cạnh tranh song song đi vào trạng thái tranh chấp, phủ định rõ ràng thì đi vào trạng thái vô hiệu.
+- Suy diễn thế giới và sắp xếp lịch sử đều có thể ghi vào sự thật dài hạn và phục bút; truy xuất tính liên quan tổng hợp thẻ thực thể, đoạn nhị phân tiếng Trung/văn bản, mức độ quan trọng, độ tin cậy và suy giảm khoảng cách tin nhắn.
+- Chèn nội dung chính là lối ra an toàn riêng biệt, chỉ cho phép sự thật và manh mối liên quan `known` hoặc `direct` đi qua; tóm tắt liên tục, trải nghiệm giai đoạn, nội dung `hidden`/`trace` không trực tiếp chèn vào nội dung chính.
+- Quả cầu lơ lửng chuyển đổi tên lớp chạy dựa trên trạng thái suy diễn thế giới và trạng thái sắp xếp ký ức, hoạt ảnh trực quan không tham gia vào bất kỳ tính toán trạng thái nào.
 
-## 0.4 新增链路
+## 0.4 Liên kết mới thêm
 
-- `api.js` 负责独立 OpenAI 兼容接口。`proxy` 模式只借用 SillyTavern 同源后端转发网络请求，URL、Key、模型与消息体均来自插件设置；`direct` 模式直接请求上游。DeepSeek V4 会关闭不必要的思考，并在代理模式使用酒馆的 DeepSeek 兼容通道。
-- `storyMemory.summaries` 保存分批历史摘要，`storyMemory.clues` 保存带消息楼层和 swipe 来源的伏笔。
-- 历史建档按字符数与用户轮次分批，每批成功后写回聊天 metadata，支持断点续扫；截断或空正文会先触发极简 JSON 重试，仍失败时自动将批次逐级拆小。
-- 世界推演只召回与当前人物、地点和标签相关的少量摘要与伏笔。
-- 人物即时观测复用所选 API，但不调用 `applySimulationResult`，因此不会写回状态或推进时钟。
-- 自动调度可累计 N 条新 AI 正文后合并推演；旧轮次只提供因果上下文，只有标记为 `new="true"` 的正文会形成新变化。
-- 后台 NPC 由插件端执行人数预算。入镜人物正常更新，镜头外人物按相关性限额推进，其余保持休眠。
-- 临时请求或 JSON 失败可自动重试；所有尝试共享同一个 `base`，仅合法结果进入 `applySimulationResult`。
+- `api.js` chịu trách nhiệm cho giao diện tương thích OpenAI độc lập. Chế độ `proxy` chỉ mượn backend cùng nguồn của SillyTavern để chuyển tiếp yêu cầu mạng, URL, Key, mô hình và nội dung tin nhắn đều đến từ cài đặt plugin; chế độ `direct` trực tiếp yêu cầu upstream. DeepSeek V4 sẽ tắt suy nghĩ không cần thiết, và trong chế độ proxy sử dụng kênh tương thích DeepSeek của Tavern.
+- `storyMemory.summaries` lưu tóm tắt lịch sử theo lô, `storyMemory.clues` lưu phục bút kèm tầng tin nhắn và nguồn swipe.
+- Lưu trữ lịch sử chia lô theo số ký tự và số vòng của người dùng, sau khi mỗi lô thành công sẽ ghi lại vào metadata của cuộc trò chuyện, hỗ trợ quét tiếp từ điểm dừng; nội dung chính bị cắt bớt hoặc trống sẽ kích hoạt thử lại JSON tối giản trước, nếu vẫn thất bại sẽ tự động chia nhỏ lô theo từng cấp.
+- Suy diễn thế giới chỉ truy xuất một lượng nhỏ tóm tắt và phục bút liên quan đến nhân vật, địa điểm và thẻ hiện tại.
+- Quan sát nhân vật tức thời tái sử dụng API đã chọn, nhưng không gọi `applySimulationResult`, do đó sẽ không ghi lại trạng thái hoặc tiến hành đồng hồ.
+- Điều độ tự động có thể tích lũy N nội dung chính AI mới rồi hợp nhất suy diễn; vòng cũ chỉ cung cấp ngữ cảnh nhân quả, chỉ nội dung chính được đánh dấu là `new="true"` mới tạo thành thay đổi mới.
+- NPC chạy ngầm do phía plugin thực thi ngân sách số người. Nhân vật trong ống kính cập nhật bình thường, nhân vật ngoài ống kính tiến hành theo hạn mức liên quan, phần còn lại giữ trạng thái ngủ.
+- Yêu cầu tạm thời hoặc JSON thất bại có thể tự động thử lại; tất cả các lần thử chia sẻ cùng một `base`, chỉ kết quả hợp lệ mới vào `applySimulationResult`.
 
-## 模块边界
+## Ranh giới mô-đun
 
-“世界背面”管理可演算的当前世界状态，并维护当前聊天、当前重抽分支内的结构化长期记忆；它不跨聊天共享，也不保存逐字永久全文或人物全生平档案。
+“Mặt trái thế giới” quản lý trạng thái thế giới hiện tại có thể tính toán, và duy trì ký ức dài hạn có cấu trúc trong cuộc trò chuyện hiện tại, nhánh rút lại hiện tại; nó không chia sẻ chéo giữa các cuộc trò chuyện, cũng không lưu toàn văn vĩnh viễn từng chữ hoặc hồ sơ toàn bộ cuộc đời nhân vật.
 
-| 层 | 负责 | 不负责 |
+| Lớp | Chịu trách nhiệm | Không chịu trách nhiệm |
 |---|---|---|
-| 主世界日历 | 权威绝对分钟、历法日期映射、校准与推进 | 现实时间同步 |
-| 人物轨迹 | 位置、行动、短期意图、知识边界、当前独白 | 人物全生平记忆 |
-| 事件账本 | 创建、计时、到期、结果、可见性、递交状态 | 自动替玩家决定行动 |
-| 分支快照 | 每个 AI swipe 的推演前/后状态 | 合并互相矛盾的分支 |
-| 分层记忆 | 持续摘要、长期事实版本、阶段经历、伏笔来源与相关性召回 | 跨聊天共享或逐字永久存档 |
-| 正文注入 | 日历、相关状态、可自然显露的结果、角色可知的相关记忆 | 独白、完整后台账本、隐藏记忆 |
-| 独立推演 | 从本批新 AI 正文抽取经过时间与状态变化 | 小说续写 |
+| Lịch thế giới chính | Phút tuyệt đối chuẩn, ánh xạ ngày tháng lịch, hiệu chuẩn và tiến hành | Đồng bộ thời gian thực tế |
+| Quỹ đạo nhân vật | Vị trí, hành động, ý định ngắn hạn, ranh giới kiến thức, độc thoại hiện tại | Ký ức toàn bộ cuộc đời nhân vật |
+| Sổ cái sự kiện | Tạo, tính giờ, hết hạn, kết quả, khả năng hiển thị, trạng thái gửi | Tự động quyết định hành động thay người chơi |
+| Bản ghi nhanh nhánh | Trạng thái trước/sau suy diễn của mỗi swipe AI | Hợp nhất các nhánh mâu thuẫn với nhau |
+| Ký ức phân tầng | Tóm tắt liên tục, phiên bản sự thật dài hạn, trải nghiệm giai đoạn, nguồn phục bút và truy xuất tính liên quan | Chia sẻ chéo trò chuyện hoặc lưu trữ vĩnh viễn từng chữ |
+| Chèn nội dung chính | Lịch, trạng thái liên quan, kết quả có thể hiển thị tự nhiên, ký ức liên quan mà nhân vật biết | Độc thoại, sổ cái chạy ngầm hoàn chỉnh, ký ức ẩn |
+| Suy diễn độc lập | Trích xuất thời gian trôi qua và thay đổi trạng thái từ lô nội dung chính AI mới này | Viết tiếp tiểu thuyết |
 
-## 时间模型
+## Mô hình thời gian
 
-所有时间计算仍保存为从内部第 0 日 00:00 起算的绝对分钟：
+Tất cả tính toán thời gian vẫn được lưu dưới dạng phút tuyệt đối tính từ 00:00 ngày 0 nội bộ:
 
 ```text
 absoluteMinute = day × 1440 + hour × 60 + minute
 ```
 
-`world.calendar` 保存一次历法日期与绝对分钟的锚定关系。展示日期由“锚定日期 + 绝对分钟差”得到，因此校准历法标签不会把事件误判成突然经过了许多年；真正推进仍只修改绝对分钟。
+`world.calendar` lưu một lần mối quan hệ neo giữa ngày tháng lịch và phút tuyệt đối. Ngày tháng hiển thị có được từ "ngày tháng neo + chênh lệch phút tuyệt đối", do đó hiệu chuẩn thẻ lịch sẽ không đánh giá sai sự kiện thành đột nhiên trôi qua nhiều năm; tiến hành thực sự vẫn chỉ sửa đổi phút tuyệt đối.
 
-## 分层记忆模型
+## Mô hình ký ức phân tầng
 
 ```text
-持续摘要 digest
-  ├─ 当前故事整体脉络，整理时重写
-长期事实 facts
+Tóm tắt liên tục digest
+  ├─ Mạch truyện tổng thể hiện tại, viết lại khi sắp xếp
+Sự thật dài hạn facts
   ├─ active / disputed / superseded / invalidated
-  └─ 每条保留 key、来源消息、swipe 与版本指针
-阶段经历 summaries
-  └─ 每个新增正文批次一段可追溯摘要
-伏笔 clues
+  └─ Mỗi mục giữ lại key, tin nhắn nguồn, swipe và con trỏ phiên bản
+Trải nghiệm giai đoạn summaries
+  └─ Mỗi lô nội dung chính mới thêm một đoạn tóm tắt có thể truy xuất
+Phục bút clues
   └─ open / echoed / resolved / discarded
 ```
 
-世界推演负责近场增量维护；按 N 条 AI 正文触发的记忆整理负责压缩较长区间和重写持续摘要。二者共享同一分支快照，但记忆整理不会推进世界时间。
+Suy diễn thế giới chịu trách nhiệm bảo trì gia tăng trường gần; sắp xếp ký ức được kích hoạt theo N nội dung chính AI chịu trách nhiệm nén khoảng thời gian dài hơn và viết lại tóm tắt liên tục. Cả hai chia sẻ cùng một bản ghi nhanh nhánh, nhưng sắp xếp ký ức sẽ không tiến hành thời gian thế giới.
 
-达到自动触发频率后，模型只返回本批新正文中可确认的 `elapsed_minutes`。插件再用它推进时钟并结算事件。
+Sau khi đạt tần suất kích hoạt tự động, mô hình chỉ trả về `elapsed_minutes` có thể xác nhận trong lô nội dung chính mới này. Plugin sau đó dùng nó để tiến hành đồng hồ và quyết toán sự kiện.
 
 ```mermaid
 flowchart TD
-    A["AI 正文完成"] --> B{"累计轮数达到设置值？"}
-    B -->|"否"| C["标记待推演并继续累计"]
-    B -->|"是"| D["读取同一份推演前快照"]
-    D --> E["按顺序合并本批新正文"]
-    E --> F["取得合法 JSON 后推进时钟"]
-    F --> G["结算人物与事件并保存结果快照"]
+    A["Nội dung chính AI hoàn thành"] --> B{"Số vòng tích lũy đạt giá trị cài đặt?"}
+    B -->|"Không"| C["Đánh dấu chờ suy diễn và tiếp tục tích lũy"]
+    B -->|"Có"| D["Đọc cùng một bản ghi nhanh trước suy diễn"]
+    D --> E["Hợp nhất lô nội dung chính mới này theo thứ tự"]
+    E --> F["Sau khi lấy được JSON hợp lệ thì tiến hành đồng hồ"]
+    F --> G["Quyết toán nhân vật và sự kiện rồi lưu bản ghi nhanh kết quả"]
 ```
 
-没有明确经过时间时，`elapsed_minutes` 必须为 0。回复次数不参与任何进度公式。
+Khi không có thời gian trôi qua rõ ràng, `elapsed_minutes` phải là 0. Số lần phản hồi không tham gia vào bất kỳ công thức tiến độ nào.
 
-## 事件状态
+## Trạng thái sự kiện
 
 ```mermaid
 stateDiagram-v2
     [*] --> active
     active --> waiting
     waiting --> active
-    active --> ready: 到期或工时完成
-    waiting --> ready: 条件满足
-    ready --> resolved: 结果形成
-    ready --> cancelled: 被取消
-    ready --> missed: 已错过
+    active --> ready: Hết hạn hoặc hoàn thành giờ làm việc
+    waiting --> ready: Điều kiện thỏa mãn
+    ready --> resolved: Kết quả hình thành
+    ready --> cancelled: Bị hủy
+    ready --> missed: Đã bỏ lỡ
     resolved --> [*]
     cancelled --> [*]
     missed --> [*]
 ```
 
-`ready` 事件不再显示在进行中列表。它等待后台给出明确结果；有结果后进入终态。
+Sự kiện `ready` không còn hiển thị trong danh sách đang tiến hành. Nó chờ chạy ngầm đưa ra kết quả rõ ràng; sau khi có kết quả sẽ đi vào trạng thái cuối.
 
-## 结果递交
+## Gửi kết quả
 
-事件结果和正文知情是两件不同的事：
+Kết quả sự kiện và nội dung chính biết chuyện là hai việc khác nhau:
 
-1. 事件在后台形成结果。
-2. 根据 `visibility` 进入候选队列。
-3. 注入只提供少量候选结果。
-4. 世界推演检查正文是否真的承接。
-5. 只有被正文写到、感知到或留下可见痕迹，才标记 `delivered`。
+1. Sự kiện hình thành kết quả ở chạy ngầm.
+2. Dựa theo `visibility` đi vào hàng đợi ứng viên.
+3. Chèn chỉ cung cấp một lượng nhỏ kết quả ứng viên.
+4. Suy diễn thế giới kiểm tra xem nội dung chính có thực sự tiếp nối hay không.
+5. Chỉ khi được nội dung chính viết đến, nhận thức được hoặc để lại dấu vết có thể thấy, mới đánh dấu `delivered`.
 
-非直接结果连续三次没有合适时机，会转入纪事，不再强塞正文；`direct` 结果会继续等待。
+Kết quả không trực tiếp liên tiếp ba lần không có thời cơ thích hợp, sẽ chuyển vào biên niên sử, không còn nhét ép vào nội dung chính; kết quả `direct` sẽ tiếp tục chờ.
 
-## 重抽快照
+## Bản ghi nhanh rút lại
 
-每个 AI swipe 保存：
+Mỗi swipe AI lưu:
 
-- `base`：生成这条正文以前的世界；
-- `result`：这条正文推演后的世界；
-- `sourceKey`：消息号、swipe 号与正文哈希；
-- `offeredEventIds`：生成前实际提供的候选结果；
-- `status`：pending、committed 或 error。
+- `base`: Thế giới trước khi tạo nội dung chính này;
+- `result`: Thế giới sau khi suy diễn nội dung chính này;
+- `sourceKey`: Số tin nhắn, số swipe và hash nội dung chính;
+- `offeredEventIds`: Kết quả ứng viên thực tế được cung cấp trước khi tạo;
+- `status`: pending, committed hoặc error.
 
-新建 swipe 时恢复 `base`，而不是继承当前 swipe 的 `result`。切回旧 swipe 时恢复它自己的 `result`。
+Khi tạo swipe mới sẽ khôi phục `base`, thay vì kế thừa `result` của swipe hiện tại. Khi chuyển về swipe cũ sẽ khôi phục `result` của chính nó.
 
-手动校时、手动建事件和导入状态会作为该分支锚点的覆盖快照保存，避免切换界面后消失。
+Chỉnh giờ thủ công, tạo sự kiện thủ công và trạng thái nhập sẽ được lưu làm bản ghi nhanh ghi đè của điểm neo nhánh đó, tránh biến mất sau khi chuyển đổi giao diện.
 
-## 第一视角独白
+## Độc thoại góc nhìn thứ nhất
 
-人物记录只保存当前独白和产生它的世界分钟：
+Bản ghi nhân vật chỉ lưu độc thoại hiện tại và phút thế giới tạo ra nó:
 
 ```json
 {
-  "innerVoice": "我得在潮声停下以前把信藏好。",
+  "innerVoice": "Tôi phải giấu kỹ bức thư trước khi tiếng sóng dừng lại.",
   "innerVoiceAt": 4210
 }
 ```
 
-它会进入后台独立结算上下文，以便模型保持人物口吻并避免无意义重复；不会进入正文状态注入。不同 swipe 的快照各自保存自己的独白。
+Nó sẽ đi vào ngữ cảnh quyết toán độc lập chạy ngầm, để mô hình giữ giọng điệu nhân vật và tránh lặp lại vô nghĩa; sẽ không đi vào chèn trạng thái nội dung chính. Bản ghi nhanh của các swipe khác nhau tự lưu độc thoại của riêng mình.
 
-## 失败策略
+## Chiến lược thất bại
 
-- JSON 无法解析：保留 `base`，标记待推演；
-- 中途切换聊天：不把旧聊天结果写入新聊天；
-- 正文被编辑：编辑点及之后的快照全部标记过期；
-- 后台模型不确定时间：保持 0 分钟；
-- 手动把时钟向后校准：只校正当前时钟，不凭空撤销已经形成的结果；需要真正回滚时使用旧 swipe 或导入备份。
+- JSON không thể phân tích cú pháp: Giữ lại `base`, đánh dấu chờ suy diễn;
+- Chuyển đổi trò chuyện giữa chừng: Không ghi kết quả trò chuyện cũ vào trò chuyện mới;
+- Nội dung chính bị chỉnh sửa: Điểm chỉnh sửa và các bản ghi nhanh sau đó đều đánh dấu hết hạn;
+- Mô hình chạy ngầm không chắc chắn thời gian: Giữ 0 phút;
+- Chỉnh đồng hồ lùi lại thủ công: Chỉ hiệu chỉnh đồng hồ hiện tại, không vô cớ hoàn tác kết quả đã hình thành; khi cần rollback thực sự thì sử dụng swipe cũ hoặc nhập bản sao lưu.

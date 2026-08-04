@@ -5873,7 +5873,7 @@
     }
 }
 
-/* 1.0.8 · 世界书人物浏览与人物资料展示 */
+/* 1.0.8 · Duyệt nhân vật Worldbook và hiển thị thông tin nhân vật */
 #world-backstage-root .wb-worldbook-import > label:first-child {
     font-size: clamp(10px, calc(10px + var(--wb-reading-bump)), 14px);
 }
@@ -6120,7 +6120,7 @@
     word-break: break-word;
 }
 
-/* 人物编辑底栏：删除是低权重危险操作，默认克制，悬停才显红。 */
+/* Thanh dưới cùng chỉnh sửa nhân vật: Xóa là thao tác nguy hiểm trọng số thấp, kiềm chế mặc định, di chuột mới hiện đỏ. */
 #world-backstage-root .wb-person-editor .wb-person-editor-actions .wb-person-delete-button {
     min-height: 39px !important;
     padding: 0 14px !important;
@@ -6172,7 +6172,7 @@
     }
 }
 
-/* 1.1.0 · 世界舆情观察版 */
+/* 1.1.0 · Bảng quan sát dư luận thế giới */
 #world-backstage-root .wb-public-readonly-badge {
     display: inline-flex;
     align-items: center;
@@ -6444,7 +6444,7 @@
     }
 }
 
-/* 1.1.1 · 交互与连接体验统一 */
+/* 1.1.1 · Thống nhất trải nghiệm tương tác và kết nối */
 #world-backstage-root .wb-setting-explanation {
     min-height: 2.8em;
     margin-top: 8px !important;
@@ -6454,7 +6454,7 @@
     color: var(--wb-text-faint);
 }
 
-/* 模块顶部说明区统一瘦身：信息还在，但不再抢掉正文空间。 */
+/* Khu vực hướng dẫn trên cùng của mô-đun được thu gọn thống nhất: Thông tin vẫn còn, nhưng không còn chiếm mất không gian nội dung chính. */
 #world-backstage-root .wb-view-intro {
     align-items: center;
     gap: 12px;
@@ -6505,7 +6505,7 @@
     padding: 8px 10px;
 }
 
-/* API 方案库与模块路由 */
+/* API Thư viện phương án và định tuyến mô-đun */
 #world-backstage-root .wb-api-profile-list {
     display: grid;
     gap: 8px;
@@ -6581,7 +6581,7 @@
     min-width: 0;
 }
 
-/* 舆情字体正式并入全局阅读字号，不再单独缩成另一套。 */
+/* Phông chữ dư luận chính thức gộp vào cỡ chữ đọc toàn cục, không còn thu nhỏ riêng thành một bộ khác. */
 #world-backstage-root .wb-opinion-intro,
 #world-backstage-root .wb-opinion-tabs,
 #world-backstage-root .wb-opinion-status,
@@ -6672,7 +6672,7 @@
     }
 }
 
-/* 1.1.2 · 舆情来源 / 受众与轻交互 */
+/* 1.1.2 · Nguồn dư luận / Đối tượng và tương tác nhẹ */
 #world-backstage-root .wb-opinion-source-row {
     display: flex;
     flex-wrap: wrap;
@@ -6713,7 +6713,7 @@
 }
 
 #world-backstage-root .wb-opinion-audience > span:not(.wb-opinion-scope)::before {
-    content: '可能关注 · ';
+    content: 'Có thể quan tâm · ';
     opacity: 0.72;
 }
 
@@ -6758,7 +6758,7 @@
     color: var(--wb-text-faint) !important;
 }
 
-/* 1.1.3 · 分层经历与来源链 */
+/* 1.1.3 · Trải nghiệm phân tầng và chuỗi nguồn */
 #world-backstage-root .wb-memory-layer-note {
     margin-top: 10px;
     padding: 8px 10px;
@@ -6803,7 +6803,7 @@
     line-height: 1.45;
 }
 
-/* 1.1.5 · 舆情空状态跨满双栏，真正居中而不是卡在左半边。 */
+/* 1.1.5 · Trạng thái trống của dư luận trải dài cả hai cột, thực sự căn giữa thay vì bị kẹt ở nửa bên trái. */
 #world-backstage-root .wb-news-grid > .wb-empty {
     grid-column: 1 / -1;
     width: 100%;
@@ -6816,12 +6816,12 @@
 .wb-news-card.is-sandbox, .wb-forum-card.is-sandbox { border-style: dashed; }
 .wb-news-card.is-sandbox .wb-news-card-top small, .wb-forum-card.is-sandbox .wb-forum-card-top small { letter-spacing: .08em; opacity: .72; }
 
-/* v1.1.8 · 舆情没有候选时是“本地未调用 API”，不伪装成成功。 */
+/* v1.1.8 · Khi dư luận không có ứng cử viên là“Chưa gọi cục bộ API”，Không ngụy trang thành thành công. */
 .wb-opinion-status.is-empty {
     opacity: .82;
 }
 
-/* v1.1.9 · 舆情版面收紧：内容优先，空框不再抢半屏。 */
+/* v1.1.9 · Thu gọn bố cục dư luận: ưu tiên nội dung, khung trống không còn chiếm nửa màn hình. */
 #world-backstage-root .wb-opinion-toolbar {
     display: flex;
     align-items: center;
@@ -6943,7 +6943,7 @@
     }
 }
 
-/* 1.2.1 · API 方案 / 日历设置 / 舆情状态细化 */
+/* 1.2.1 · API Phương án / Cài đặt lịch / Chi tiết hóa trạng thái dư luận */
 #world-backstage-root .wb-api-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
@@ -7042,7 +7042,7 @@
 }
 
 
-/* 1.2.1 · API 方案 / 日历设置 / 舆情状态细化 */
+/* 1.2.1 · API Phương án / Cài đặt lịch / Chi tiết hóa trạng thái dư luận */
 #world-backstage-root .wb-api-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;

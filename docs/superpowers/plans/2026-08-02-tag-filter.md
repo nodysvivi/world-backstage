@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add an observation-settings “标签过滤” module that strips HTML comments and user-defined open/close tag blocks from narrative text before world simulation, memory indexing, and person observation.
+**Goal:** Add an observation-settings module “Lọc thẻ” that strips HTML comments and user-defined open/close tag blocks from narrative text before world simulation, memory indexing, and person observation.
 
 **Architecture:** Pure `filterNarrativeText` in `core.js`; `index.js` keeps `selectedMessageText` raw for hashes/queue and adds `narrativeMessageText` as the filtered choke point; `ui.js` adds a settings group with draft-aware rule cards.
 
@@ -42,33 +42,33 @@ import { filterNarrativeText, normalizeTagFilterRules } from '../core.js';
 
 const enabled = (rules) => ({ tagFilterEnabled: true, tagFilterRules: rules });
 
-test('始终删除跨行 HTML 注释', () => {
-    const text = '前<!--\n草稿\n-->后';
-    assert.equal(filterNarrativeText(text, { tagFilterEnabled: false, tagFilterRules: [] }), '前后');
+test('Luôn xóa chú thích HTML nhiều dòng', () => {
+    const text = 'Trước<!--\nBản nháp\n-->Sau';
+    assert.equal(filterNarrativeText(text, { tagFilterEnabled: false, tagFilterRules: [] }), 'TrướcSau');
 });
 
-test('未闭合注释保持不变', () => {
-    const text = '前<!--草稿后';
+test('Chú thích chưa đóng giữ nguyên', () => {
+    const text = 'Trước<!--Bản nháp Sau';
     assert.equal(filterNarrativeText(text, { tagFilterEnabled: false, tagFilterRules: [] }), text);
 });
 
-test('成对规则删除整块', () => {
-    const text = 'A<options>选1</options>B';
+test('Quy tắc theo cặp xóa toàn bộ khối', () => {
+    const text = 'A<options>Chọn 1</options>B';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '<options>', close: '</options>' }])),
         'AB',
     );
 });
 
-test('严格字面不匹配带属性开头', () => {
-    const text = 'A<options type="x">选1</options>B';
+test('Không khớp chính xác theo nghĩa đen với phần mở đầu có thuộc tính', () => {
+    const text = 'A<options type="x">Chọn 1</options>B';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '<options>', close: '</options>' }])),
         text,
     );
 });
 
-test('区分大小写', () => {
+test('Phân biệt chữ hoa chữ thường', () => {
     const text = 'A<Options>x</Options>B';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '<options>', close: '</options>' }])),
@@ -76,7 +76,7 @@ test('区分大小写', () => {
     );
 });
 
-test('仅结尾：删除结尾及之前全部，并反复削剪', () => {
+test('Chỉ phần cuối: Xóa phần cuối và toàn bộ trước đó, và cắt tỉa lặp đi lặp lại', () => {
     const text = 'aaa</x>bbb</x>ccc';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '', close: '</x>' }])),
@@ -84,15 +84,15 @@ test('仅结尾：删除结尾及之前全部，并反复削剪', () => {
     );
 });
 
-test('仅开头：从开头删到文末', () => {
-    const text = '保留<tail>后面全删';
+test('Chỉ phần đầu: Xóa từ phần đầu đến cuối văn bản', () => {
+    const text = 'Giữ lại<tail>Xóa toàn bộ phía sau';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '<tail>', close: '' }])),
-        '保留',
+        'Giữ lại',
     );
 });
 
-test('关闭用户规则时仍删注释', () => {
+test('Vẫn xóa chú thích khi tắt quy tắc người dùng', () => {
     const text = 'A<!--c-->B<options>x</options>C';
     assert.equal(
         filterNarrativeText(text, {
@@ -103,7 +103,7 @@ test('关闭用户规则时仍删注释', () => {
     );
 });
 
-test('多规则按顺序应用', () => {
+test('Áp dụng nhiều quy tắc theo thứ tự', () => {
     const text = '1<think>t</think>2<options>o</options>3';
     assert.equal(
         filterNarrativeText(text, enabled([
@@ -114,15 +114,15 @@ test('多规则按顺序应用', () => {
     );
 });
 
-test('成对找不到 close 时不误删到文末', () => {
-    const text = 'A<options>没有结尾B';
+test('Không xóa nhầm đến cuối văn bản khi không tìm thấy close của cặp', () => {
+    const text = 'A<options>Không có phần kết B';
     assert.equal(
         filterNarrativeText(text, enabled([{ open: '<options>', close: '</options>' }])),
         text,
     );
 });
 
-test('normalizeTagFilterRules 丢弃双空并截断', () => {
+test('normalizeTagFilterRules Bỏ qua khoảng trống kép và cắt bớt', () => {
     const rules = normalizeTagFilterRules([
         { open: '', close: '' },
         { open: ` <${'a'.repeat(100)}> `, close: '</a>' },
@@ -438,7 +438,7 @@ if (!filteredNewTexts.length) {
         if (currentChatToken() === chatTokenAtStart) {
             setSyncStatus({
                 phase: 'pending',
-                message: '正文分支已变化，旧结果未提交；最新正文仍等待推演',
+                message: 'Nhánh nội dung chính đã thay đổi, kết quả cũ chưa được gửi; nội dung chính mới nhất vẫn đang chờ suy diễn',
                 error: '',
             });
         }
@@ -471,7 +471,7 @@ if (!filteredNewTexts.length) {
     await target.context.saveChat?.();
     setSyncStatus({
         phase: 'success',
-        message: '过滤后无有效正文，本轮没有推进世界',
+        message: 'Không có nội dung chính hợp lệ sau khi lọc, vòng này không tiến hành thế giới',
         error: '',
         succeededAt: new Date().toISOString(),
         method: runtime.syncStatus.method,
@@ -490,7 +490,7 @@ Person observation: no special short-circuit (allow call with empty turns).
 Append to `tests/tag-filter.test.mjs`:
 
 ```js
-test('先过滤再截断：闭合标签在截断点之后仍会被完整删除', () => {
+test('Lọc trước rồi cắt bớt: Thẻ đóng sau điểm cắt bớt vẫn sẽ bị xóa hoàn toàn', () => {
     const open = '<options>';
     const close = '</options>';
     const inner = 'x'.repeat(50);
@@ -526,7 +526,7 @@ EOF
 
 ---
 
-### Task 4: Settings UI — 标签过滤 group
+### Task 4: Settings UI — Lọc thẻ group
 
 **Files:**
 - Modify: `ui.js` (`renderSettings`, `createWorldBackstageUI` state + handlers)
@@ -590,10 +590,10 @@ Between the closing `</details>` of `simulation` and the opening of `worldbook`,
 
 ```html
 <details class="wb-settings-group" data-settings-group="tagfilter" ${groupOpen('tagfilter')}>
-    <summary><span>标签过滤</span><small>剔除杂标签与注释后再推演 / 记忆</small></summary>
+    <summary><span>Lọc thẻ</span><small>Loại bỏ các thẻ tạp và chú thích trước khi suy diễn / ký ức</small></summary>
     <div class="wb-settings-group-body">
         <div class="wb-setting-toggle">
-            <div><strong>启用标签过滤</strong><span>关闭后仍会删除 HTML 注释 &lt;!-- --&gt;</span></div>
+            <div><strong>Bật lọc thẻ</strong><span>Vẫn sẽ xóa chú thích HTML &lt;!-- --&gt; sau khi đóng</span></div>
             <label class="wb-switch">
                 <input type="checkbox" data-wb-setting="tagFilterEnabled"
                     ${settings.tagFilterEnabled !== false ? 'checked' : ''}>
@@ -601,27 +601,27 @@ Between the closing `</details>` of `simulation` and the opening of `worldbook`,
             </label>
         </div>
         <div class="wb-setting-block">
-            <p>HTML 注释 <code>&lt;!-- ... --&gt;</code> 始终整块删除。匹配为严格字面（区分大小写）。开头可空：只填结尾时删除该结尾及之前全部；只填开头时从开头删到本条末尾。</p>
+            <p>Chú thích HTML <code>&lt;!-- ... --&gt;</code> luôn bị xóa toàn bộ khối. Khớp chính xác theo nghĩa đen (phân biệt chữ hoa chữ thường). Thẻ mở đầu có thể để trống: chỉ điền thẻ kết thúc sẽ xóa thẻ kết thúc đó và toàn bộ trước đó; chỉ điền thẻ mở đầu sẽ xóa từ thẻ mở đầu đến cuối mục này.</p>
             <div class="wb-tag-filter-list">
                 ${rules.map((rule, index) => `
                     <div class="wb-tag-filter-rule" data-tag-filter-index="${index}">
                         <div class="wb-tag-filter-rule-head">
-                            <strong>规则 ${index + 1}</strong>
+                            <strong>Quy tắc ${index + 1}</strong>
                             <button type="button" data-wb-action="remove-tag-filter-rule"
-                                data-index="${index}">删除</button>
+                                data-index="${index}">Xóa</button>
                         </div>
-                        <label>开头标签 <span>（可空）</span>
+                        <label>Thẻ mở đầu <span>（Có thể để trống）</span>
                             <input type="text" maxlength="80"
                                 data-wb-tag-filter-field="open" data-index="${index}"
                                 value="${escapeAttr(rule.open || '')}"
-                                placeholder="例如 &lt;options&gt;"
+                                placeholder="Ví dụ &lt;options&gt;"
                                 autocomplete="off" spellcheck="false">
                         </label>
-                        <label>结尾标签 <span>（可空）</span>
+                        <label>Thẻ kết thúc <span>（Có thể để trống）</span>
                             <input type="text" maxlength="80"
                                 data-wb-tag-filter-field="close" data-index="${index}"
                                 value="${escapeAttr(rule.close || '')}"
-                                placeholder="例如 &lt;/options&gt;"
+                                placeholder="Ví dụ &lt;/options&gt;"
                                 autocomplete="off" spellcheck="false">
                         </label>
                     </div>
@@ -629,7 +629,7 @@ Between the closing `</details>` of `simulation` and the opening of `worldbook`,
             </div>
             <button type="button" class="wb-secondary-button" data-wb-action="add-tag-filter-rule"
                 ${rules.filter(rule => String(rule.open || '').trim() || String(rule.close || '').trim()).length >= 30 ? 'disabled' : ''}>
-                ＋ 添加规则
+                ＋ Thêm quy tắc
             </button>
         </div>
     </div>
@@ -765,7 +765,7 @@ npm test
 npm run check
 ```
 
-Manual (SillyTavern): open 观测设置 → 标签过滤 → confirm defaults, add empty card (does not vanish), fill `</dream_body>` only, toggle enable.
+Manual (SillyTavern): open Cài đặt quan sát → Lọc thẻ → confirm defaults, add empty card (does not vanish), fill `</dream_body>` only, toggle enable.
 
 - [ ] **Step 9: Commit**
 
@@ -785,14 +785,14 @@ EOF
 ### Task 5: Architecture note + final verification
 
 **Files:**
-- Modify: `docs/ARCHITECTURE.md` (short bullet under 0.8.x or 模块边界)
+- Modify: `docs/ARCHITECTURE.md` (short bullet under 0.8.x or Ranh giới mô-đun)
 
 - [ ] **Step 1: Document**
 
-Add under the latest version section or 模块边界:
+Add under the latest version section or Ranh giới mô-đun:
 
 ```md
-- 叙事提取层可选标签过滤：`filterNarrativeText` 在推演 / 记忆 / 人物观测读取正文时剔除 HTML 注释与用户配置的开闭标签；分支哈希与可用性判断仍使用原文。
+- Lọc thẻ tùy chọn ở lớp trích xuất tự sự: `filterNarrativeText` loại bỏ chú thích HTML và các thẻ đóng mở do người dùng cấu hình khi đọc nội dung chính trong suy diễn / ký ức / quan sát nhân vật; băm nhánh và đánh giá tính khả dụng vẫn sử dụng văn bản gốc.
 ```
 
 - [ ] **Step 2: Full verification**

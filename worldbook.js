@@ -1,22 +1,22 @@
 const PROFILE_LABELS = Object.freeze({
-    name: ['中文名', '姓名', '名字', '角色名', 'chinese name', 'full name', 'name'],
-    nickname: ['昵称', '别名', '别称', '称呼', 'nickname', 'alias', 'aliases'],
-    gender: ['性别', 'gender', 'sex'],
-    age: ['年龄', 'age'],
-    birthday: ['生日', 'birthday', 'birth date'],
-    species: ['种族', '物种', 'race', 'species'],
-    identity: ['身份', '职业', '职务', '职位', 'occupation', 'profession', 'identity', 'role'],
-    personality: ['性格', '人格', '个性', '性情', 'personality', 'temperament', 'character'],
-    values: ['价值观', '原则', '习惯', '喜好', '偏好', 'values', 'habit', 'habits', 'likes', 'preferences'],
+    name: ['Tên tiếng Trung', 'Họ tên', 'Tên', 'Tên nhân vật', 'chinese name', 'full name', 'name'],
+    nickname: ['Biệt danh', 'Tên khác', 'Tên gọi khác', 'Danh xưng', 'nickname', 'alias', 'aliases'],
+    gender: ['Giới tính', 'gender', 'sex'],
+    age: ['Tuổi tác', 'age'],
+    birthday: ['Sinh nhật', 'birthday', 'birth date'],
+    species: ['Chủng tộc', 'Loài', 'race', 'species'],
+    identity: ['Thân phận', 'Nghề nghiệp', 'Chức vụ', 'Chức vụ', 'occupation', 'profession', 'identity', 'role'],
+    personality: ['Tính cách', 'Nhân cách', 'Cá tính', 'Tính tình', 'personality', 'temperament', 'character'],
+    values: ['Giá trị quan', 'Nguyên tắc', 'Thói quen', 'Sở thích', 'Thiên hướng', 'values', 'habit', 'habits', 'likes', 'preferences'],
     mbti: ['mbti'],
-    appearance: ['外貌', '外观', '长相', '体貌', 'appearance', 'looks'],
-    height: ['身高', 'height'],
-    body: ['体型', '身材', '身体特征', 'body', 'build'],
-    clothing: ['穿着', '服装', '衣着', 'clothing', 'outfit'],
-    background: ['背景', '经历', '履历', '过去', '生平', 'background story', 'background', 'history', 'backstory'],
-    relations: ['关系', '人际关系', '家庭', '家人', '亲属', 'relationships', 'relations', 'family'],
-    speech: ['说话方式', '说话习惯', '语言风格', '口癖', '语气', 'speech style', 'speaking style', 'speech', 'voice'],
-    behavior: ['行为习惯', '行为边界', '底线', '禁忌', '雷区', 'behavior boundaries', 'behavior', 'boundaries', 'taboo'],
+    appearance: ['Ngoại hình', 'Vẻ ngoài', 'Tướng mạo', 'Thể mạo', 'appearance', 'looks'],
+    height: ['Chiều cao', 'height'],
+    body: ['Thể hình', 'Vóc dáng', 'Đặc điểm cơ thể', 'body', 'build'],
+    clothing: ['Ăn mặc', 'Trang phục', 'Trang phục', 'clothing', 'outfit'],
+    background: ['Bối cảnh', 'Trải nghiệm', 'Lý lịch', 'Quá khứ', 'Tiểu sử', 'background story', 'background', 'history', 'backstory'],
+    relations: ['Mối quan hệ', 'Mối quan hệ xã hội', 'Gia đình', 'Người nhà', 'Người thân', 'relationships', 'relations', 'family'],
+    speech: ['Cách nói chuyện', 'Thói quen nói chuyện', 'Phong cách ngôn ngữ', 'Câu cửa miệng', 'Giọng điệu', 'speech style', 'speaking style', 'speech', 'voice'],
+    behavior: ['Thói quen hành vi', 'Ranh giới hành vi', 'Giới hạn cuối', 'Cấm kỵ', 'Bãi mìn', 'behavior boundaries', 'behavior', 'boundaries', 'taboo'],
 });
 
 const PROFILE_LOOKUP = new Map(
@@ -88,27 +88,27 @@ export function extractWorldbookCharacterProfile(content, fallbackName = '') {
         .slice(0, 80);
     const name = explicitName || String(fallbackName || '').trim().slice(0, 80);
     const identityAnchor = joinFields([
-        values.nickname ? `昵称/别称：${values.nickname}` : '',
-        values.gender ? `性别：${values.gender}` : '',
-        values.age ? `年龄：${values.age}` : '',
-        values.birthday ? `生日：${values.birthday}` : '',
-        values.species ? `种族/物种：${values.species}` : '',
-        values.identity ? `身份/职业：${values.identity}` : '',
+        values.nickname ? `Biệt danh/Biệt danh:${values.nickname}` : '',
+        values.gender ? `Giới tính:${values.gender}` : '',
+        values.age ? `Tuổi tác:${values.age}` : '',
+        values.birthday ? `Sinh nhật:${values.birthday}` : '',
+        values.species ? `Chủng tộc/Loài:${values.species}` : '',
+        values.identity ? `Thân phận/Nghề nghiệp:${values.identity}` : '',
     ], 500);
     const personalityAnchor = joinFields([
         values.personality,
-        values.values ? `价值观/习惯：${values.values}` : '',
+        values.values ? `Giá trị quan/Thói quen:${values.values}` : '',
         values.mbti ? `MBTI：${values.mbti}` : '',
     ], 600);
     const appearanceProfile = joinFields([
-        values.height ? `身高：${values.height}` : '',
-        values.body ? `体型/身体特征：${values.body}` : '',
+        values.height ? `Chiều cao:${values.height}` : '',
+        values.body ? `Thể hình/Đặc điểm cơ thể:${values.body}` : '',
         values.appearance,
-        values.clothing ? `穿着：${values.clothing}` : '',
+        values.clothing ? `Trang phục:${values.clothing}` : '',
     ], 700);
     const backgroundProfile = joinFields([
         values.background,
-        values.relations ? `关系/家庭：${values.relations}` : '',
+        values.relations ? `Mối quan hệ/Gia đình:${values.relations}` : '',
     ], 900);
 
     return {
@@ -133,23 +133,23 @@ export function detectWorldbookCharacter(entry, profile = extractWorldbookCharac
 
     if (/<\s*character\b/i.test(content) || /<\s*(?:char|npc|person)\b/i.test(content)) {
         score += 3;
-        signals.push('角色结构标签');
+        signals.push('Thẻ cấu trúc nhân vật');
     }
     if (profile.explicitName) {
         score += 3;
-        signals.push('明确姓名');
+        signals.push('Họ tên rõ ràng');
     }
     const strongFields = ['personality', 'appearance', 'background', 'speech', 'gender', 'age', 'identity'];
     const matchedStrong = strongFields.filter(field => profile.matchedFields.includes(field));
     score += Math.min(5, matchedStrong.length);
-    if (matchedStrong.length >= 2) signals.push(`人物字段 ${matchedStrong.length} 项`);
-    if (/(?:角色|人物|npc|character|char(?:acter)?\s*card)/iu.test(title)) {
+    if (matchedStrong.length >= 2) signals.push(`Trường dữ liệu nhân vật ${matchedStrong.length} Mục`);
+    if (/(?:Nhân vật|Nhân vật|npc|character|char(?:acter)?\s*card)/iu.test(title)) {
         score += 2;
-        signals.push('条目名/关键词像人物');
+        signals.push('Tên mục/Từ khóa giống nhân vật');
     }
-    if (/(?:世界观|世界设定|规则|系统|教程|说明|模板|格式|地点|城市|国家|势力总览|时间线|词典|百科|剧情梗概)/iu.test(title)) {
+    if (/(?:Thế giới quan|Thiết lập thế giới|Quy tắc|Hệ thống|Hướng dẫn|Mô tả|Mẫu|Định dạng|Địa điểm|Thành phố|Quốc gia|Tổng quan thế lực|Dòng thời gian|Từ điển|Bách khoa toàn thư|Tóm tắt cốt truyện)/iu.test(title)) {
         score -= 4;
-        signals.push('条目名更像设定');
+        signals.push('Tên mục giống thiết lập hơn');
     }
     if (profile.matchedFields.length >= 4) score += 2;
 

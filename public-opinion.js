@@ -69,13 +69,13 @@ export function eligiblePublicOpinionEvents(state) {
                 const explicitTrace = asText(event.publicTrace ?? event.public_trace, 260);
                 return {
                     id: asText(event.id, 120),
-                    title: '未证实的异常迹象',
+                    title: 'Dấu hiệu bất thường chưa được xác nhận',
                     place,
                     summary: '',
                     result: '',
                     status: asText(event.status, 30),
                     visibility,
-                    public_hint: explicitTrace || `${place ? `${place}附近` : '某处'}出现了可被外界察觉的异常迹象，具体原因尚不明确。`,
+                    public_hint: explicitTrace || `${place ? `${place}Gần đó` : 'Nơi nào đó'}Đã xuất hiện dấu hiệu bất thường có thể bị thế giới bên ngoài nhận biết, nguyên nhân cụ thể vẫn chưa rõ ràng.`,
                 };
             }
             return {
@@ -94,48 +94,48 @@ export function eligiblePublicOpinionEvents(state) {
 export function buildPublicOpinionPrompt(state, { clockLabel = '' } = {}) {
     const events = eligiblePublicOpinionEvents(state);
     const context = {
-        world_name: asText(state?.world?.name || '主世界', 80),
+        world_name: asText(state?.world?.name || 'Thế giới chính', 80),
         world_time: asText(clockLabel, 100),
         public_event_candidates: events,
     };
 
     return [
-        '你是“世界背面”的世界舆情观察器。你只生成只读的新闻与论坛快照，不修改世界状态、人物认知、事件、记忆、时间或正文。不会写回人物认知，也不会触发新的世界变化。',
-        '只能依据下方 public_event_candidates。不得使用任何未提供的幕后事实，不得把隐藏事件、私人行动或角色秘密写成公开消息。',
-        'visibility=trace 的候选不是“已经公开的事件”，而只是外界能察觉的一点表面迹象：只允许依据 public_hint 与 place 生成非官方论坛讨论；不得使用该事件真正标题、summary/result、隐藏原因或幕后人物信息，也不得生成新闻。trace 对应论坛必须 source_type=unofficial，claim_status 只能是 mixed 或 rumor。',
-        '不得虚构新的正史事件；但只要 public_event_candidates 非空，就必须至少选择其中 1 项有自然传播可能的内容生成新闻或论坛讨论。影响较小时可以写成本地、小圈层、低热度讨论，不必硬抬成重大新闻。',
-        '新闻与论坛是“传播载体”，source_type 才表示消息来源层级：official = 官方/机构/权威渠道，unofficial = 目击、匿名爆料、民间媒体、论坛、小道消息。官方消息也可能措辞保守、选择性披露；非官方消息也可能碰巧为真。来源层级不等于世界真相。',
-        '新闻偏事实传播：只报道有公共传播价值的内容；无法确认的原因不要擅自下结论。论坛偏群众反应：允许猜测、误解、玩梗和传闻，但必须通过 claim_status 明确区分 fact / mixed / rumor，且不得把传闻写回成事实。',
-        '每条消息给出 audience_tags：只写“哪些类型的人可能更关注这条消息”，例如当地居民、行业从业者、某组织成员、记者、学生等。它只是受众标签，不代表任何具体 NPC 已经看到或相信该消息，也不需要读取完整世界书。',
-        'scope 用一句很短的话概括传播范围，例如“本地居民圈”“行业内部”“全城公开”“小范围匿名流传”。',
-        'related_event_id 必须来自 public_event_candidates 中已有的 id。不得虚构新的事件 ID。',
-        '最多生成 3 条新闻、4 个论坛主题；每个论坛主题最多 4 条代表回复。news / forums 不需要分别凑齐，但二者合计至少要有 1 条有效内容，并且 related_event_id 必须来自候选。',
-        '只输出 JSON，不要 Markdown，不要代码块，不要解释。',
+        'Bạn là“Mặt trái thế giới”máy quan sát dư luận thế giới của. Bạn chỉ tạo bản ghi nhanh tin tức và diễn đàn chỉ đọc, không sửa đổi trạng thái thế giới, nhận thức nhân vật, sự kiện, ký ức, thời gian hoặc nội dung chính. Sẽ không ghi lại vào nhận thức nhân vật, cũng không kích hoạt thay đổi thế giới mới.',
+        'Chỉ có thể dựa vào bên dưới public_event_candidates。Không được sử dụng bất kỳ sự thật hậu trường nào chưa được cung cấp, không được viết sự kiện ẩn, hành động riêng tư hoặc bí mật nhân vật thành tin nhắn công khai.',
+        'visibility=trace ứng cử viên không phải là "sự kiện đã công khai", mà chỉ là một chút dấu hiệu bề ngoài mà thế giới bên ngoài có thể nhận biết: chỉ cho phép dựa vào public_hint và place tạo thảo luận diễn đàn không chính thức; không được sử dụng tiêu đề thực sự của sự kiện này, summary/result, nguyên nhân ẩn hoặc thông tin nhân vật hậu trường, cũng không được tạo tin tức. trace diễn đàn tương ứng phải source_type=unofficial, claim_status chỉ có thể là mixed hoặc rumor.',
+        'không được hư cấu sự kiện chính sử mới; nhưng chỉ cần public_event_candidates không trống, thì phải chọn ít nhất trong đó 1 mục nội dung có khả năng lan truyền tự nhiên để tạo tin tức hoặc thảo luận diễn đàn. Khi ảnh hưởng nhỏ có thể viết thành thảo luận địa phương, vòng tròn nhỏ, độ hot thấp, không cần gượng ép nâng thành tin tức quan trọng.',
+        'Tin tức và diễn đàn là“phương tiện lan truyền”，source_type mới biểu thị cấp độ nguồn tin nhắn:official = Chính thức/Cơ quan/kênh có thẩm quyền,unofficial = chứng kiến, tiết lộ ẩn danh, truyền thông dân gian, diễn đàn, tin vỉa hè. Tin tức chính thức cũng có thể dùng từ ngữ thận trọng, tiết lộ có chọn lọc; tin tức không chính thức cũng có thể tình cờ là sự thật. Cấp độ nguồn không đồng nghĩa với sự thật thế giới.',
+        'Tin tức thiên về lan truyền sự thật: chỉ đưa tin nội dung có giá trị lan truyền công cộng; nguyên nhân không thể xác nhận đừng tự ý kết luận. Diễn đàn thiên về phản ứng quần chúng: cho phép suy đoán, hiểu lầm, đùa cợt và tin đồn, nhưng phải thông qua claim_status phân biệt rõ ràng fact / mixed / rumor，và không được viết tin đồn thành sự thật.',
+        'Mỗi tin nhắn đưa ra audience_tags：chỉ viết“những loại người nào có thể quan tâm hơn đến tin nhắn này”，ví dụ như cư dân địa phương, người làm trong ngành, thành viên tổ chức nào đó, phóng viên, học sinh, v.v. Nó chỉ là thẻ đối tượng khán giả, không đại diện cho bất kỳ cụ thể nào NPC đã nhìn thấy hoặc tin vào tin nhắn này, cũng không cần đọc toàn bộ Worldbook.',
+        'scope Dùng một câu rất ngắn để tóm tắt phạm vi lan truyền, ví dụ“Vòng tròn cư dân địa phương”“Nội bộ ngành”“Công khai toàn thành phố”“Lưu truyền ẩn danh phạm vi nhỏ”。',
+        'related_event_id phải đến từ public_event_candidates đã có trong id。không được hư cấu sự kiện mới ID。',
+        'tạo tối đa 3 tin tức,4 chủ đề diễn đàn; mỗi chủ đề diễn đàn tối đa 4 phản hồi đại diện.news / forums không cần gom đủ riêng biệt, nhưng tổng cộng cả hai ít nhất phải có 1  nội dung hợp lệ, và related_event_id phải đến từ ứng viên.',
+        'chỉ xuất ra JSON，không được Markdown，Không dùng khối mã, không giải thích.',
         JSON.stringify({
             output_schema: {
                 news: [{
-                    category: '城市 / 社会 / 商业 / 公告 / 其他',
-                    headline: '标题',
-                    summary: '简短报道，1-3句',
-                    source: '媒体、机构、组织或公开信息来源名称，可为泛称',
+                    category: 'Thành phố / Xã hội / Thương mại / Thông báo / Khác',
+                    headline: 'Tiêu đề',
+                    summary: 'báo cáo ngắn gọn,1-3 câu',
+                    source: 'Tên phương tiện truyền thông, cơ quan, tổ chức hoặc nguồn thông tin công khai, có thể là tên gọi chung',
                     source_type: 'official | unofficial',
-                    audience_tags: ['可能关注的人群，1-5个'],
-                    scope: '传播范围，短句',
-                    related_event_id: '必须来自输入',
+                    audience_tags: ['nhóm người có thể quan tâm,1-5 cái'],
+                    scope: 'Phạm vi lan truyền, câu ngắn',
+                    related_event_id: 'phải đến từ đầu vào',
                     confidence: 'high | medium',
                     heat: '1-3',
                 }],
                 forums: [{
-                    board: '版块名称',
-                    title: '帖子标题',
-                    summary: '楼主或主题摘要',
-                    source_type: 'official | unofficial（论坛通常为 unofficial，官方账号发布时可为 official）',
-                    audience_tags: ['可能关注的人群，1-5个'],
-                    scope: '传播范围，短句',
-                    related_event_id: '必须来自输入',
+                    board: 'Tên chuyên mục',
+                    title: 'Tiêu đề bài đăng',
+                    summary: 'Chủ thớt hoặc tóm tắt chủ đề',
+                    source_type: 'official | unofficial（Diễn đàn thường là unofficial，Khi tài khoản chính thức đăng tải có thể là official）',
+                    audience_tags: ['nhóm người có thể quan tâm,1-5 cái'],
+                    scope: 'Phạm vi lan truyền, câu ngắn',
+                    related_event_id: 'phải đến từ đầu vào',
                     claim_status: 'fact | mixed | rumor',
                     heat: '1-5',
-                    replies: [{ author: '匿名昵称', text: '代表回复' }],
+                    replies: [{ author: 'Biệt danh ẩn danh', text: 'Phản hồi tiêu biểu' }],
                 }],
             },
             context,
@@ -164,10 +164,10 @@ export function normalizePublicOpinionPayload(payload, {
             const confidenceRaw = asText(item?.confidence, 20).toLowerCase();
             return {
                 id: `news_${index}_${relatedEventId}`,
-                category: asText(item?.category, 40) || '世界新闻',
+                category: asText(item?.category, 40) || 'Tin tức thế giới',
                 headline,
                 summary,
-                source: asText(item?.source, 100) || '公开信息',
+                source: asText(item?.source, 100) || 'Thông tin công khai',
                 sourceType: normalizeSourceType(item?.source_type ?? item?.sourceType, 'official'),
                 audienceTags: uniqueStrings(item?.audience_tags ?? item?.audienceTags, 5),
                 scope: asText(item?.scope, 80),
@@ -193,13 +193,13 @@ export function normalizePublicOpinionPayload(payload, {
                 if (!text) return null;
                 return {
                     id: `reply_${index}_${replyIndex}`,
-                    author: asText(reply?.author ?? reply?.name, 60) || `匿名${replyIndex + 1}`,
+                    author: asText(reply?.author ?? reply?.name, 60) || `Ẩn danh${replyIndex + 1}`,
                     text,
                 };
             }).filter(Boolean).slice(0, 4);
             return {
                 id: `forum_${index}_${relatedEventId}`,
-                board: asText(item?.board, 60) || '闲聊',
+                board: asText(item?.board, 60) || 'Trò chuyện phiếm',
                 title,
                 summary,
                 sourceType: eventVisibility === 'trace'
@@ -256,20 +256,20 @@ export function emptyPublicOpinionSandbox({ generatedAt = '' } = {}) {
 
 export function buildPublicOpinionSandboxPrompt(state, { clockLabel = '' } = {}) {
     const context = {
-        world_name: asText(state?.world?.name || '主世界', 80),
+        world_name: asText(state?.world?.name || 'Thế giới chính', 80),
         world_time: asText(clockLabel, 100),
         world_flavor: asText(state?.world?.detail || state?.world?.title || '', 700),
     };
     return [
-        '你是“世界背面”的闲逛舆情生成器。这里是纯娱乐沙盒：可以生成与主线、现有事件完全无关的日常新闻、论坛水帖、小广告、城市八卦、奇怪热帖和生活碎片。',
-        '所有内容都必须标记为 non-canon 的娱乐快照：它们不是世界事实，不写入事件、记忆、人物认知、正文因果，也不能暗示真实主线发生了什么。',
-        '可以参考 world_name / world_time / world_flavor 保持世界气质，但不得偷用或续写当前主线、隐藏秘密、人物私事。尽量写普通社会生活，让这个世界显得有人在过日子。',
-        '内容可以轻松、好笑、琐碎，宁可像真的社区闲逛，也不要每条都制造大事件。',
-        '请务必生成可供闲逛的内容：至少 1 条轻新闻和 2 个论坛主题，最多 2 条轻新闻、4 个论坛主题；每个论坛最多 4 条代表回复。只输出 JSON。',
+        'Bạn là“Mặt trái thế giới” của trình tạo dư luận dạo chơi. Đây là hộp cát giải trí thuần túy: có thể tạo ra tin tức hàng ngày, bài đăng rác trên diễn đàn, quảng cáo nhỏ, tin đồn thành phố, bài đăng hot kỳ lạ và mảnh ghép cuộc sống hoàn toàn không liên quan đến tuyến truyện chính, sự kiện hiện tại.',
+        'Tất cả nội dung đều phải được đánh dấu là non-canon  bản ghi nhanh giải trí: chúng không phải là sự thật thế giới, không ghi vào sự kiện, ký ức, nhận thức nhân vật, nhân quả nội dung chính, cũng không được ám chỉ những gì đã xảy ra trong tuyến truyện chính thực sự.',
+        'Có thể tham khảo world_name / world_time / world_flavor Giữ nguyên khí chất thế giới, nhưng không được dùng trộm hoặc viết tiếp tuyến truyện chính hiện tại, bí mật ẩn giấu, chuyện riêng tư của nhân vật. Cố gắng viết về cuộc sống xã hội bình thường, để thế giới này trông như có người đang sinh sống.',
+        'Nội dung có thể nhẹ nhàng, hài hước, vụn vặt, thà giống như đang dạo chơi trong cộng đồng thật, còn hơn là mỗi mục đều tạo ra sự kiện lớn.',
+        'Vui lòng nhất thiết phải tạo nội dung có thể dạo chơi: ít nhất 1  tin tức nhẹ và 2  chủ đề diễn đàn, tối đa 2  tin tức nhẹ, 4  chủ đề diễn đàn; mỗi diễn đàn tối đa 4  phản hồi tiêu biểu. Chỉ xuất ra JSON。',
         JSON.stringify({
             output_schema: {
-                news: [{ category: '生活 / 本地 / 趣闻 / 商业 / 其他', headline: '', summary: '', source: '', heat: 1 }],
-                forums: [{ board: '闲聊', title: '', summary: '', heat: 1, replies: [{ author: '', text: '' }] }],
+                news: [{ category: 'Cuộc sống / Địa phương / Chuyện thú vị / Thương mại / Khác', headline: '', summary: '', source: '', heat: 1 }],
+                forums: [{ board: 'Trò chuyện phiếm', title: '', summary: '', heat: 1, replies: [{ author: '', text: '' }] }],
             },
             context,
         }, null, 2),
@@ -284,13 +284,13 @@ export function normalizePublicOpinionSandboxPayload(payload, { generatedAt = ne
             if (!headline || !summary) return null;
             return {
                 id: `sandbox_news_${index}`,
-                category: asText(item?.category, 40) || '闲逛新闻',
+                category: asText(item?.category, 40) || 'Tin tức dạo chơi',
                 headline,
                 summary,
-                source: asText(item?.source, 100) || '世界里的普通公开信息',
+                source: asText(item?.source, 100) || 'Thông tin công khai bình thường trong thế giới',
                 sourceType: 'unofficial',
                 audienceTags: [],
-                scope: '娱乐沙盒',
+                scope: 'Hộp cát giải trí',
                 relatedEventId: '',
                 confidence: 'medium',
                 heat: clampInteger(item?.heat, 1, 1, 3),
@@ -307,16 +307,16 @@ export function normalizePublicOpinionSandboxPayload(payload, { generatedAt = ne
             const replies = asArray(item?.replies).map((reply, replyIndex) => {
                 const text = asText(reply?.text ?? reply?.content, 360);
                 if (!text) return null;
-                return { id: `sandbox_reply_${index}_${replyIndex}`, author: asText(reply?.author ?? reply?.name, 60) || `匿名${replyIndex + 1}`, text };
+                return { id: `sandbox_reply_${index}_${replyIndex}`, author: asText(reply?.author ?? reply?.name, 60) || `Ẩn danh${replyIndex + 1}`, text };
             }).filter(Boolean).slice(0, 4);
             return {
                 id: `sandbox_forum_${index}`,
-                board: asText(item?.board, 60) || '闲聊',
+                board: asText(item?.board, 60) || 'Trò chuyện phiếm',
                 title,
                 summary,
                 sourceType: 'unofficial',
                 audienceTags: [],
-                scope: '娱乐沙盒',
+                scope: 'Hộp cát giải trí',
                 relatedEventId: '',
                 claimStatus: 'rumor',
                 heat: clampInteger(item?.heat, 1, 1, 5),

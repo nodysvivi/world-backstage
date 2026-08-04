@@ -9,13 +9,13 @@ import {
 import { filterWorldbookEntries } from './worldbook.js';
 
 const VIEWS = [
-    { id: 'now', label: '此刻', eyebrow: 'NOW' },
-    { id: 'people', label: '人物', eyebrow: 'PEOPLE' },
-    { id: 'currents', label: '暗流', eyebrow: 'CURRENTS' },
-    { id: 'echoes', label: '回声', eyebrow: 'ECHOES' },
-    { id: 'opinion', label: '舆情', eyebrow: 'PUBLIC' },
-    { id: 'memory', label: '记忆', eyebrow: 'MEMORY' },
-    { id: 'archive', label: '纪事', eyebrow: 'ARCHIVE' },
+    { id: 'now', label: 'Lúc này', eyebrow: 'NOW' },
+    { id: 'people', label: 'Nhân vật', eyebrow: 'PEOPLE' },
+    { id: 'currents', label: 'Dòng chảy ngầm', eyebrow: 'CURRENTS' },
+    { id: 'echoes', label: 'Tiếng vang', eyebrow: 'ECHOES' },
+    { id: 'opinion', label: 'Dư luận', eyebrow: 'PUBLIC' },
+    { id: 'memory', label: 'Ký ức', eyebrow: 'MEMORY' },
+    { id: 'archive', label: 'Biên niên sử', eyebrow: 'ARCHIVE' },
 ];
 
 const TOAST_FACES = {
@@ -28,12 +28,12 @@ const TOAST_FACES = {
 };
 
 const TOAST_LABELS = {
-    success: '好啦',
-    busy: '正在努力',
-    info: '小提示',
-    normal: '小提示',
-    warning: '等一下',
-    error: '出问题了',
+    success: 'Được rồi',
+    busy: 'Đang xử lý',
+    info: 'Mẹo nhỏ',
+    normal: 'Mẹo nhỏ',
+    warning: 'Đợi một chút',
+    error: 'Đã xảy ra lỗi',
 };
 
 function escapeHtml(value) {
@@ -57,9 +57,9 @@ function foldOpenAttr(openFolds, key, defaultOpen = false) {
 
 function renderFoldToolbar(prefix) {
     return `
-        <div class="wb-fold-toolbar" aria-label="折叠控制">
-            <button type="button" data-wb-action="expand-folds" data-fold-prefix="${escapeAttr(prefix)}">全部展开</button>
-            <button type="button" data-wb-action="collapse-folds" data-fold-prefix="${escapeAttr(prefix)}">全部收起</button>
+        <div class="wb-fold-toolbar" aria-label="Điều khiển thu gọn">
+            <button type="button" data-wb-action="expand-folds" data-fold-prefix="${escapeAttr(prefix)}">Mở rộng tất cả</button>
+            <button type="button" data-wb-action="collapse-folds" data-fold-prefix="${escapeAttr(prefix)}">Thu gọn tất cả</button>
         </div>
     `;
 }
@@ -70,7 +70,7 @@ function compactText(value, maximum = 64) {
     return `${text.slice(0, Math.max(1, maximum - 1)).trimEnd()}…`;
 }
 
-function normalizeGroupLabel(value, fallback = '其他') {
+function normalizeGroupLabel(value, fallback = 'Khác') {
     const label = String(value || '').trim();
     return label || fallback;
 }
@@ -94,7 +94,7 @@ function groupItems(items, getGroup) {
 }
 function formatLocalTimestamp(value) {
     const date = new Date(String(value || ''));
-    if (!Number.isFinite(date.getTime())) return '时间未知';
+    if (!Number.isFinite(date.getTime())) return 'Thời gian không xác định';
     return date.toLocaleString('zh-CN', {
         month: 'numeric',
         day: 'numeric',
@@ -104,7 +104,7 @@ function formatLocalTimestamp(value) {
 }
 
 function worldClockLabel(state, clock = formatWorldCalendar(state)) {
-    return state.clock?.anchored ? clock.stamp : '待从正文建立时间锚点';
+    return state.clock?.anchored ? clock.stamp : 'Chờ thiết lập điểm neo thời gian từ nội dung chính';
 }
 
 function themeFor(state, settings) {
@@ -115,41 +115,41 @@ function themeFor(state, settings) {
 
 function eventStatusLabel(event) {
     return {
-        active: '发展中',
-        waiting: '等待条件',
-        ready: '到时待确认',
-        resolved: '结果已形成',
-        cancelled: '已经取消',
-        missed: '已经错过',
+        active: 'Đang phát triển',
+        waiting: 'Chờ điều kiện',
+        ready: 'Chờ xác nhận khi đến lúc',
+        resolved: 'Kết quả đã hình thành',
+        cancelled: 'Đã hủy',
+        missed: 'Đã bỏ lỡ',
     }[event.status] || event.status;
 }
 
 function visibilityLabel(value) {
     return {
-        hidden: '角色尚不可知',
-        trace: '可由痕迹察觉',
-        known: '可经消息获知',
-        direct: '可以直接感知',
-    }[value] || '角色尚不可知';
+        hidden: 'Nhân vật vẫn chưa rõ',
+        trace: 'Có thể nhận biết qua dấu vết',
+        known: 'Có thể biết được qua tin tức',
+        direct: 'Có thể cảm nhận trực tiếp',
+    }[value] || 'Nhân vật vẫn chưa rõ';
 }
 
 function deliveryLabel(event) {
-    if (event.status === 'ready') return '到时待后台确认';
+    if (event.status === 'ready') return 'Đến lúc đó chờ chạy ngầm xác nhận';
     return {
-        none: '只在后台生效',
-        pending: '等待自然显露',
-        delivered: '已由正文承接',
-        expired: '未显露，转入纪事',
-    }[event.delivery?.state] || '只在后台生效';
+        none: 'Chỉ có hiệu lực khi chạy ngầm',
+        pending: 'Chờ hiển thị tự nhiên',
+        delivered: 'Đã được tiếp nối bởi nội dung chính',
+        expired: 'Chưa hiển thị, chuyển vào biên niên sử',
+    }[event.delivery?.state] || 'Chỉ có hiệu lực khi chạy ngầm';
 }
 
 function clockModeLabel(value) {
     return {
-        duration: '自然流逝',
-        active: '有效工时',
-        scheduled: '预定时间',
-        condition: '条件等待',
-    }[value] || '自然流逝';
+        duration: 'Trôi qua tự nhiên',
+        active: 'Giờ làm việc hiệu quả',
+        scheduled: 'Thời gian dự định',
+        condition: 'Chờ điều kiện',
+    }[value] || 'Trôi qua tự nhiên';
 }
 
 function renderBrandMark() {
@@ -222,39 +222,39 @@ export function renderPersonCard(person, observerMode, worldMinute, openFolds = 
                             <strong>${escapeHtml(person.name)}</strong>
                             <small>${escapeHtml(person.location)}</small>
                         </span>
-                        <span class="wb-person-summary-action">${escapeHtml(compactText(person.action, 72) || '暂时没有新的动作。')}</span>
+                        <span class="wb-person-summary-action">${escapeHtml(compactText(person.action, 72) || 'Tạm thời không có hành động mới.')}</span>
                     </span>
                 </span>
                 <span class="wb-fold-meta">
                     <span class="wb-person-sim-state ${person.simulationEnabled === false ? 'is-sleeping' : ''}">
-                        ${person.simulationEnabled === false ? '后台休眠' : '后台活动'}
+                        ${person.simulationEnabled === false ? 'Ngủ ngầm' : 'Hoạt động ngầm'}
                     </span>
                     <i class="wb-fold-chevron" aria-hidden="true"></i>
                 </span>
             </summary>
             <div class="wb-fold-body wb-person-card-body">
                 <span class="wb-person-thread is-current-action">
-                    <small>正在做</small>
-                    <strong>${escapeHtml(person.action || '暂时没有新的动作。')}</strong>
+                    <small>Đang làm</small>
+                    <strong>${escapeHtml(person.action || 'Tạm thời không có hành động mới.')}</strong>
                 </span>
                 <span class="wb-person-thread">
-                    <small>短期意图</small>
-                    <strong>${escapeHtml(person.intent || '暂无明确短期意图。')}</strong>
+                    <small>Ý định ngắn hạn</small>
+                    <strong>${escapeHtml(person.intent || 'Tạm thời không có ý định ngắn hạn rõ ràng.')}</strong>
                 </span>
                 ${person.longTermGoal ? `
                     <span class="wb-person-thread is-long-term">
-                        <small>长期目标</small>
+                        <small>Mục tiêu dài hạn</small>
                         <strong>${escapeHtml(person.longTermGoal)}</strong>
                     </span>
                 ` : ''}
                 ${observerMode === 'backstage'
                     ? renderInnerVoice(person, worldMinute)
-                    : '<span class="wb-known-boundary">幕后独白已隐藏</span>'}
+                    : '<span class="wb-known-boundary">Độc thoại hậu trường đã bị ẩn</span>'}
                 <div class="wb-person-card-actions">
                     <button class="wb-card-action-button is-primary" type="button"
-                        data-wb-action="select-person" data-person-id="${escapeAttr(person.id)}">查看人物详情</button>
+                        data-wb-action="select-person" data-person-id="${escapeAttr(person.id)}">Xem chi tiết nhân vật</button>
                     <button class="wb-card-action-button is-edit" type="button" data-wb-action="open-person-editor"
-                        data-person-id="${escapeAttr(person.id)}" data-person-name="${escapeAttr(person.name)}">编辑</button>
+                        data-person-id="${escapeAttr(person.id)}" data-person-name="${escapeAttr(person.name)}">Chỉnh sửa</button>
                 </div>
             </div>
         </details>
@@ -271,7 +271,7 @@ function renderProgress(event, state, wide = false) {
         ? progress.phase
         : progress.remaining === 0
             ? eventStatusLabel(event)
-            : `剩余 ${formatDuration(progress.remaining)}`;
+            : `Còn lại ${formatDuration(progress.remaining)}`;
 
     if (progress.percent === null) {
         return `
@@ -288,7 +288,7 @@ function renderProgress(event, state, wide = false) {
                 <div class="wb-time-progress-copy">
                     <span>${escapeHtml(started.stamp)}</span>
                     <strong>${escapeHtml(clockModeLabel(event.clockMode))}</strong>
-                    <span>${due ? escapeHtml(due.stamp) : '完成时间待确认'}</span>
+                    <span>${due ? escapeHtml(due.stamp) : 'Thời gian hoàn thành chờ xác nhận'}</span>
                 </div>
             ` : ''}
             <span class="wb-time-track">
@@ -312,7 +312,7 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
                     <span>${escapeHtml(event.place)}</span>
                 </div>
                 <h3>${escapeHtml(event.title)}</h3>
-                <p>${escapeHtml(event.summary || event.consequence || '事件仍在形成。')}</p>
+                <p>${escapeHtml(event.summary || event.consequence || 'Sự kiện vẫn đang hình thành.')}</p>
                 ${renderProgress(event, state, false)}
                 <div class="wb-route">
                     <i></i>
@@ -323,7 +323,7 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
                         type="button" data-wb-action="toggle-event-delivery"
                         data-event-id="${escapeAttr(event.id)}"
                         ${event.visibility === 'hidden' ? 'disabled' : ''}>
-                        ${event.delivery?.manualQueued ? '✓ 下一轮显露' : '下一轮显露'}
+                        ${event.delivery?.manualQueued ? '✓ Hiển thị vòng tiếp theo' : 'Hiển thị vòng tiếp theo'}
                     </button>
                 </div>
             </article>
@@ -335,7 +335,7 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
         ? progress.phase
         : progress.remaining === 0
             ? eventStatusLabel(event)
-            : `剩余 ${formatDuration(progress.remaining)}`;
+            : `Còn lại ${formatDuration(progress.remaining)}`;
     const foldKey = `currents:${event.id}`;
     return `
         <details class="wb-fold wb-event-card is-wide" data-fold-key="${escapeAttr(foldKey)}"
@@ -347,7 +347,7 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
                         <span>${escapeHtml(event.place)}</span>
                     </span>
                     <strong>${escapeHtml(event.title)}</strong>
-                    <small>${escapeHtml(compactText(event.summary || event.consequence || '事件仍在形成。', 90))}</small>
+                    <small>${escapeHtml(compactText(event.summary || event.consequence || 'Sự kiện vẫn đang hình thành.', 90))}</small>
                 </span>
                 <span class="wb-fold-meta">
                     <span class="wb-fold-status">${escapeHtml(remaining)}</span>
@@ -355,10 +355,10 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
                 </span>
             </summary>
             <div class="wb-fold-body wb-event-card-body">
-                <p>${escapeHtml(event.summary || event.consequence || '事件仍在形成。')}</p>
+                <p>${escapeHtml(event.summary || event.consequence || 'Sự kiện vẫn đang hình thành.')}</p>
                 ${event.consequence ? `
                     <div class="wb-consequence">
-                        <span>可能后果</span>
+                        <span>Hậu quả có thể xảy ra</span>
                         <strong>${escapeHtml(event.consequence)}</strong>
                     </div>
                 ` : ''}
@@ -372,12 +372,12 @@ function renderEventCard(event, state, wide = false, openFolds = new Set()) {
                         type="button" data-wb-action="toggle-event-delivery"
                         data-event-id="${escapeAttr(event.id)}"
                         ${event.visibility === 'hidden' ? 'disabled' : ''}>
-                        ${event.delivery?.manualQueued ? '✓ 下一轮显露' : '下一轮显露'}
+                        ${event.delivery?.manualQueued ? '✓ Hiển thị vòng tiếp theo' : 'Hiển thị vòng tiếp theo'}
                     </button>
                     <button class="wb-card-action-button is-edit" type="button" data-wb-action="open-event-editor"
-                        data-event-id="${escapeAttr(event.id)}">编辑</button>
+                        data-event-id="${escapeAttr(event.id)}">Chỉnh sửa</button>
                     <button class="wb-card-action-button is-danger" type="button" data-wb-action="delete-event"
-                        data-event-id="${escapeAttr(event.id)}">删除</button>
+                        data-event-id="${escapeAttr(event.id)}">Xóa</button>
                 </div>
             </div>
         </details>
@@ -389,7 +389,7 @@ function renderOutcome(event, state, openFolds = new Set()) {
         state,
         event.resolvedAt ?? event.updatedAt ?? event.dueAt ?? 0,
     );
-    const result = event.result || event.expectedResult || event.consequence || '结果等待确认。';
+    const result = event.result || event.expectedResult || event.consequence || 'Kết quả đang chờ xác nhận.';
     const foldKey = `echoes:${event.id}`;
     return `
         <article class="wb-echo-item">
@@ -411,9 +411,9 @@ function renderOutcome(event, state, openFolds = new Set()) {
                     <p>${escapeHtml(result)}</p>
                     <div class="wb-record-actions">
                         <button class="wb-card-action-button is-edit" type="button" data-wb-action="open-record-editor"
-                            data-record-kind="echo" data-record-id="${escapeAttr(event.id)}">编辑</button>
+                            data-record-kind="echo" data-record-id="${escapeAttr(event.id)}">Chỉnh sửa</button>
                         <button class="wb-card-action-button is-danger" type="button" data-wb-action="delete-record"
-                            data-record-kind="echo" data-record-id="${escapeAttr(event.id)}">删除</button>
+                            data-record-kind="echo" data-record-id="${escapeAttr(event.id)}">Xóa</button>
                     </div>
                 </div>
             </details>
@@ -425,19 +425,19 @@ function renderArchiveEntry(entry, state, recordKind = 'archive', openFolds = ne
     const time = Number.isFinite(Number(entry.resolvedAt ?? entry.at))
         ? formatWorldCalendar(state, entry.resolvedAt ?? entry.at)
         : null;
-    const title = entry.title || '未命名记录';
+    const title = entry.title || 'Bản ghi chưa đặt tên';
     const text = entry.result || entry.text || entry.consequence || entry.route || '';
     const tags = [
         entry.visibility ? visibilityLabel(entry.visibility) : '',
         entry.delivery?.state ? deliveryLabel(entry) : '',
-        entry.deliveryState === 'expired' ? '未显露，转入纪事' : '',
+        entry.deliveryState === 'expired' ? 'Chưa hiển thị, chuyển vào biên niên sử' : '',
     ].filter(Boolean);
     const foldKey = `archive:${recordKind}:${entry.id}`;
 
     return `
         <article class="wb-archive-entry">
             <div class="wb-archive-date">
-                <strong>${time ? time.date : '日期未定'}</strong>
+                <strong>${time ? time.date : 'Chưa định ngày'}</strong>
                 <span>${time ? time.time : '—'}</span>
             </div>
             <span class="wb-archive-rule"></span>
@@ -446,18 +446,18 @@ function renderArchiveEntry(entry, state, recordKind = 'archive', openFolds = ne
                 <summary class="wb-archive-summary">
                     <span>
                         <strong>${escapeHtml(title)}</strong>
-                        <small>${escapeHtml(compactText(text || '这件事已经成为世界事实。', 100))}</small>
+                        <small>${escapeHtml(compactText(text || 'Việc này đã trở thành sự thật thế giới.', 100))}</small>
                     </span>
                     <i class="wb-fold-chevron" aria-hidden="true"></i>
                 </summary>
                 <div class="wb-fold-body wb-archive-body">
-                    <p>${escapeHtml(text || '这件事已经成为世界事实。')}</p>
+                    <p>${escapeHtml(text || 'Việc này đã trở thành sự thật thế giới.')}</p>
                     <div class="wb-archive-tags">${tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join('')}</div>
                     <div class="wb-record-actions">
                         <button class="wb-card-action-button is-edit" type="button" data-wb-action="open-record-editor"
-                            data-record-kind="${escapeAttr(recordKind)}" data-record-id="${escapeAttr(entry.id)}">编辑</button>
+                            data-record-kind="${escapeAttr(recordKind)}" data-record-id="${escapeAttr(entry.id)}">Chỉnh sửa</button>
                         <button class="wb-card-action-button is-danger" type="button" data-wb-action="delete-record"
-                            data-record-kind="${escapeAttr(recordKind)}" data-record-id="${escapeAttr(entry.id)}">删除</button>
+                            data-record-kind="${escapeAttr(recordKind)}" data-record-id="${escapeAttr(entry.id)}">Xóa</button>
                     </div>
                 </div>
             </details>
@@ -467,14 +467,14 @@ function renderArchiveEntry(entry, state, recordKind = 'archive', openFolds = ne
 
 function syncPhaseLabel(phase) {
     return {
-        idle: '等待正文',
-        queued: '排队中',
-        running: '推演中',
-        cancelling: '正在停止',
-        success: '推演完成',
-        error: '推演失败',
-        pending: '等待推演',
-    }[phase] || '等待正文';
+        idle: 'Chờ nội dung chính',
+        queued: 'Đang xếp hàng',
+        running: 'Đang suy diễn',
+        cancelling: 'Đang dừng',
+        success: 'Suy diễn hoàn tất',
+        error: 'Suy diễn thất bại',
+        pending: 'Chờ suy diễn',
+    }[phase] || 'Chờ nội dung chính';
 }
 
 function renderSyncStrip(syncStatus) {
@@ -484,14 +484,14 @@ function renderSyncStrip(syncStatus) {
     const memoryTakesFocus = ['running', 'error'].includes(memoryPhase);
     const phase = memoryTakesFocus ? memoryPhase : (status.phase || 'idle');
     const baseDetail = memoryTakesFocus
-        ? status.memory?.message || (memoryPhase === 'error' ? '记忆整理没有完成' : '正在整理长期记忆')
-        : status.error || status.message || '尚未进行世界推演';
+        ? status.memory?.message || (memoryPhase === 'error' ? 'Sắp xếp ký ức chưa hoàn thành' : 'Đang sắp xếp ký ức dài hạn')
+        : status.error || status.message || 'Chưa tiến hành suy diễn thế giới';
     const waitingTurns = Math.max(0, Number(status.queue?.waitingTurns) || 0);
-    const detail = !memoryTakesFocus && waitingTurns > 0 && !String(baseDetail).includes('待处理')
-        ? `${baseDetail} · 后面还有 ${waitingTurns} 轮待处理`
+    const detail = !memoryTakesFocus && waitingTurns > 0 && !String(baseDetail).includes('Chờ xử lý')
+        ? `${baseDetail} · Phía sau vẫn còn ${waitingTurns} vòng chờ xử lý`
         : baseDetail;
     const title = memoryTakesFocus
-        ? (memoryPhase === 'error' ? '记忆整理失败' : '整理记忆中')
+        ? (memoryPhase === 'error' ? 'Sắp xếp ký ức thất bại' : 'Đang sắp xếp ký ức')
         : syncPhaseLabel(phase);
     const connectionText = [
         connection.apiLabel,
@@ -506,13 +506,13 @@ function renderSyncStrip(syncStatus) {
         : '';
     const summaryHtml = summary ? `
         <details class="wb-sync-summary">
-            <summary>本次变化</summary>
+            <summary>Thay đổi lần này</summary>
             <div>
-                <span>世界时间</span><strong>${summary.elapsedMinutes > 0 ? `+${escapeHtml(formatDuration(summary.elapsedMinutes))}` : '未推进'}</strong>
-                <span>人物变化</span><strong>${summary.peopleChanged || 0} 人 ${changedNames}</strong>
-                <span>事件变化</span><strong>新增 ${summary.eventsAdded || 0} · 更新 ${summary.eventsUpdated || 0} ${eventNames}</strong>
-                <span>记忆变化</span><strong>新增 ${summary.memoryAdded || 0} · 更新 ${summary.memoryUpdated || 0}</strong>
-                <span>正文显露</span><strong>${summary.injectionEvents || 0} 个事件</strong>
+                <span>Thời gian thế giới</span><strong>${summary.elapsedMinutes > 0 ? `+${escapeHtml(formatDuration(summary.elapsedMinutes))}` : 'Chưa tiến hành'}</strong>
+                <span>Thay đổi nhân vật</span><strong>${summary.peopleChanged || 0} Người ${changedNames}</strong>
+                <span>Thay đổi sự kiện</span><strong>Thêm mới ${summary.eventsAdded || 0} · Cập nhật ${summary.eventsUpdated || 0} ${eventNames}</strong>
+                <span>Thay đổi ký ức</span><strong>Thêm mới ${summary.memoryAdded || 0} · Cập nhật ${summary.memoryUpdated || 0}</strong>
+                <span>Hiển thị nội dung chính</span><strong>${summary.injectionEvents || 0} sự kiện</strong>
             </div>
         </details>
     ` : '';
@@ -524,7 +524,7 @@ function renderSyncStrip(syncStatus) {
                 <strong>${escapeHtml(title)}</strong>
                 <span>${escapeHtml(detail)}</span>
             </div>
-            <span class="wb-sync-connection">${escapeHtml(connectionText || '跟随酒馆当前主 API')}</span>
+            <span class="wb-sync-connection">${escapeHtml(connectionText || 'Theo chính hiện tại của Tavern API')}</span>
             ${summaryHtml}
         </div>
     `;
@@ -575,50 +575,50 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
         ? settings.apiModuleRoutes
         : {};
     const routeOptions = (current = 'default') => [
-        `<option value="default" ${current === 'default' ? 'selected' : ''}>跟随世界背面默认连接</option>`,
-        `<option value="tavern" ${current === 'tavern' ? 'selected' : ''}>跟随当前酒馆</option>`,
+        `<option value="default" ${current === 'default' ? 'selected' : ''}>Theo kết nối mặc định của mặt trái thế giới</option>`,
+        `<option value="tavern" ${current === 'tavern' ? 'selected' : ''}>Theo Tavern hiện tại</option>`,
         ...apiProfiles.map(profile => {
             const value = `profile:${profile.id}`;
-            return `<option value="${escapeAttr(value)}" ${current === value ? 'selected' : ''}>${escapeHtml(profile.name)} · ${escapeHtml(profile.model || '未选模型')}</option>`;
+            return `<option value="${escapeAttr(value)}" ${current === value ? 'selected' : ''}>${escapeHtml(profile.name)} · ${escapeHtml(profile.model || 'Chưa chọn mô hình')}</option>`;
         }),
     ].join('');
     const settingExplanation = (setting, value) => {
         const key = String(value);
         const maps = {
             apiMode: {
-                tavern: '跟着酒馆当前连接走就好啦～主聊天换模型，这边也会一起跟着变 (｡•̀ᴗ-)✧',
-                custom: '世界背面自己走独立接口～不会碰主聊天连接。',
+                tavern: 'Cứ theo kết nối hiện tại của Tavern là được nha~ Trò chuyện chính đổi mô hình, bên này cũng sẽ đổi theo (｡•̀ᴗ-)✧',
+                custom: 'Mặt trái thế giới tự chạy giao diện độc lập~ Sẽ không đụng đến kết nối trò chuyện chính.',
             },
             theme: {
-                auto: '让界面跟着世界昼夜自己换衣服～',
-                day: '固定日间配色，亮堂堂的 (◕ᴗ◕✿)',
-                night: '固定夜间配色，适合深夜偷偷看世界（盯）',
+                auto: 'Để giao diện tự thay đồ theo ngày đêm của thế giới~',
+                day: 'Cố định phối màu ban ngày, sáng sủa (◕ᴗ◕✿)',
+                night: 'Cố định phối màu ban đêm, thích hợp để lén nhìn thế giới vào đêm khuya (chằm chằm)',
             },
             uiScale: {
-                compact: '信息挤紧一点～适合想一眼多看几样东西的时候。',
-                comfortable: '默认推荐～不挤也不空，看着刚刚好。',
-                large: '字再大一点～手机端和长时间盯后台会轻松些。',
+                compact: 'Thông tin ép chặt một chút~ Thích hợp khi muốn nhìn nhiều thứ cùng lúc.',
+                comfortable: 'Đề xuất mặc định~ Không chật cũng không trống, nhìn vừa vặn.',
+                large: 'Chữ lớn hơn một chút~ Sẽ thoải mái hơn cho phiên bản di động và khi nhìn chạy ngầm trong thời gian dài.',
             },
             deliveryDensity: {
-                restrained: '后台照常生活，只是少来抢镜头～',
-                balanced: '重要结果会自然靠近镜头～该出现的时候再出现。',
-                active: '会更积极找机会露个脸，世界存在感更强一点 ( •̀ ω •́ )✧',
+                restrained: 'Chạy ngầm vẫn sinh hoạt bình thường, chỉ là ít giành ống kính hơn~',
+                balanced: 'Kết quả quan trọng sẽ tự nhiên tiến lại gần ống kính~ Khi nào cần xuất hiện thì mới xuất hiện.',
+                active: 'Sẽ tích cực tìm cơ hội lộ mặt hơn, cảm giác tồn tại của thế giới mạnh mẽ hơn một chút ( •̀ ω •́ )✧',
             },
             autoSimulationMode: {
 
-                light: '轻轻维护必要变化～安静一点，也更省调用。',
-                balanced: '默认推荐～人物和事件都会正常过自己的日子。',
-                deep: '会更认真照看镜头外的人和因果～复杂剧情更适合这个。',
+                light: 'Nhẹ nhàng bảo trì những thay đổi cần thiết~ Yên tĩnh hơn một chút, cũng tiết kiệm gọi hơn.',
+                balanced: 'Đề xuất mặc định~ Nhân vật và sự kiện đều sẽ sống những ngày bình thường của mình.',
+                deep: 'Sẽ chăm sóc cẩn thận hơn những người và nhân quả ngoài ống kính~ Cốt truyện phức tạp phù hợp với cái này hơn.',
             },
             timePolicy: {
-                world: '世界钟负责盯住连续时间～正文给出可靠时间时会自己跟上。',
-                explicit: '只有明确算得出来的时间才会推进～最谨慎。',
-                cautious: '允许稍微估一点，但会很克制～',
-                open: '旅行、等待、工作这类长耗时也可以自然往前走～',
+                world: 'Đồng hồ thế giới chịu trách nhiệm theo dõi thời gian liên tục~ Khi nội dung chính đưa ra thời gian đáng tin cậy sẽ tự động theo kịp.',
+                explicit: 'Chỉ khi thời gian có thể tính toán rõ ràng mới tiến hành~ Cẩn thận nhất.',
+                cautious: 'Cho phép ước lượng một chút, nhưng sẽ rất kiềm chế~',
+                open: 'Những việc tốn nhiều thời gian như du lịch, chờ đợi, làm việc cũng có thể tiến về phía trước một cách tự nhiên~',
             },
             publicOpinionRevealMode: {
-                observe: '安心吃瓜就好啦～新闻和论坛只待在舆情页 (˘▾˘)',
-                relevant: '真的和当前镜头沾边时，才让它自然露个脸～不会硬插播。',
+                observe: 'Cứ yên tâm hóng hớt thôi~ Tin tức và diễn đàn chỉ ở trang dư luận. (˘▾˘)',
+                relevant: 'Chỉ khi thực sự liên quan đến ống kính hiện tại, mới để nó hiển thị tự nhiên~ Sẽ không chèn ép vào.',
             },
         };
         return maps[setting]?.[key] || '';
@@ -645,74 +645,74 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
     const subgroupOpen = id => openSubgroups.has(id) ? 'open' : '';
 
     return `
-        <div class="wb-settings-popover" role="dialog" aria-modal="true" aria-label="世界背面设置">
+        <div class="wb-settings-popover" role="dialog" aria-modal="true" aria-label="Cài đặt mặt trái thế giới">
             <div class="wb-popover-heading">
-                <div><span>OBSERVATION</span><h3>观测设置</h3></div>
-                <button type="button" data-wb-action="toggle-settings" aria-label="关闭设置">×</button>
+                <div><span>OBSERVATION</span><h3>Cài đặt quan sát</h3></div>
+                <button type="button" data-wb-action="toggle-settings" aria-label="Đóng cài đặt">×</button>
             </div>
 
             <details class="wb-settings-group" data-settings-group="connection" ${groupOpen('connection')}>
-                <summary><span>连接</span><small>API 与模型</small></summary>
+                <summary><span>Kết nối</span><small>API Và mô hình</small></summary>
                 <div class="wb-settings-group-body wb-settings-subgroup-stack">
                     <div class="wb-settings-flat-section">
             <div class="wb-connection-card is-${escapeAttr(phase)}">
                 <div>
-                    <span>世界推演连接</span>
-                    <strong>${escapeHtml(connection.apiLabel || '跟随酒馆当前主 API')}</strong>
+                    <span>Kết nối suy diễn thế giới</span>
+                    <strong>${escapeHtml(connection.apiLabel || 'Theo chính hiện tại của Tavern API')}</strong>
                 </div>
                 <dl>
-                    <dt>模型</dt><dd>${escapeHtml(connection.model || '跟随酒馆当前模型')}</dd>
-                    ${connection.profile ? `<dt>连接档案</dt><dd>${escapeHtml(connection.profile)}</dd>` : ''}
-                    <dt>方式</dt><dd>${escapeHtml(connection.method || '独立上下文推演')}</dd>
-                    <dt>状态</dt><dd>${escapeHtml(syncPhaseLabel(phase))}</dd>
+                    <dt>Mô hình</dt><dd>${escapeHtml(connection.model || 'Theo mô hình hiện tại của Tavern')}</dd>
+                    ${connection.profile ? `<dt>Hồ sơ kết nối</dt><dd>${escapeHtml(connection.profile)}</dd>` : ''}
+                    <dt>Phương thức</dt><dd>${escapeHtml(connection.method || 'Suy diễn ngữ cảnh độc lập')}</dd>
+                    <dt>Trạng thái</dt><dd>${escapeHtml(syncPhaseLabel(phase))}</dd>
                 </dl>
                 ${syncStatus?.error ? `<p>${escapeHtml(syncStatus.error)}</p>` : ''}
                 <small>${settings.apiMode === 'custom'
-                    ? '世界背面走自己的接口～主聊天那边不会被打扰。'
-                    : '跟着酒馆当前连接走就好啦～'}</small>
+                    ? 'Mặt trái thế giới chạy giao diện riêng~ Bên trò chuyện chính sẽ không bị làm phiền.'
+                    : 'Cứ theo kết nối hiện tại của Tavern là được~'}</small>
             </div>
 
             <div class="wb-setting-block">
-                <label>世界推演连接</label>
+                <label>Kết nối suy diễn thế giới</label>
                 <div class="wb-option-row">
-                    ${settingButton('apiMode', settings.apiMode, 'tavern', '跟随酒馆')}
-                    ${settingButton('apiMode', settings.apiMode, 'custom', '独立接口')}
+                    ${settingButton('apiMode', settings.apiMode, 'tavern', 'Theo Tavern')}
+                    ${settingButton('apiMode', settings.apiMode, 'custom', 'Giao diện độc lập')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('apiMode', settings.apiMode))}</p>
             </div>
                     </div>
                     <details class="wb-settings-subgroup" data-settings-subgroup="connection-custom" ${subgroupOpen('connection-custom')}>
-                        <summary><span>独立接口配置</span><small>地址、Key、模型与连接方式</small></summary>
+                        <summary><span>Cấu hình giao diện độc lập</span><small>Địa chỉ,Key、Mô hình và phương thức kết nối</small></summary>
                         <div class="wb-settings-subgroup-body">
                 <form class="wb-api-form" data-wb-form="api" autocomplete="off">
                     <input type="hidden" name="profileId" value="${escapeAttr(apiValues.profileId)}">
                     <div class="wb-api-draft-heading">
-                        <span>${apiValues.profileId ? '正在编辑已保存方案～Key 留空就继续沿用原来的。' : (hasSavedApiKey ? '已保存默认独立接口；旧 Key 不会再次显示。' : '这里可以临时配接口，也可以存成方案给不同模块复用～')}</span>
-                        <button type="button" data-wb-action="reset-api-draft">清空重填</button>
+                        <span>${apiValues.profileId ? 'Đang chỉnh sửa phương án đã lưu~Key Để trống thì tiếp tục sử dụng cái cũ.' : (hasSavedApiKey ? 'Đã lưu giao diện độc lập mặc định; cũ Key Sẽ không hiển thị lại.' : 'Ở đây có thể cấu hình giao diện tạm thời, cũng có thể lưu thành phương án để các mô-đun khác nhau tái sử dụng~')}</span>
+                        <button type="button" data-wb-action="reset-api-draft">Xóa và điền lại</button>
                     </div>
-                    <label>接口地址
+                    <label>Địa chỉ API
                         <input name="customApiUrl" type="url" required
                             value="${escapeAttr(apiValues.customApiUrl)}"
                             autocomplete="off" inputmode="url" autocapitalize="none" spellcheck="false"
                             placeholder="https://example.com/v1">
                     </label>
-                    <p>请填到版本层，例如 <code>/v1</code>；插件只会自动补上 <code>/chat/completions</code>。</p>
+                    <p>Vui lòng điền đến cấp phiên bản, ví dụ <code>/v1</code>；Plugin sẽ chỉ tự động bổ sung <code>/chat/completions</code>。</p>
                     <label>API Key
                         <span class="wb-api-secret-field">
                             <input class="wb-secret-input" name="customApiCredential" type="text"
                                 value="${escapeAttr(apiValues.customApiCredential)}"
-                                placeholder="${hasSavedApiKey ? '留空则继续使用已保存的 Key' : '请输入 API Key'}"
+                                placeholder="${hasSavedApiKey ? 'Để trống thì tiếp tục sử dụng cái đã lưu Key' : 'Vui lòng nhập API Key'}"
                                 autocomplete="one-time-code" autocapitalize="none" spellcheck="false"
                                 data-lpignore="true" data-1p-ignore data-form-type="other"
                                 ${hasSavedApiKey ? '' : 'required'}>
                             <button type="button" data-wb-action="toggle-api-key-visibility"
-                                aria-pressed="false">显示</button>
+                                aria-pressed="false">Hiển thị</button>
                         </span>
                     </label>
                     <p>${hasSavedApiKey
-                        ? '输入新 Key 会替换旧 Key；留空则沿用。为了避免手机自动回填，旧 Key 不会放回输入框。'
-                        : 'Key 只保存在本机的 SillyTavern 扩展设置中，不会写进导出的世界状态。'}</p>
-                    <label>模型名称
+                        ? 'Nhập mới Key Sẽ thay thế cũ Key；Để trống thì tiếp tục sử dụng. Để tránh điện thoại tự động điền lại, cũ Key Sẽ không đưa lại vào ô nhập.'
+                        : 'Key Chỉ lưu trên máy cục bộ SillyTavern Trong cài đặt tiện ích mở rộng, sẽ không ghi vào trạng thái thế giới được xuất.'}</p>
+                    <label>Tên mô hình
                         <input name="customApiModel" required list="wb-custom-model-list"
                             value="${escapeAttr(apiValues.customApiModel)}"
                             autocomplete="off" autocapitalize="none" spellcheck="false"
@@ -721,29 +721,29 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                             ${availableModels.map(model => `<option value="${escapeAttr(model)}"></option>`).join('')}
                         </datalist>
                     </label>
-                    <label>连接方式
+                    <label>Phương thức kết nối
                         <select name="customApiTransport">
                             <option value="proxy" ${apiValues.customApiTransport === 'proxy' ? 'selected' : ''}>
-                                经酒馆服务器转发（推荐）
+                                Chuyển tiếp qua máy chủ Tavern (khuyên dùng)
                             </option>
                             <option value="direct" ${apiValues.customApiTransport === 'direct' ? 'selected' : ''}>
-                                浏览器直连
+                                Trình duyệt kết nối trực tiếp
                             </option>
                         </select>
                     </label>
-                    <label>方案名称（可选）
+                    <label>Tên phương án (tùy chọn)
                         <input name="profileName" maxlength="80"
                             value="${escapeAttr(apiValues.profileName)}"
-                            autocomplete="off" placeholder="例如：主力 Pro / 公益站 Flash">
+                            autocomplete="off" placeholder="Ví dụ: Chủ lực Pro / Trạm công ích Flash">
                     </label>
-                    <p>只是临时试接口的话不用管这里～想以后直接复用，就填个名字再点「保存为方案」。</p>
+                    <p>Nếu chỉ tạm thời thử nghiệm giao diện thì không cần quan tâm chỗ này～ Muốn sau này tái sử dụng trực tiếp, hãy điền một cái tên rồi nhấp vào 「Lưu thành phương án」.</p>
                     <div class="wb-api-actions">
-                        <button class="wb-api-action is-primary" type="submit">保存默认独立接口</button>
-                        <button class="wb-api-action is-accent" type="button" data-wb-action="save-api-profile-from-form">${apiValues.profileId ? '保存方案修改' : '保存为方案'}</button>
-                        <button class="wb-api-action" type="button" data-wb-action="test-api">测试连接</button>
+                        <button class="wb-api-action is-primary" type="submit">Lưu giao diện độc lập mặc định</button>
+                        <button class="wb-api-action is-accent" type="button" data-wb-action="save-api-profile-from-form">${apiValues.profileId ? 'Lưu sửa đổi phương án' : 'Lưu thành phương án'}</button>
+                        <button class="wb-api-action" type="button" data-wb-action="test-api">Kiểm tra kết nối</button>
                         <button class="wb-api-action" type="button" data-wb-action="pull-api-models"
                             ${modelPull.phase === 'running' ? 'disabled' : ''}>
-                            ${modelPull.phase === 'running' ? '正在拉取…' : '拉取模型列表'}
+                            ${modelPull.phase === 'running' ? 'Đang lấy…' : 'Lấy danh sách mô hình'}
                         </button>
                     </div>
                     ${modelPull.message ? `<p class="wb-api-model-status is-${escapeAttr(modelPull.phase)}">${escapeHtml(modelPull.message)}</p>` : ''}
@@ -752,7 +752,7 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="connection-profiles" ${subgroupOpen('connection-profiles')}>
-                        <summary><span>已保存 API 方案</span><small>${apiProfiles.length ? `${apiProfiles.length} 个方案` : '还没有保存方案'}</small></summary>
+                        <summary><span>Đã lưu API Phương án</span><small>${apiProfiles.length ? `${apiProfiles.length} phương án` : 'Vẫn chưa lưu phương án'}</small></summary>
                         <div class="wb-settings-subgroup-body">
                             ${apiProfiles.length ? `
                                 <div class="wb-api-profile-list">
@@ -760,37 +760,37 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                                         <article class="wb-api-profile-card">
                                             <div>
                                                 <strong>${escapeHtml(profile.name)}</strong>
-                                                <span>${escapeHtml(profile.model || '未选模型')} · ${escapeHtml(profile.transport === 'direct' ? '浏览器直连' : '酒馆转发')}</span>
+                                                <span>${escapeHtml(profile.model || 'Chưa chọn mô hình')} · ${escapeHtml(profile.transport === 'direct' ? 'Trình duyệt kết nối trực tiếp' : 'Chuyển tiếp Tavern')}</span>
                                             </div>
                                             <div class="wb-api-profile-actions">
-                                                <button class="wb-api-profile-chip is-accent" type="button" data-wb-action="edit-api-profile" data-profile-id="${escapeAttr(profile.id)}">编辑</button>
-                                                <button class="wb-api-profile-chip" type="button" data-wb-action="test-api-profile" data-profile-id="${escapeAttr(profile.id)}">测试</button>
-                                                <button class="wb-api-profile-chip" type="button" data-wb-action="pull-api-profile-models" data-profile-id="${escapeAttr(profile.id)}">模型</button>
-                                                <button class="wb-api-profile-chip" type="button" data-wb-action="duplicate-api-profile" data-profile-id="${escapeAttr(profile.id)}">复制</button>
-                                                <button class="wb-api-profile-chip is-danger" type="button" data-wb-action="delete-api-profile" data-profile-id="${escapeAttr(profile.id)}">删除</button>
+                                                <button class="wb-api-profile-chip is-accent" type="button" data-wb-action="edit-api-profile" data-profile-id="${escapeAttr(profile.id)}">Chỉnh sửa</button>
+                                                <button class="wb-api-profile-chip" type="button" data-wb-action="test-api-profile" data-profile-id="${escapeAttr(profile.id)}">Kiểm tra</button>
+                                                <button class="wb-api-profile-chip" type="button" data-wb-action="pull-api-profile-models" data-profile-id="${escapeAttr(profile.id)}">Mô hình</button>
+                                                <button class="wb-api-profile-chip" type="button" data-wb-action="duplicate-api-profile" data-profile-id="${escapeAttr(profile.id)}">Sao chép</button>
+                                                <button class="wb-api-profile-chip is-danger" type="button" data-wb-action="delete-api-profile" data-profile-id="${escapeAttr(profile.id)}">Xóa</button>
                                             </div>
                                         </article>
                                     `).join('')}
                                 </div>
-                            ` : '<p>常用接口可以从上面的独立接口表单一键保存～之后给不同模块分流时就不用重复填 URL 和 Key 啦 `(｡•̀ᴗ-)✧`</p>'}
+                            ` : '<p>Giao diện thường dùng có thể lưu bằng một cú nhấp chuột từ biểu mẫu giao diện độc lập ở trên～ Sau này khi phân luồng cho các mô-đun khác nhau sẽ không cần điền lại URL Và Key rồi `(｡•̀ᴗ-)✧`</p>'}
                         </div>
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="connection-routing" ${subgroupOpen('connection-routing')}>
-                        <summary><span>模块 API 分流</span><small>默认都跟随世界背面默认连接</small></summary>
+                        <summary><span>Mô-đun API Phân luồng</span><small>Mặc định đều theo kết nối mặc định của mặt trái thế giới</small></summary>
                         <div class="wb-settings-subgroup-body">
-                            <p>需要单独跑模型的模块可以各走各的～不设置就继续跟随默认连接，普通用户完全不用管这里。</p>
+                            <p>Các mô-đun cần chạy mô hình riêng biệt có thể đi theo đường riêng～ Nếu không cài đặt thì tiếp tục theo kết nối mặc định, người dùng bình thường hoàn toàn không cần quan tâm chỗ này.</p>
                             <div class="wb-api-route-grid">
-                                <label>世界推演
+                                <label>Suy diễn thế giới
                                     <select data-wb-api-route="simulation">${routeOptions(apiModuleRoutes.simulation || 'default')}</select>
                                 </label>
-                                <label>人物即时观测
+                                <label>Quan sát nhân vật tức thời
                                     <select data-wb-api-route="observation">${routeOptions(apiModuleRoutes.observation || 'default')}</select>
                                 </label>
-                                <label>长期记忆 / 历史整理
+                                <label>Ký ức dài hạn / Sắp xếp lịch sử
                                     <select data-wb-api-route="history">${routeOptions(apiModuleRoutes.history || 'default')}</select>
                                 </label>
-                                <label>世界舆情
+                                <label>Dư luận thế giới
                                     <select data-wb-api-route="opinion">${routeOptions(apiModuleRoutes.opinion || 'default')}</select>
                                 </label>
                             </div>
@@ -801,27 +801,27 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </details>
 
             <details class="wb-settings-group" data-settings-group="appearance" ${groupOpen('appearance')}>
-                <summary><span>界面与显露</span><small>主题、字号、正文注入</small></summary>
+                <summary><span>Giao diện và hiển thị</span><small>Chủ đề, cỡ chữ, chèn nội dung chính</small></summary>
                 <div class="wb-settings-group-body wb-settings-subgroup-stack">
                     <details class="wb-settings-subgroup" data-settings-subgroup="appearance-ui" ${subgroupOpen('appearance-ui')}>
-                        <summary><span>界面</span><small>明暗与阅读字号</small></summary>
+                        <summary><span>Giao diện</span><small>Sáng tối và cỡ chữ đọc</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>界面明暗</label>
+                <label>Sáng tối giao diện</label>
                 <div class="wb-option-row">
-                    ${themeButton('auto', '自动')}
-                    ${themeButton('day', '日间')}
-                    ${themeButton('night', '夜间')}
+                    ${themeButton('auto', 'Tự động')}
+                    ${themeButton('day', 'Ban ngày')}
+                    ${themeButton('night', 'Ban đêm')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('theme', settings.theme))}</p>
             </div>
 
             <div class="wb-setting-block">
-                <label>界面字号</label>
+                <label>Cỡ chữ giao diện</label>
                 <div class="wb-option-row">
-                    ${settingButton('uiScale', settings.uiScale, 'compact', '紧凑')}
-                    ${settingButton('uiScale', settings.uiScale, 'comfortable', '标准')}
-                    ${settingButton('uiScale', settings.uiScale, 'large', '大字')}
+                    ${settingButton('uiScale', settings.uiScale, 'compact', 'Nhỏ gọn')}
+                    ${settingButton('uiScale', settings.uiScale, 'comfortable', 'Tiêu chuẩn')}
+                    ${settingButton('uiScale', settings.uiScale, 'large', 'Chữ lớn')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('uiScale', settings.uiScale))}</p>
             </div>
@@ -829,29 +829,29 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="appearance-reveal" ${subgroupOpen('appearance-reveal')}>
-                        <summary><span>显露</span><small>密度与进入正文的时机</small></summary>
+                        <summary><span>Hiển thị</span><small>Mật độ và thời điểm vào nội dung chính</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>正文显露度</label>
+                <label>Độ hiển thị nội dung chính</label>
                 <div class="wb-option-row">
-                    ${densityButton('restrained', '克制')}
-                    ${densityButton('balanced', '均衡')}
-                    ${densityButton('active', '活跃')}
+                    ${densityButton('restrained', 'Kiềm chế')}
+                    ${densityButton('balanced', 'Cân bằng')}
+                    ${densityButton('active', 'Sôi nổi')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('deliveryDensity', settings.deliveryDensity))}</p>
             </div>
 
             <div class="wb-setting-block">
-                <label for="wb-scene-timing">显露时机</label>
+                <label for="wb-scene-timing">Thời điểm hiển thị</label>
                 <select id="wb-scene-timing" data-wb-setting="sceneTiming">
-                    <option value="strict" ${settings.sceneTiming === 'strict' ? 'selected' : ''}>严格：只在转场或空档</option>
-                    <option value="smart" ${settings.sceneTiming === 'smart' ? 'selected' : ''}>智能：关键场景延后</option>
-                    <option value="open" ${settings.sceneTiming === 'open' ? 'selected' : ''}>开放：允许简短自然变化</option>
+                    <option value="strict" ${settings.sceneTiming === 'strict' ? 'selected' : ''}>Nghiêm ngặt: Chỉ khi chuyển cảnh hoặc khoảng trống</option>
+                    <option value="smart" ${settings.sceneTiming === 'smart' ? 'selected' : ''}>Thông minh: Trì hoãn cảnh quan trọng</option>
+                    <option value="open" ${settings.sceneTiming === 'open' ? 'selected' : ''}>Mở: Cho phép thay đổi tự nhiên ngắn gọn</option>
                 </select>
             </div>
 
             <div class="wb-setting-toggle">
-                <div><strong>后台结果自然显露</strong><span>关掉也不会让世界失忆～只是不主动把后台结果递进正文；已成立世界事实始终用于保持连续性。</span></div>
+                <div><strong>Kết quả chạy ngầm hiển thị tự nhiên</strong><span>Tắt đi cũng không làm thế giới mất trí nhớ~ Chỉ là không chủ động đưa kết quả chạy ngầm vào nội dung chính; sự thật thế giới đã thành lập luôn được sử dụng để duy trì tính liên tục.</span></div>
                 <label class="wb-switch">
                     <input type="checkbox" data-wb-setting="worldPromptInjection"
                         ${settings.worldPromptInjection ? 'checked' : ''}>
@@ -860,10 +860,10 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </div>
 
             <div class="wb-setting-block">
-                <label>舆情是否靠近主线</label>
+                <label>Dư luận có gần với tuyến truyện chính không</label>
                 <div class="wb-option-row">
-                    ${settingButton('publicOpinionRevealMode', settings.publicOpinionRevealMode, 'observe', '仅观察')}
-                    ${settingButton('publicOpinionRevealMode', settings.publicOpinionRevealMode, 'relevant', '相关时显露')}
+                    ${settingButton('publicOpinionRevealMode', settings.publicOpinionRevealMode, 'observe', 'Chỉ quan sát')}
+                    ${settingButton('publicOpinionRevealMode', settings.publicOpinionRevealMode, 'relevant', 'Hiển thị khi liên quan')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('publicOpinionRevealMode', settings.publicOpinionRevealMode))}</p>
             </div>
@@ -874,13 +874,13 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </details>
 
             <details class="wb-settings-group" data-settings-group="simulation" ${groupOpen('simulation')}>
-                <summary><span>世界运行</span><small>让镜头外的世界继续自己走～</small></summary>
+                <summary><span>Thế giới vận hành</span><small>Để thế giới ngoài ống kính tiếp tục tự bước đi~</small></summary>
                 <div class="wb-settings-group-body wb-settings-subgroup-stack">
                     <details class="wb-settings-subgroup" data-settings-subgroup="simulation-switches" ${subgroupOpen('simulation-switches')}>
-                        <summary><span>基础开关</span><small>要不要让后台继续转起来</small></summary>
+                        <summary><span>Công tắc cơ bản</span><small>Có muốn để chạy ngầm tiếp tục hoạt động không</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-toggle">
-                <div><strong>启用世界引擎</strong><span>关掉就先让后台歇一会儿～现有世界不会丢</span></div>
+                <div><strong>Bật engine thế giới</strong><span>Tắt đi thì để chạy ngầm nghỉ ngơi một lát~ Thế giới hiện tại sẽ không bị mất</span></div>
                 <label class="wb-switch">
                     <input type="checkbox" data-wb-setting="worldSimulationEnabled"
                         ${settings.worldSimulationEnabled ? 'checked' : ''}>
@@ -891,25 +891,25 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="simulation-trigger" ${subgroupOpen('simulation-trigger')}>
-                        <summary><span>运行方式</span><small>世界背面要多勤快～</small></summary>
+                        <summary><span>Phương thức vận hành</span><small>Mặt trái thế giới cần chăm chỉ thế nào~</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>世界运转强度</label>
+                <label>Cường độ vận hành thế giới</label>
                 <div class="wb-option-row">
-                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'light', '轻量')}
-                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'balanced', '均衡')}
-                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'deep', '深入')}
+                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'light', 'Gọn nhẹ')}
+                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'balanced', 'Cân bằng')}
+                    ${settingButton('autoSimulationMode', settings.autoSimulationMode, 'deep', 'Chuyên sâu')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('autoSimulationMode', settings.autoSimulationMode))}</p>
-                <label>自动触发频率</label>
+                <label>Tần suất kích hoạt tự động</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 1, '每轮')}
-                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 2, '每 2 轮')}
-                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 3, '每 3 轮')}
-                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 5, '每 5 轮')}
+                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 1, 'Mỗi vòng')}
+                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 2, 'Mỗi 2 Vòng')}
+                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 3, 'Mỗi 3 Vòng')}
+                    ${settingButton('autoSimulationInterval', settings.autoSimulationInterval, 5, 'Mỗi 5 Vòng')}
                 </div>
                 <label class="wb-number-setting">
-                    自定义累计轮数
+                    Tùy chỉnh số vòng tích lũy
                     <input type="number" min="1" max="20" step="1"
                         data-wb-setting="autoSimulationInterval"
                         value="${escapeAttr(settings.autoSimulationInterval)}">
@@ -919,57 +919,57 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="simulation-output" ${subgroupOpen('simulation-output')}>
-                        <summary><span>失败与输出</span><small>重试、输出预算与附加要求</small></summary>
+                        <summary><span>Thất bại và đầu ra</span><small>Thử lại, ngân sách đầu ra và yêu cầu bổ sung</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>推演失败自动重试</label>
+                <label>Tự động thử lại khi suy diễn thất bại</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('autoRetryCount', settings.autoRetryCount, 0, '不重试')}
-                    ${settingButton('autoRetryCount', settings.autoRetryCount, 1, '重试 1 次')}
-                    ${settingButton('autoRetryCount', settings.autoRetryCount, 2, '重试 2 次')}
-                    ${settingButton('autoRetryCount', settings.autoRetryCount, 3, '重试 3 次')}
+                    ${settingButton('autoRetryCount', settings.autoRetryCount, 0, 'Không thử lại')}
+                    ${settingButton('autoRetryCount', settings.autoRetryCount, 1, 'Thử lại 1 Lần')}
+                    ${settingButton('autoRetryCount', settings.autoRetryCount, 2, 'Thử lại 2 Lần')}
+                    ${settingButton('autoRetryCount', settings.autoRetryCount, 3, 'Thử lại 3 Lần')}
                 </div>
                 <label class="wb-number-setting">
-                    自定义重试次数
+                    Tùy chỉnh số lần thử lại
                     <input type="number" min="0" max="5" step="1"
                         data-wb-setting="autoRetryCount"
                         value="${escapeAttr(settings.autoRetryCount)}">
                 </label>
-                <label>单次最大输出</label>
+                <label>Đầu ra tối đa mỗi lần</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('maxOutputTokens', settings.maxOutputTokens, 0, '自动')}
+                    ${settingButton('maxOutputTokens', settings.maxOutputTokens, 0, 'Tự động')}
                     ${settingButton('maxOutputTokens', settings.maxOutputTokens, 4000, '4K')}
                     ${settingButton('maxOutputTokens', settings.maxOutputTokens, 8000, '8K')}
                     ${settingButton('maxOutputTokens', settings.maxOutputTokens, 12000, '12K')}
                 </div>
                 <label class="wb-number-setting">
-                    自定义输出 token
+                    Tùy chỉnh đầu ra token
                     <input type="number" min="0" max="16000" step="500"
                         data-wb-setting="maxOutputTokens"
                         value="${escapeAttr(settings.maxOutputTokens)}">
                 </label>
                 <label class="wb-custom-instruction">
-                    自定义推演要求
+                    Tùy chỉnh yêu cầu suy diễn
                     <textarea data-wb-setting="customSimulationInstruction" maxlength="1000" rows="3"
-                        placeholder="例如：少制造新事件；更关注商会与港口的变化。">${escapeHtml(settings.customSimulationInstruction)}</textarea>
+                        placeholder="Ví dụ: Ít tạo sự kiện mới; chú ý hơn đến sự thay đổi của thương hội và bến cảng.">${escapeHtml(settings.customSimulationInstruction)}</textarea>
                 </label>
             </div>
                         </div>
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="simulation-npc" ${subgroupOpen('simulation-npc')}>
-                        <summary><span>NPC 与玩家边界</span><small>后台人数与玩家内心</small></summary>
+                        <summary><span>NPC Và ranh giới người chơi</span><small>Số người chạy ngầm và nội tâm người chơi</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>后台 NPC 预算</label>
+                <label>Chạy ngầm NPC Ngân sách</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 0, '不主动推演')}
-                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 2, '最多 2 人')}
-                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 4, '最多 4 人')}
-                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 8, '最多 8 人')}
+                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 0, 'Không chủ động suy diễn')}
+                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 2, 'Tối đa 2 Người')}
+                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 4, 'Tối đa 4 Người')}
+                    ${settingButton('backgroundNpcBudget', settings.backgroundNpcBudget, 8, 'Tối đa 8 Người')}
                 </div>
                 <label class="wb-number-setting">
-                    自定义人数上限
+                    Tùy chỉnh giới hạn số người
                     <input type="number" min="0" max="12" step="1"
                         data-wb-setting="backgroundNpcBudget"
                         value="${escapeAttr(settings.backgroundNpcBudget)}">
@@ -977,7 +977,7 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </div>
 
             <div class="wb-setting-toggle">
-                <div><strong>描写玩家内心</strong><span>默认关闭，避免插件替你决定想法与立场</span></div>
+                <div><strong>Miêu tả nội tâm người chơi</strong><span>Mặc định tắt, tránh để plugin quyết định suy nghĩ và lập trường thay bạn</span></div>
                 <label class="wb-switch">
                     <input type="checkbox" data-wb-setting="includeUserInnerVoice"
                         ${settings.includeUserInnerVoice ? 'checked' : ''}>
@@ -988,39 +988,39 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="simulation-context" ${subgroupOpen('simulation-context')}>
-                        <summary><span>上下文与时间</span><small>读取范围与世界钟策略</small></summary>
+                        <summary><span>Ngữ cảnh và thời gian</span><small>Phạm vi đọc và chiến lược đồng hồ thế giới</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-block">
-                <label>正文读取范围</label>
+                <label>Phạm vi đọc nội dung chính</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('contextTurns', settings.contextTurns, 1, '最近 1 轮')}
-                    ${settingButton('contextTurns', settings.contextTurns, 3, '最近 3 轮')}
-                    ${settingButton('contextTurns', settings.contextTurns, 5, '最近 5 轮')}
+                    ${settingButton('contextTurns', settings.contextTurns, 1, 'Gần đây 1 Vòng')}
+                    ${settingButton('contextTurns', settings.contextTurns, 3, 'Gần đây 3 Vòng')}
+                    ${settingButton('contextTurns', settings.contextTurns, 5, 'Gần đây 5 Vòng')}
                     <button type="button" data-wb-action="setting-button"
                         data-setting="contextTurns" data-value="${escapeAttr(settings.customContextTurns || 8)}"
-                        class="${![1, 3, 5].includes(Number(settings.contextTurns)) ? 'is-active' : ''}">自定义</button>
+                        class="${![1, 3, 5].includes(Number(settings.contextTurns)) ? 'is-active' : ''}">Tùy chỉnh</button>
                 </div>
                 ${![1, 3, 5].includes(Number(settings.contextTurns)) ? `
                     <label class="wb-number-setting wb-context-custom">
-                        读取最近几轮
+                        Đọc vài vòng gần đây
                         <input type="number" min="1" max="30" step="1"
                             data-wb-setting="contextTurns" value="${escapeAttr(settings.contextTurns)}">
                     </label>
                 ` : ''}
                 <p class="wb-setting-explanation">${escapeHtml(
                     [1, 3, 5].includes(Number(settings.contextTurns))
-                        ? ({1: '只看最新一轮，最轻最省～适合当前信息已经很明确的剧情。', 3: '读最近 3 轮，连续性和消耗都比较轻巧，适合多数日常场景。', 5: '默认推荐～最近 5 轮通常足够接住人物与事件，又不容易把上下文撑得圆滚滚。'}[Number(settings.contextTurns)])
-                        : `现在会读最近 ${settings.contextTurns} 轮～长事件和多人剧情会更稳，但轮数越高，Token 也会跟着长胖。`
+                        ? ({1: 'Chỉ xem vòng mới nhất, nhẹ nhất và tiết kiệm nhất~ Phù hợp với cốt truyện mà thông tin hiện tại đã rất rõ ràng.', 3: 'Đọc gần đây 3 vòng, tính liên tục và tiêu hao đều khá nhẹ nhàng, phù hợp với hầu hết các cảnh hàng ngày.', 5: 'Mặc định đề xuất~ Gần đây 5 vòng thường đủ để nắm bắt nhân vật và sự kiện, lại không dễ làm ngữ cảnh phình to.'}[Number(settings.contextTurns)])
+                        : `Bây giờ sẽ đọc gần đây ${settings.contextTurns} vòng ~ sự kiện dài và cốt truyện nhiều người sẽ ổn định hơn, nhưng số vòng càng cao,Token cũng sẽ béo lên theo.`
                 )}</p>
             </div>
 
             <div class="wb-setting-block">
-                <label>时间推进</label>
+                <label>Thời gian trôi qua</label>
                 <div class="wb-option-row">
-                    ${settingButton('timePolicy', settings.timePolicy, 'world', '世界钟')}
-                    ${settingButton('timePolicy', settings.timePolicy, 'explicit', '严格')}
-                    ${settingButton('timePolicy', settings.timePolicy, 'cautious', '克制')}
-                    ${settingButton('timePolicy', settings.timePolicy, 'open', '开放')}
+                    ${settingButton('timePolicy', settings.timePolicy, 'world', 'Đồng hồ thế giới')}
+                    ${settingButton('timePolicy', settings.timePolicy, 'explicit', 'Nghiêm ngặt')}
+                    ${settingButton('timePolicy', settings.timePolicy, 'cautious', 'Kiềm chế')}
+                    ${settingButton('timePolicy', settings.timePolicy, 'open', 'Mở')}
                 </div>
                 <p class="wb-setting-explanation">${escapeHtml(settingExplanation('timePolicy', settings.timePolicy))}</p>
             </div>
@@ -1031,45 +1031,45 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </details>
 
             <details class="wb-settings-group" data-settings-group="worldbook" ${groupOpen('worldbook')}>
-                <summary><span>世界书人物</span><small>搜索、识别与批量导入</small></summary>
+                <summary><span>Nhân vật Worldbook</span><small>Tìm kiếm, nhận dạng và nhập hàng loạt</small></summary>
                 <div class="wb-settings-group-body">
                     <div class="wb-settings-flat-section">
                     <form class="wb-worldbook-import" data-wb-form="worldbook">
-                        <label>选择世界书
+                        <label>Chọn Worldbook
                             <select name="bookName" ${worldbookBooks.length ? '' : 'disabled'}>
                                 ${worldbookBooks.length
                                     ? worldbookBooks.map(book => `<option value="${escapeAttr(book)}"
                                         ${book === worldbook.bookName ? 'selected' : ''}>${escapeHtml(book)}</option>`).join('')
-                                    : '<option value="">酒馆当前没有可读取的世界书</option>'}
+                                    : '<option value="">Tavern hiện không có Worldbook nào có thể đọc</option>'}
                             </select>
                         </label>
                         <button class="wb-worldbook-scan-button" type="button" data-wb-action="scan-worldbook"
                             ${worldbook.phase === 'running' || !worldbookBooks.length ? 'disabled' : ''}>
-                            ${worldbook.phase === 'running' ? '正在读取…' : '读取并识别人物'}
+                            ${worldbook.phase === 'running' ? 'Đang đọc…' : 'Đọc và nhận dạng nhân vật'}
                         </button>
                         ${worldbook.message ? `<div class="wb-worldbook-status is-${escapeAttr(worldbook.phase)}">${escapeHtml(worldbook.message)}</div>` : ''}
                         ${worldbookEntries.length ? `
                             <div class="wb-worldbook-browser">
                                 <label class="wb-worldbook-search">
-                                    <span>搜索条目</span>
+                                    <span>Tìm kiếm mục</span>
                                     <input type="search" name="worldbookSearch" data-wb-worldbook-search value="${escapeAttr(worldbookQuery)}"
-                                        placeholder="搜人物名、条目名、关键词或正文">
+                                        placeholder="Tìm tên nhân vật, tên mục, từ khóa hoặc nội dung chính">
                                 </label>
                                 <div class="wb-worldbook-filter-row">
                                     <label class="wb-worldbook-filter-chip ${worldbookOnlyPeople ? 'is-active' : ''}">
                                         <input type="checkbox" data-wb-worldbook-filter="people" ${worldbookOnlyPeople ? 'checked' : ''}>
-                                        <span>只看疑似人物</span>
+                                        <span>Chỉ xem nhân vật nghi ngờ</span>
                                     </label>
                                     <label class="wb-worldbook-filter-chip ${worldbookOnlyEnabled ? 'is-active' : ''}">
                                         <input type="checkbox" data-wb-worldbook-filter="enabled" ${worldbookOnlyEnabled ? 'checked' : ''}>
-                                        <span>只看启用条目</span>
+                                        <span>Chỉ xem mục đã bật</span>
                                     </label>
                                 </div>
                                 <div class="wb-worldbook-toolbar">
-                                    <span>共 ${worldbookEntries.length} 条 · 当前 ${filteredWorldbookEntries.length} 条 · 已选 ${worldbookSelectedCount} 条</span>
+                                    <span>Tổng cộng ${worldbookEntries.length} mục · Hiện tại ${filteredWorldbookEntries.length} mục · Đã chọn ${worldbookSelectedCount} mục</span>
                                     <div>
-                                        <button type="button" data-wb-action="select-worldbook-visible" ${filteredWorldbookEntries.length ? '' : 'disabled'}>全选当前</button>
-                                        <button type="button" data-wb-action="clear-worldbook-visible" ${filteredWorldbookEntries.length ? '' : 'disabled'}>取消当前</button>
+                                        <button type="button" data-wb-action="select-worldbook-visible" ${filteredWorldbookEntries.length ? '' : 'disabled'}>Chọn tất cả hiện tại</button>
+                                        <button type="button" data-wb-action="clear-worldbook-visible" ${filteredWorldbookEntries.length ? '' : 'disabled'}>Hủy hiện tại</button>
                                     </div>
                                 </div>
                                 <div class="wb-worldbook-entry-list">
@@ -1080,24 +1080,24 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                                             <span>
                                                 <span class="wb-worldbook-entry-heading">
                                                     <strong>${escapeHtml(entry.parsedName || entry.name)}</strong>
-                                                    ${entry.likelyPerson ? '<em>疑似人物</em>' : ''}
-                                                    ${entry.disabled ? '<em class="is-muted">已停用</em>' : ''}
+                                                    ${entry.likelyPerson ? '<em>Nhân vật nghi ngờ</em>' : ''}
+                                                    ${entry.disabled ? '<em class="is-muted">Đã vô hiệu hóa</em>' : ''}
                                                 </span>
                                                 ${entry.parsedName && entry.parsedName !== entry.name
-                                                    ? `<small>条目：${escapeHtml(entry.name)} · ${escapeHtml((entry.keys || []).join('、') || `UID ${entry.uid}`)}</small>`
+                                                    ? `<small>Mục:${escapeHtml(entry.name)} · ${escapeHtml((entry.keys || []).join('、') || `UID ${entry.uid}`)}</small>`
                                                     : `<small>${escapeHtml((entry.keys || []).join('、') || `UID ${entry.uid}`)}</small>`}
                                                 ${entry.profile?.matchedFields?.length
-                                                    ? `<div class="wb-worldbook-profile-hints">已识别：${escapeHtml(entry.profile.matchedFields.slice(0, 6).map(field => ({
-                                                        name: '姓名', nickname: '别称', gender: '性别', age: '年龄', birthday: '生日', species: '种族', identity: '身份', personality: '人格', values: '偏好', mbti: 'MBTI', appearance: '外貌', height: '身高', body: '体型', clothing: '穿着', background: '背景', relations: '关系', speech: '说话', behavior: '行为边界',
+                                                    ? `<div class="wb-worldbook-profile-hints">Đã nhận dạng:${escapeHtml(entry.profile.matchedFields.slice(0, 6).map(field => ({
+                                                        name: 'Họ tên', nickname: 'Biệt danh', gender: 'Giới tính', age: 'Tuổi tác', birthday: 'Sinh nhật', species: 'Chủng tộc', identity: 'Thân phận', personality: 'Nhân cách', values: 'Sở thích', mbti: 'MBTI', appearance: 'Ngoại hình', height: 'Chiều cao', body: 'Thể hình', clothing: 'Trang phục', background: 'Bối cảnh', relations: 'Mối quan hệ', speech: 'Nói chuyện', behavior: 'Ranh giới hành vi',
                                                     }[field] || field)).join('、'))}</div>`
                                                     : ''}
                                                 <p>${escapeHtml(entry.content.slice(0, 220))}${entry.content.length > 220 ? '…' : ''}</p>
                                             </span>
                                         </label>
-                                    `).join('') : `<div class="wb-worldbook-empty">当前筛选下没有条目。可以取消筛选或换个关键词。</div>`}
+                                    `).join('') : `<div class="wb-worldbook-empty">Không có mục nào dưới bộ lọc hiện tại. Có thể hủy bộ lọc hoặc đổi từ khóa khác.</div>`}
                                 </div>
                                 <button class="wb-primary-button wb-worldbook-import-button" type="submit" ${worldbookSelectedCount ? '' : 'disabled'}>
-                                    ${worldbookSelectedCount ? `导入已选人物（${worldbookSelectedCount}）` : '请选择要导入的人物'}
+                                    ${worldbookSelectedCount ? `Nhập nhân vật đã chọn (${worldbookSelectedCount}）` : 'Vui lòng chọn nhân vật muốn nhập'}
                                 </button>
                             </div>
                         ` : ''}
@@ -1107,13 +1107,13 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </details>
 
             <details class="wb-settings-group" data-settings-group="memory" ${groupOpen('memory')}>
-                <summary><span>长期记忆</span><small>自动整理与历史建档</small></summary>
+                <summary><span>Ký ức dài hạn</span><small>Tự động sắp xếp và lưu trữ lịch sử</small></summary>
                 <div class="wb-settings-group-body wb-settings-subgroup-stack">
                     <details class="wb-settings-subgroup" data-settings-subgroup="memory-switches" ${subgroupOpen('memory-switches')}>
-                        <summary><span>记忆开关</span><small>整理与正文注入</small></summary>
+                        <summary><span>Công tắc ký ức</span><small>Sắp xếp và chèn nội dung chính</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-setting-toggle">
-                <div><strong>启用记忆系统</strong><span>关闭后停止整理与写入，但保留已有记忆</span></div>
+                <div><strong>Bật hệ thống ký ức</strong><span>Sau khi tắt sẽ dừng sắp xếp và ghi, nhưng giữ lại ký ức đã có</span></div>
                 <label class="wb-switch">
                     <input type="checkbox" data-wb-setting="memorySystemEnabled"
                         ${settings.memorySystemEnabled ? 'checked' : ''}>
@@ -1121,7 +1121,7 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                 </label>
             </div>
             <div class="wb-setting-toggle">
-                <div><strong>记忆注入正文</strong><span>关闭后仍会整理和保存，只是不参与主对话生成</span></div>
+                <div><strong>Chèn ký ức vào nội dung chính</strong><span>Sau khi tắt vẫn sẽ sắp xếp và lưu, chỉ là không tham gia tạo cuộc trò chuyện chính</span></div>
                 <label class="wb-switch">
                     <input type="checkbox" data-wb-setting="memoryPromptInjection"
                         ${settings.memoryPromptInjection ? 'checked' : ''}>
@@ -1132,46 +1132,46 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="memory-history" ${subgroupOpen('memory-history')}>
-                        <summary><span>自动整理</span><small>进度与手动整理</small></summary>
+                        <summary><span>Tự động sắp xếp</span><small>Tiến độ và sắp xếp thủ công</small></summary>
                         <div class="wb-settings-subgroup-body">
             <div class="wb-history-settings">
                 <div class="wb-history-heading">
                     <div>
-                        <label>记忆整理</label>
+                        <label>Sắp xếp ký ức</label>
                         <strong>${escapeHtml(
                             historyRunning
-                                ? memory.message || '正在收拾记忆～'
-                                : '会自己收拾长期记忆～',
+                                ? memory.message || 'Đang dọn dẹp ký ức～'
+                                : 'Sẽ tự dọn dẹp ký ức dài hạn～',
                         )}</strong>
                     </div>
-                    <span>${historyRunning ? `${historyPercent}%` : (Number(memory.pendingAssistantResponses || 0) > 0 ? '有新增正文待收拾～' : '已经跟上正文啦～')}</span>
+                    <span>${historyRunning ? `${historyPercent}%` : (Number(memory.pendingAssistantResponses || 0) > 0 ? 'Có nội dung chính mới chờ dọn dẹp～' : 'Đã theo kịp nội dung chính rồi～')}</span>
                 </div>
                 ${historyRunning ? `
                     <div class="wb-history-progress"><i style="width:${historyPercent}%"></i></div>
                 ` : ''}
-                <p>会自动整理新增正文～重要事实、关系、承诺和没收尾的伏笔会乖乖留下来 (｡•̀ᴗ-)✧</p>
+                <p>Sẽ tự động sắp xếp nội dung chính mới～Sự thật quan trọng, mối quan hệ, cam kết và phục bút chưa kết thúc sẽ được giữ lại ngoan ngoãn (｡•̀ᴗ-)✧</p>
                 <div class="wb-memory-queue">
-                    <span>待整理 ${Math.max(0, Number(memory.pendingAssistantResponses || 0))} 条正文</span>
+                    <span>Chờ sắp xếp ${Math.max(0, Number(memory.pendingAssistantResponses || 0))} mục nội dung chính</span>
                     <strong>${settings.memoryAutoIndexInterval > 0
-                        ? `自动 · 每 ${settings.memoryAutoIndexInterval} 轮`
-                        : '手动整理'}</strong>
+                        ? `Tự động · Mỗi ${settings.memoryAutoIndexInterval} Vòng`
+                        : 'Sắp xếp thủ công'}</strong>
                 </div>
-                <label>整理方式</label>
+                <label>Phương thức sắp xếp</label>
                 <div class="wb-option-row wb-option-row-four">
-                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 0, '手动')}
-                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 5, '每 5 轮')}
-                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 10, '每 10 轮')}
-                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 20, '每 20 轮')}
+                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 0, 'Thủ công')}
+                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 5, 'Mỗi 5 Vòng')}
+                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 10, 'Mỗi 10 Vòng')}
+                    ${settingButton('memoryAutoIndexInterval', settings.memoryAutoIndexInterval, 20, 'Mỗi 20 Vòng')}
                 </div>
                 <label class="wb-number-setting">
-                    自定义间隔（轮）
+                    Khoảng thời gian tùy chỉnh (vòng)
                     <input type="number" min="0" max="50" step="1"
                         data-wb-setting="memoryAutoIndexInterval"
                         value="${escapeAttr(settings.memoryAutoIndexInterval)}">
                 </label>
                 <button type="button" data-wb-action="scan-history"
                     ${historyRunning || !settings.memorySystemEnabled ? 'disabled' : ''}>
-                    ${Number(memory.indexedThroughMessageId ?? -1) < 0 ? '整理当前记忆' : '立即整理'}
+                    ${Number(memory.indexedThroughMessageId ?? -1) < 0 ? 'Sắp xếp ký ức hiện tại' : 'Sắp xếp ngay'}
                 </button>
             </div>
                         </div>
@@ -1181,62 +1181,62 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
             </details>
 
             <details class="wb-settings-group" data-settings-group="calendar" ${groupOpen('calendar')}>
-                <summary><span>日历</span><small>主世界时间、校准与快进</small></summary>
+                <summary><span>Lịch</span><small>Thời gian thế giới chính, hiệu chuẩn và tua nhanh</small></summary>
                 <div class="wb-settings-group-body">
                     <form class="wb-clock-form" data-wb-form="clock">
                         <div class="wb-clock-form-heading">
-                            <div><label>主世界日历</label><strong>${escapeHtml(clockLabel)}</strong></div>
-                            <span>每个聊天独立保存</span>
+                            <div><label>Lịch thế giới chính</label><strong>${escapeHtml(clockLabel)}</strong></div>
+                            <span>Mỗi cuộc trò chuyện lưu độc lập</span>
                         </div>
                         <label class="wb-calendar-name-field">
-                            历法名称
+                            Tên lịch pháp
                             <input name="calendarName" maxlength="40"
-                                value="${escapeAttr(clock.calendarName)}" placeholder="例如：帝国历">
+                                value="${escapeAttr(clock.calendarName)}" placeholder="Ví dụ: Đế quốc lịch">
                         </label>
                         <div class="wb-calendar-date-fields">
                             <label><input name="year" type="number" min="1" max="9999"
-                                value="${clock.year}"> 年</label>
+                                value="${clock.year}"> Năm</label>
                             <label><input name="month" type="number" min="1" max="12"
-                                value="${clock.month}"> 月</label>
+                                value="${clock.month}"> Tháng</label>
                             <label><input name="day" type="number" min="1" max="31"
-                                value="${clock.dayOfMonth}"> 日</label>
+                                value="${clock.dayOfMonth}"> Ngày</label>
                         </div>
                         <div class="wb-clock-fields">
-                            <label><input name="hour" type="number" min="0" max="23" value="${clock.hour}"> 时</label>
-                            <label><input name="minute" type="number" min="0" max="59" value="${clock.minute}"> 分</label>
-                            <button type="button" data-wb-action="sync-clock-from-story">与正文校准</button>
-                            <button type="submit" class="wb-clock-manual-save">手动设定</button>
+                            <label><input name="hour" type="number" min="0" max="23" value="${clock.hour}"> Giờ</label>
+                            <label><input name="minute" type="number" min="0" max="59" value="${clock.minute}"> Phút</label>
+                            <button type="button" data-wb-action="sync-clock-from-story">Hiệu chuẩn với nội dung chính</button>
+                            <button type="submit" class="wb-clock-manual-save">Cài đặt thủ công</button>
                         </div>
-                        <p class="wb-clock-sync-note">正文给出可靠时间时，世界钟会自己跟上～这里也可以手动校准或快进。</p>
+                        <p class="wb-clock-sync-note">Khi nội dung chính đưa ra thời gian đáng tin cậy, đồng hồ thế giới sẽ tự theo kịp～Ở đây cũng có thể hiệu chuẩn thủ công hoặc tua nhanh.</p>
                         <div class="wb-time-actions">
-                            <button type="button" data-wb-action="advance-clock" data-minutes="60">+ 1 小时</button>
-                            <button type="button" data-wb-action="advance-clock" data-minutes="360">+ 6 小时</button>
-                            <button type="button" data-wb-action="advance-clock" data-minutes="1440">+ 1 天</button>
+                            <button type="button" data-wb-action="advance-clock" data-minutes="60">+ 1 Giờ</button>
+                            <button type="button" data-wb-action="advance-clock" data-minutes="360">+ 6 Giờ</button>
+                            <button type="button" data-wb-action="advance-clock" data-minutes="1440">+ 1 Ngày</button>
                         </div>
                     </form>
                 </div>
             </details>
 
             <details class="wb-settings-group" data-settings-group="advanced" ${groupOpen('advanced')}>
-                <summary><span>高级与维护</span><small>过滤、恢复与诊断</small></summary>
+                <summary><span>Nâng cao và bảo trì</span><small>Lọc, khôi phục và chẩn đoán</small></summary>
                 <div class="wb-settings-group-body wb-advanced-settings-body wb-settings-subgroup-stack">
                     <details class="wb-settings-subgroup" data-settings-subgroup="advanced-data" ${subgroupOpen('advanced-data')}>
-                        <summary><span>数据备份</span><small>导出与导入当前世界</small></summary>
+                        <summary><span>Sao lưu dữ liệu</span><small>Xuất và nhập thế giới hiện tại</small></summary>
                         <div class="wb-settings-subgroup-body">
                             <div class="wb-setting-actions">
-                                <button type="button" data-wb-action="export-state">导出当前世界</button>
-                                <button type="button" data-wb-action="import-state">导入世界状态</button>
+                                <button type="button" data-wb-action="export-state">Xuất thế giới hiện tại</button>
+                                <button type="button" data-wb-action="import-state">Nhập trạng thái thế giới</button>
                                 <input class="wb-import-input" type="file" accept=".json,application/json">
                             </div>
-                            <p>要搬家、测试或大改前，先给当前世界留个备份吧～ (｡•̀ᴗ-)✧</p>
+                            <p>Trước khi chuyển nhà, thử nghiệm hoặc sửa đổi lớn, hãy để lại một bản sao lưu cho thế giới hiện tại nhé～ (｡•̀ᴗ-)✧</p>
                         </div>
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="advanced-tagfilter" ${subgroupOpen('advanced-tagfilter')}>
-                        <summary><span>标签过滤</span><small>清理杂标签与 HTML 注释</small></summary>
+                        <summary><span>Lọc thẻ</span><small>Dọn dẹp thẻ rác và HTML Chú thích</small></summary>
                         <div class="wb-settings-subgroup-body">
                     <div class="wb-setting-toggle">
-                        <div><strong>启用标签过滤</strong><span>关闭后仍会删除 HTML 注释 &lt;!-- --&gt;</span></div>
+                        <div><strong>Bật lọc thẻ</strong><span>Vẫn sẽ xóa sau khi đóng HTML Chú thích &lt;!-- --&gt;</span></div>
                         <label class="wb-switch">
                             <input type="checkbox" data-wb-setting="tagFilterEnabled"
                                 ${settings.tagFilterEnabled !== false ? 'checked' : ''}>
@@ -1244,28 +1244,28 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                         </label>
                     </div>
                     <div class="wb-setting-block">
-                        <p>HTML 注释 <code>&lt;!-- ... --&gt;</code> 会整块拿掉～这里按字面严格匹配（区分大小写）。只填结尾时会删掉它和之前内容；只填开头时会从那里一路删到本条末尾。</p>
+                        <p>HTML Chú thích <code>&lt;!-- ... --&gt;</code> Sẽ lấy đi toàn bộ khối～Ở đây khớp chính xác theo nghĩa đen (phân biệt chữ hoa chữ thường). Khi chỉ điền phần cuối sẽ xóa nó và nội dung trước đó; khi chỉ điền phần đầu sẽ xóa từ đó cho đến cuối mục này.</p>
                         <div class="wb-tag-filter-list">
                             ${rules.map((rule, index) => `
                                 <div class="wb-tag-filter-rule" data-tag-filter-index="${index}">
                                     <div class="wb-tag-filter-rule-head">
-                                        <strong>规则 ${index + 1}</strong>
+                                        <strong>Quy tắc ${index + 1}</strong>
                                         <button type="button" class="wb-tag-filter-remove is-delete"
                                             data-wb-action="remove-tag-filter-rule"
-                                            data-index="${index}">删除</button>
+                                            data-index="${index}">Xóa</button>
                                     </div>
-                                    <label>开头标签 <span>（可空）</span>
+                                    <label>Thẻ mở đầu <span>（Có thể để trống）</span>
                                         <input type="text" maxlength="80"
                                             data-wb-tag-filter-field="open" data-index="${index}"
                                             value="${escapeAttr(rule.open || '')}"
-                                            placeholder="例如 &lt;options&gt;"
+                                            placeholder="Ví dụ &lt;options&gt;"
                                             autocomplete="off" spellcheck="false">
                                     </label>
-                                    <label>结尾标签 <span>（可空）</span>
+                                    <label>Thẻ kết thúc <span>（Có thể để trống）</span>
                                         <input type="text" maxlength="80"
                                             data-wb-tag-filter-field="close" data-index="${index}"
                                             value="${escapeAttr(rule.close || '')}"
-                                            placeholder="例如 &lt;/options&gt;"
+                                            placeholder="Ví dụ &lt;/options&gt;"
                                             autocomplete="off" spellcheck="false">
                                     </label>
                                 </div>
@@ -1273,10 +1273,10 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                         </div>
                         <div class="wb-tag-auto-tools">
                             <div class="wb-tag-auto-head">
-                                <div><strong>自动提取候选</strong><span>只扫描，不会自动加入规则</span></div>
+                                <div><strong>Tự động trích xuất ứng viên</strong><span>Chỉ quét, sẽ không tự động thêm vào quy tắc</span></div>
                                 <div class="wb-tag-auto-actions">
-                                    <button type="button" data-wb-action="scan-tag-candidates" data-count="1">扫描最新正文</button>
-                                    <button type="button" data-wb-action="scan-tag-candidates" data-count="5">扫描最近 5 条</button>
+                                    <button type="button" data-wb-action="scan-tag-candidates" data-count="1">Quét nội dung chính mới nhất</button>
+                                    <button type="button" data-wb-action="scan-tag-candidates" data-count="5">Quét gần đây 5 mục</button>
                                 </div>
                             </div>
                             ${tagCandidates.length ? `
@@ -1286,21 +1286,21 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                                             <input type="checkbox" data-wb-tag-candidate-index="${index}"
                                                 ${item.recommended ? 'checked' : ''} ${item.alreadyAdded ? 'disabled' : ''}>
                                             <span>
-                                                <strong>&lt;${escapeHtml(item.tagName)}&gt;${item.alreadyAdded ? ' · 已添加' : ''}</strong>
-                                                <small>${item.count} 次${item.broad ? ' · 范围较宽，建议确认后再加' : ''}</small>
+                                                <strong>&lt;${escapeHtml(item.tagName)}&gt;${item.alreadyAdded ? ' · Đã thêm' : ''}</strong>
+                                                <small>${item.count} Lần${item.broad ? ' · Phạm vi khá rộng, khuyên bạn nên xác nhận trước khi thêm' : ''}</small>
                                                 <code>${escapeHtml(item.open)} … ${escapeHtml(item.close)}</code>
                                             </span>
                                         </label>
                                     `).join('')}
                                 </div>
-                                <button type="button" class="wb-tag-filter-add" data-wb-action="apply-tag-candidates">添加选中候选</button>
-                            ` : '<p class="wb-tag-auto-empty">点击扫描后，插件会把疑似成对标签列出来供你确认。</p>'}
+                                <button type="button" class="wb-tag-filter-add" data-wb-action="apply-tag-candidates">Thêm ứng viên đã chọn</button>
+                            ` : '<p class="wb-tag-auto-empty">Sau khi nhấp vào quét, plugin sẽ liệt kê các thẻ nghi ngờ có cặp để bạn xác nhận.</p>'}
                         </div>
 
                         <button type="button" class="wb-tag-filter-add"
                             data-wb-action="add-tag-filter-rule"
                             ${rules.filter(rule => String(rule.open || '').trim() || String(rule.close || '').trim()).length >= 30 ? 'disabled' : ''}>
-                            ＋ 添加规则
+                            ＋ Thêm quy tắc
                         </button>
                     </div>
 
@@ -1308,29 +1308,29 @@ function renderSettings(state, settings, syncStatus, openGroups = new Set(), ope
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="advanced-recovery" ${subgroupOpen('advanced-recovery')}>
-                        <summary><span>安全恢复</span><small>${latestRecovery ? escapeHtml(latestRecovery.label) : '恢复点与回滚'}</small></summary>
+                        <summary><span>Khôi phục an toàn</span><small>${latestRecovery ? escapeHtml(latestRecovery.label) : 'Điểm khôi phục và quay lại'}</small></summary>
                         <div class="wb-settings-subgroup-body">
                             <div class="wb-maintenance-status">
-                                <strong>${latestRecovery ? escapeHtml(latestRecovery.label) : '还没有恢复点'}</strong>
-                                <span>${latestRecovery ? escapeHtml(formatLocalTimestamp(latestRecovery.createdAt)) : '每个聊天独立'}</span>
+                                <strong>${latestRecovery ? escapeHtml(latestRecovery.label) : 'Chưa có điểm khôi phục'}</strong>
+                                <span>${latestRecovery ? escapeHtml(formatLocalTimestamp(latestRecovery.createdAt)) : 'Mỗi cuộc trò chuyện độc lập'}</span>
                             </div>
                             <p>${latestRecovery
-                                ? `当前保存 ${Math.max(1, Number(recovery.count) || 1)} 个恢复点，恢复后仍会先替现在的状态留一份保险。`
-                                : '升级旧数据、导入世界状态时会自动留档，也可以现在手动保存一份。'}</p>
+                                ? `Lưu hiện tại ${Math.max(1, Number(recovery.count) || 1)} điểm khôi phục, sau khi khôi phục vẫn sẽ lưu lại một bản bảo hiểm cho trạng thái hiện tại trước.`
+                                : 'Khi nâng cấp dữ liệu cũ, nhập trạng thái thế giới sẽ tự động lưu trữ, cũng có thể lưu thủ công một bản ngay bây giờ.'}</p>
                             <div class="wb-setting-actions">
-                                <button type="button" data-wb-action="create-recovery-point">立即保存恢复点</button>
-                                <button type="button" data-wb-action="restore-latest-recovery" ${latestRecovery ? '' : 'disabled'}>恢复最近保存</button>
+                                <button type="button" data-wb-action="create-recovery-point">Lưu điểm khôi phục ngay lập tức</button>
+                                <button type="button" data-wb-action="restore-latest-recovery" ${latestRecovery ? '' : 'disabled'}>Khôi phục bản lưu gần nhất</button>
                             </div>
                         </div>
                     </details>
 
                     <details class="wb-settings-subgroup" data-settings-subgroup="advanced-diagnostics" ${subgroupOpen('advanced-diagnostics')}>
-                        <summary><span>故障诊断</span><small>安全复制诊断信息</small></summary>
+                        <summary><span>Chẩn đoán sự cố</span><small>Sao chép thông tin chẩn đoán an toàn</small></summary>
                         <div class="wb-settings-subgroup-body">
-                            <p>会带上版本、设备、接口模式和错误状态，方便抓虫～API Key、接口地址、正文和角色设定都不会跟着跑出去。</p>
+                            <p>Sẽ mang theo phiên bản, thiết bị, chế độ giao diện và trạng thái lỗi, thuận tiện cho việc bắt lỗi~API Key、Địa chỉ API, nội dung chính và thiết lập nhân vật đều sẽ không bị lộ ra ngoài.</p>
                             <div class="wb-setting-actions">
-                                <button type="button" data-wb-action="copy-diagnostics">复制诊断信息</button>
-                                <button type="button" data-wb-action="preview-notice">看看提示样式</button>
+                                <button type="button" data-wb-action="copy-diagnostics">Sao chép thông tin chẩn đoán</button>
+                                <button type="button" data-wb-action="preview-notice">Xem kiểu nhắc nhở</button>
                             </div>
                         </div>
                     </details>
@@ -1357,44 +1357,44 @@ function renderEventModal(state, editorId = '') {
         <div class="wb-drawer-scrim" data-wb-action="close-event-form">
             <form class="wb-event-form" data-wb-form="event">
                 <div class="wb-form-heading">
-                    <div><span>${isEdit ? 'EDIT CURRENT' : 'NEW CURRENT'}</span><h3>${isEdit ? '修改这条暗流' : '放入一条暗流'}</h3></div>
+                    <div><span>${isEdit ? 'EDIT CURRENT' : 'NEW CURRENT'}</span><h3>${isEdit ? 'Sửa đổi dòng chảy ngầm này' : 'Đưa vào một dòng chảy ngầm'}</h3></div>
                     <button type="button" data-wb-action="close-event-form">×</button>
                 </div>
                 <input type="hidden" name="id" value="${escapeAttr(event?.id || '')}">
-                <label>事件名称<input name="title" required maxlength="140"
-                    value="${escapeAttr(event?.title || '')}" placeholder="例如：修复一台旧通讯器"></label>
-                <label>地点<input name="place" maxlength="140"
-                    value="${escapeAttr(event?.place || '')}" placeholder="南岸维修站"></label>
-                <label>正在发生什么<textarea name="summary" maxlength="420" rows="3">${escapeHtml(event?.summary || '')}</textarea></label>
-                <label>预计结果<textarea name="expectedResult" maxlength="420" rows="2">${escapeHtml(event?.expectedResult || event?.consequence || '')}</textarea></label>
+                <label>Tên sự kiện<input name="title" required maxlength="140"
+                    value="${escapeAttr(event?.title || '')}" placeholder="Ví dụ: Sửa chữa một máy liên lạc cũ"></label>
+                <label>Địa điểm<input name="place" maxlength="140"
+                    value="${escapeAttr(event?.place || '')}" placeholder="Trạm bảo trì Nam Ngạn"></label>
+                <label>Chuyện gì đang xảy ra<textarea name="summary" maxlength="420" rows="3">${escapeHtml(event?.summary || '')}</textarea></label>
+                <label>Kết quả dự kiến<textarea name="expectedResult" maxlength="420" rows="2">${escapeHtml(event?.expectedResult || event?.consequence || '')}</textarea></label>
                 <div class="wb-form-grid">
-                    <label>计时方式
+                    <label>Phương thức tính giờ
                         <select name="clockMode">
-                            <option value="duration" ${event?.clockMode === 'duration' || !event ? 'selected' : ''}>自然流逝</option>
-                            <option value="active" ${event?.clockMode === 'active' ? 'selected' : ''}>有效工时</option>
-                            <option value="scheduled" ${event?.clockMode === 'scheduled' ? 'selected' : ''}>预定时间</option>
-                            <option value="condition" ${event?.clockMode === 'condition' ? 'selected' : ''}>条件等待</option>
+                            <option value="duration" ${event?.clockMode === 'duration' || !event ? 'selected' : ''}>Trôi qua tự nhiên</option>
+                            <option value="active" ${event?.clockMode === 'active' ? 'selected' : ''}>Giờ làm việc hiệu quả</option>
+                            <option value="scheduled" ${event?.clockMode === 'scheduled' ? 'selected' : ''}>Thời gian dự định</option>
+                            <option value="condition" ${event?.clockMode === 'condition' ? 'selected' : ''}>Chờ điều kiện</option>
                         </select>
                     </label>
-                    <label>预计耗时（小时）
+                    <label>Thời gian dự kiến (giờ)
                         <input name="durationHours" type="number" min="0" step="0.5"
                             value="${isEdit ? escapeAttr(durationValue) : '12'}">
                     </label>
                 </div>
-                <label>可见边界
+                <label>Ranh giới có thể nhìn thấy
                     <select name="visibility">
-                        <option value="hidden" ${event?.visibility === 'hidden' || !event ? 'selected' : ''}>角色尚不可知</option>
-                        <option value="trace" ${event?.visibility === 'trace' ? 'selected' : ''}>可由痕迹察觉</option>
-                        <option value="known" ${event?.visibility === 'known' ? 'selected' : ''}>可经消息获知</option>
-                        <option value="direct" ${event?.visibility === 'direct' ? 'selected' : ''}>可以直接感知</option>
+                        <option value="hidden" ${event?.visibility === 'hidden' || !event ? 'selected' : ''}>Nhân vật vẫn chưa rõ</option>
+                        <option value="trace" ${event?.visibility === 'trace' ? 'selected' : ''}>Có thể nhận biết qua dấu vết</option>
+                        <option value="known" ${event?.visibility === 'known' ? 'selected' : ''}>Có thể biết được qua tin tức</option>
+                        <option value="direct" ${event?.visibility === 'direct' ? 'selected' : ''}>Có thể cảm nhận trực tiếp</option>
                     </select>
                 </label>
                 <div class="wb-form-note">
                     ${isEdit
-                        ? `这条暗流从 ${escapeHtml(startedStamp)} 开始。修改计时方式或耗时后，会沿用原始开始时间重新计算；只改文字不会改变已有进度。`
-                        : `从 ${escapeHtml(formatWorldCalendar(state).stamp)} 开始计时。回复轮次不会增加进度。`}
+                        ? `Dòng chảy ngầm này từ ${escapeHtml(startedStamp)} bắt đầu. Sau khi sửa đổi phương thức tính giờ hoặc thời gian tiêu hao, sẽ tiếp tục sử dụng thời gian bắt đầu ban đầu để tính toán lại; chỉ sửa đổi văn bản sẽ không thay đổi tiến độ hiện có.`
+                        : `Từ ${escapeHtml(formatWorldCalendar(state).stamp)} bắt đầu tính giờ. Số vòng phản hồi sẽ không làm tăng tiến độ.`}
                 </div>
-                <button class="wb-primary-button" type="submit">${isEdit ? '保存暗流修改' : '开始在后台发展'}</button>
+                <button class="wb-primary-button" type="submit">${isEdit ? 'Lưu sửa đổi dòng chảy ngầm' : 'Bắt đầu phát triển chạy ngầm'}</button>
             </form>
         </div>
     `;
@@ -1408,100 +1408,100 @@ function renderPersonDrawer(person, observerMode, worldMinute, {
     if (!person) return '';
     return `
         <div class="wb-drawer-scrim" data-wb-action="close-person">
-            <div class="wb-person-drawer" role="dialog" aria-modal="true" aria-label="人物详情">
+            <div class="wb-person-drawer" role="dialog" aria-modal="true" aria-label="Chi tiết nhân vật">
                 <button class="wb-drawer-close" type="button" data-wb-action="close-person">×</button>
                 ${renderPersonAvatar(person, 'is-feature')}
                 <span class="wb-drawer-overline">LIVING TRACE</span>
                 <h3>${escapeHtml(person.name)}</h3>
                 <p class="wb-drawer-place">${escapeHtml(person.location)}</p>
                 <button class="wb-person-edit-button" type="button" data-wb-action="open-person-editor"
-                    data-person-id="${escapeAttr(person.id)}" data-person-name="${escapeAttr(person.name)}">编辑人物卡</button>
-                <div class="wb-drawer-section"><span>正在做</span><strong>${escapeHtml(person.action)}</strong></div>
-                <div class="wb-drawer-section"><span>短期意图</span><strong>${escapeHtml(person.intent)}</strong></div>
+                    data-person-id="${escapeAttr(person.id)}" data-person-name="${escapeAttr(person.name)}">Chỉnh sửa thẻ nhân vật</button>
+                <div class="wb-drawer-section"><span>Đang làm</span><strong>${escapeHtml(person.action)}</strong></div>
+                <div class="wb-drawer-section"><span>Ý định ngắn hạn</span><strong>${escapeHtml(person.intent)}</strong></div>
                 ${person.longTermGoal ? `
-                    <div class="wb-drawer-section"><span>长期目标</span><strong>${escapeHtml(person.longTermGoal)}</strong></div>
+                    <div class="wb-drawer-section"><span>Mục tiêu dài hạn</span><strong>${escapeHtml(person.longTermGoal)}</strong></div>
                 ` : ''}
                 ${person.identityAnchor ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>身份锚点</span><strong>${escapeHtml(person.identityAnchor)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Điểm neo thân phận</span><strong>${escapeHtml(person.identityAnchor)}</strong></div>
                 ` : ''}
                 ${person.appearanceProfile ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>外貌设定</span><strong>${escapeHtml(person.appearanceProfile)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Cài đặt ngoại hình</span><strong>${escapeHtml(person.appearanceProfile)}</strong></div>
                 ` : ''}
                 ${person.personalityAnchor ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>人格锚点</span><strong>${escapeHtml(person.personalityAnchor)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Điểm neo nhân cách</span><strong>${escapeHtml(person.personalityAnchor)}</strong></div>
                 ` : ''}
                 ${person.backgroundProfile ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>背景与关系</span><strong>${escapeHtml(person.backgroundProfile)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Bối cảnh và mối quan hệ</span><strong>${escapeHtml(person.backgroundProfile)}</strong></div>
                 ` : ''}
                 ${person.speakingStyle ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>说话习惯</span><strong>${escapeHtml(person.speakingStyle)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Thói quen nói chuyện</span><strong>${escapeHtml(person.speakingStyle)}</strong></div>
                 ` : ''}
                 ${person.behaviorBoundaries ? `
-                    <div class="wb-drawer-section is-character-anchor"><span>行为边界</span><strong>${escapeHtml(person.behaviorBoundaries)}</strong></div>
+                    <div class="wb-drawer-section is-character-anchor"><span>Ranh giới hành vi</span><strong>${escapeHtml(person.behaviorBoundaries)}</strong></div>
                 ` : ''}
                 ${person.worldbookRaw ? `
                     <details class="wb-worldbook-source-profile">
-                        <summary><span>世界书原始设定</span><small>${String(person.worldbookRaw).length} 字 · 点击查看</small></summary>
+                        <summary><span>Thiết lập gốc của Worldbook</span><small>${String(person.worldbookRaw).length} Chữ · Nhấp để xem</small></summary>
                         <pre>${escapeHtml(person.worldbookRaw)}</pre>
                     </details>
                 ` : ''}
                 ${person.trace ? `
-                    <div class="wb-drawer-section"><span>最近轨迹</span><strong>${escapeHtml(person.trace)}</strong></div>
+                    <div class="wb-drawer-section"><span>Hành tung gần đây</span><strong>${escapeHtml(person.trace)}</strong></div>
                 ` : ''}
                 ${observerMode === 'backstage'
                     ? renderInnerVoice(person, worldMinute)
                     : `
                         <div class="wb-knowledge-boundary">
-                            <i></i><div><strong>知识边界</strong><p>角色所知视角不会读取她的幕后独白。</p></div>
+                            <i></i><div><strong>Ranh giới kiến thức</strong><p>Góc nhìn những gì nhân vật biết sẽ không đọc độc thoại hậu trường của cô ấy.</p></div>
                         </div>
                     `}
                 <div class="wb-person-observation ${observation?.personId === person.id ? 'has-result' : ''}">
                     ${observation?.personId === person.id ? `
                         <article>
-                            <span>幕后观测 · ${escapeHtml(formatWorldMinute(observation.worldMinute).time)}</span>
+                            <span>Quan sát hậu trường · ${escapeHtml(formatWorldMinute(observation.worldMinute).time)}</span>
                             <p>${escapeHtml(observation.text)}</p>
                         </article>
                     ` : ''}
                     ${canObserve ? `
                         <div class="wb-observation-primary">
                             ${observation?.personId === person.id
-                                ? '<span>已保存在当前正文与世界状态下</span>'
-                                : '<span>不推进时间，也不会直接写入正文</span>'}
+                                ? '<span>Đã lưu trong nội dung chính và trạng thái thế giới hiện tại</span>'
+                                : '<span>Không thúc đẩy thời gian, cũng không ghi trực tiếp vào nội dung chính</span>'}
                             <button type="button" data-wb-action="observe-person"
                                 data-person-id="${escapeAttr(person.id)}"
                                 data-force="${observation?.personId === person.id ? 'true' : 'false'}"
                                 ${busy ? 'disabled' : ''}>
                                 ${busy
-                                    ? '正在观测……'
+                                    ? 'Đang quan sát……'
                                     : observation?.personId === person.id
-                                        ? '重新观测'
-                                        : `看看 ${escapeHtml(person.name)} 在做什么`}
+                                        ? 'Quan sát lại'
+                                        : `Xem thử ${escapeHtml(person.name)} Đang làm gì`}
                             </button>
                         </div>
                     ` : `
                         <p>${person.isUser
-                            ? '玩家角色不使用镜头外人物观测。'
+                            ? 'Nhân vật người chơi không sử dụng quan sát nhân vật ngoài ống kính.'
                             : observerMode !== 'backstage'
-                                ? '切回幕后视角后可以观测镜头外人物。'
-                                : '这个人物正在本轮镜头中，无需另行观测。'}</p>
+                                ? 'Sau khi chuyển về góc nhìn hậu trường có thể quan sát nhân vật ngoài ống kính.'
+                                : 'Nhân vật này đang trong ống kính vòng này, không cần quan sát riêng.'}</p>
                     `}
                 </div>
                 <div class="wb-knowledge-boundary wb-observation-boundary ${observation?.queued ? 'is-enabled' : ''} ${observation?.revealState === 'delivered' ? 'is-delivered' : ''}">
                     <i></i>
                     <div>
-                        <strong>${observation?.revealState === 'delivered' ? '已经显露' : '自然显露'}</strong>
+                        <strong>${observation?.revealState === 'delivered' ? 'Đã hiển thị' : 'Hiển thị tự nhiên'}</strong>
                         <p>${observation?.revealState === 'delivered'
-                            ? '这段观测已经被后续正文自然承接；关闭观测窗口不会删除已经生成的正文。'
+                            ? 'Đoạn quan sát này đã được nội dung chính tiếp theo tiếp nối tự nhiên; đóng cửa sổ quan sát sẽ không xóa nội dung chính đã tạo.'
                             : observation?.revealState === 'expired'
-                                ? '此前没有遇到合适的显露时机，已停止继续提供；你可以重新开启。'
+                                ? 'Trước đó không gặp thời điểm hiển thị phù hợp, đã ngừng tiếp tục cung cấp; bạn có thể bật lại.'
                                 : observation?.queued
-                                    ? '已允许：这段观测会在后续语境合适时作为正文候选；不会强行插入，也不保证紧接下一轮出现。'
-                                    : '默认关闭：仅供幕后观看，不进入正文、不推进时间，也不修改记忆。'}</p>
+                                    ? 'Đã cho phép: Đoạn quan sát này sẽ làm ứng cử viên cho nội dung chính khi ngữ cảnh tiếp theo phù hợp; sẽ không chèn ép buộc, cũng không đảm bảo xuất hiện ngay vòng tiếp theo.'
+                                    : 'Mặc định tắt: Chỉ dành cho xem hậu trường, không vào nội dung chính, không thúc đẩy thời gian, cũng không sửa đổi ký ức.'}</p>
                     </div>
                     ${observation?.personId === person.id ? `
                         <button type="button" role="switch"
                             aria-checked="${observation.queued || observation.revealState === 'delivered' ? 'true' : 'false'}"
-                            aria-label="允许这段观测自然显露"
+                            aria-label="Cho phép đoạn quan sát này hiển thị tự nhiên"
                             data-wb-action="queue-person-observation"
                             data-person-id="${escapeAttr(person.id)}"
                             ${observation.revealState === 'delivered' ? 'disabled' : ''}>
@@ -1524,40 +1524,40 @@ function renderNowView(state, observerMode, people, activeEvents) {
                     <div class="wb-world-card-heading-row">
                         <span class="wb-section-kicker">WORLD STATE · ${escapeHtml(clockLabel)}</span>
                         <button class="wb-card-action-button is-edit" type="button"
-                            data-wb-action="open-world-editor" aria-label="编辑世界概况">编辑</button>
+                            data-wb-action="open-world-editor" aria-label="Chỉnh sửa tổng quan thế giới">Chỉnh sửa</button>
                     </div>
                     <h3>${escapeHtml(state.world.title)}</h3>
                     <p>${escapeHtml(state.world.detail)}</p>
                 </div>
                 <div class="wb-world-pulse" aria-hidden="true">
                     <i></i><i></i><span></span>
-                    <strong>${state.needsReconciliation ? '待校准' : state.pendingSync ? '待推演' : '持续中'}</strong>
+                    <strong>${state.needsReconciliation ? 'Chờ hiệu chuẩn' : state.pendingSync ? 'Chờ suy diễn' : 'Đang tiếp diễn'}</strong>
                 </div>
             </section>
 
             <div class="wb-overview-grid">
                 <section class="wb-overview-section">
                     <div class="wb-section-heading">
-                        <div><span>正在形成</span><h3>暗流</h3></div>
-                        <button type="button" data-wb-action="set-view" data-view="currents">查看全部 →</button>
+                        <div><span>Đang hình thành</span><h3>Dòng chảy ngầm</h3></div>
+                        <button type="button" data-wb-action="set-view" data-view="currents">Xem tất cả →</button>
                     </div>
                     <div class="wb-event-list is-compact">
                         ${activeEvents.slice(0, 2).map(event => renderEventCard(event, state)).join('')
-                            || renderEmpty('暗流今天很安静～', '没有正在发展的事件也没关系，人物们照样会过自己的日子 (˘ω˘)')}
+                            || renderEmpty('Dòng chảy ngầm hôm nay rất yên tĩnh～', 'Không có sự kiện đang phát triển cũng không sao, các nhân vật vẫn sẽ sống cuộc sống của riêng mình (˘ω˘)')}
                     </div>
                 </section>
 
                 <section class="wb-overview-section">
                     <div class="wb-section-heading">
-                        <div><span>持续生活中</span><h3>人物轨迹</h3></div>
-                        <button type="button" data-wb-action="set-view" data-view="people">查看全部 →</button>
+                        <div><span>Đang tiếp tục sống</span><h3>Hành tung nhân vật</h3></div>
+                        <button type="button" data-wb-action="set-view" data-view="people">Xem tất cả →</button>
                     </div>
                     <div class="wb-person-list">
                         ${people.slice(0, 3).map(person => renderPersonRow(
                             person,
                             observerMode,
                             state.clock.absoluteMinute,
-                        )).join('') || renderEmpty('人物轨迹还没开张～', '跑一次世界推演，她们就会慢慢留下自己的生活痕迹。')}
+                        )).join('') || renderEmpty('Hành tung nhân vật vẫn chưa mở～', 'Chạy suy diễn thế giới một lần, họ sẽ dần để lại dấu vết cuộc sống của mình.')}
                     </div>
                 </section>
             </div>
@@ -1568,14 +1568,14 @@ function renderNowView(state, observerMode, people, activeEvents) {
 function renderPeopleView(state, observerMode, people, openFolds = new Set()) {
     return `
         <div class="wb-view-intro">
-            <p>每个人都会在镜头外继续过自己的日子啦～位置和行动会跟着世界一起变，没说出口的心声还是乖乖留在幕后 (｡•̀ᴗ-)✧</p>
+            <p>Mỗi người đều sẽ tiếp tục sống cuộc sống của mình ngoài ống kính nha～ Vị trí và hành động sẽ thay đổi theo thế giới, tiếng lòng chưa nói ra vẫn ngoan ngoãn ở lại hậu trường (｡•̀ᴗ-)✧</p>
             <div class="wb-memory-intro-actions">
-                <span>${people.length} 条可观测轨迹</span>
-                <button type="button" data-wb-action="open-person-editor">＋ 添加后台 NPC</button>
+                <span>${people.length} quỹ đạo có thể quan sát</span>
+                <button type="button" data-wb-action="open-person-editor">＋ Thêm chạy ngầm NPC</button>
             </div>
         </div>
         <div class="wb-view-fold-head">
-            <span>先看她们现在在哪、在做什么就好～想深挖再慢慢展开。</span>
+            <span>Trước tiên cứ xem họ hiện đang ở đâu, làm gì là được～ Muốn đào sâu thì từ từ mở rộng sau.</span>
             ${renderFoldToolbar('people:')}
         </div>
         <div class="wb-people-grid">
@@ -1585,8 +1585,8 @@ function renderPeopleView(state, observerMode, people, openFolds = new Set()) {
                 state.clock.absoluteMinute,
                 openFolds,
             )).join('') || renderEmpty(
-                observerMode === 'known' ? '角色目前没有可确认的人物轨迹' : '后台人物尚未建立',
-                observerMode === 'known' ? '切回幕后视角可以查看未知轨迹。' : '回复后自动推演或手动推演一次。',
+                observerMode === 'known' ? 'Nhân vật hiện tại không có hành tung nhân vật có thể xác nhận' : 'Nhân vật chạy ngầm chưa được thiết lập',
+                observerMode === 'known' ? 'Chuyển về góc nhìn hậu trường có thể xem hành tung chưa biết.' : 'Tự động suy diễn sau khi phản hồi hoặc suy diễn thủ công một lần.',
             )}
         </div>
     `;
@@ -1603,58 +1603,58 @@ function renderPersonEditorModal(state, editor) {
         <div class="wb-drawer-scrim" data-wb-action="close-person-editor">
             <form class="wb-event-form wb-person-editor" data-wb-form="person">
                 <div class="wb-form-heading">
-                    <div><span>BACKSTAGE CAST</span><h3>${person ? '编辑后台人物' : '添加后台 NPC'}</h3></div>
+                    <div><span>BACKSTAGE CAST</span><h3>${person ? 'Chỉnh sửa nhân vật chạy ngầm' : 'Thêm chạy ngầm NPC'}</h3></div>
                     <button type="button" data-wb-action="close-person-editor">×</button>
                 </div>
                 <input type="hidden" name="id" value="${escapeAttr(person?.id || '')}">
                 <input type="hidden" name="originalName" value="${escapeAttr(person?.name || '')}">
-                <label>姓名<input name="name" required maxlength="80" value="${escapeAttr(person?.name || '')}"></label>
-                <label>当前位置<input name="location" maxlength="160" value="${escapeAttr(person?.location || '')}"></label>
-                <label>正在做<textarea name="action" maxlength="280" rows="2">${escapeHtml(person?.action || '')}</textarea></label>
-                <label>短期意图<textarea name="intent" maxlength="320" rows="2">${escapeHtml(person?.intent || '')}</textarea></label>
-                <label>长期目标<textarea name="longTermGoal" maxlength="420" rows="3">${escapeHtml(person?.longTermGoal || '')}</textarea></label>
+                <label>Họ tên<input name="name" required maxlength="80" value="${escapeAttr(person?.name || '')}"></label>
+                <label>Vị trí hiện tại<input name="location" maxlength="160" value="${escapeAttr(person?.location || '')}"></label>
+                <label>Đang làm<textarea name="action" maxlength="280" rows="2">${escapeHtml(person?.action || '')}</textarea></label>
+                <label>Ý định ngắn hạn<textarea name="intent" maxlength="320" rows="2">${escapeHtml(person?.intent || '')}</textarea></label>
+                <label>Mục tiêu dài hạn<textarea name="longTermGoal" maxlength="420" rows="3">${escapeHtml(person?.longTermGoal || '')}</textarea></label>
                 <fieldset class="wb-character-anchor-fields">
-                    <legend><span>角色约束</span><small>推演与即时观测都会遵守，AI 不会自动改写</small></legend>
-                    <label>角色身份锚点<textarea name="identityAnchor" maxlength="500" rows="3"
-                        placeholder="例如：男性，外表偏女性，使用“他”和男性称谓；狐族人外。也可填写非二元、无性别或自定义称谓。">${escapeHtml(person?.identityAnchor || '')}</textarea>
-                        <small>自由填写性别身份、称谓/代词、物种、年龄阶段与社会身份；外貌请单独写在“外貌设定”。不限制为男女二选一。</small>
+                    <legend><span>Ràng buộc nhân vật</span><small>Suy diễn và quan sát tức thời đều sẽ tuân thủ,AI Sẽ không tự động viết lại</small></legend>
+                    <label>Điểm neo thân phận nhân vật<textarea name="identityAnchor" maxlength="500" rows="3"
+                        placeholder="Ví dụ: Nam giới, ngoại hình thiên về nữ giới, sử dụng“anh ấy”và danh xưng nam giới; dị nhân tộc cáo. Cũng có thể điền phi nhị nguyên giới, phi giới tính hoặc danh xưng tùy chỉnh.">${escapeHtml(person?.identityAnchor || '')}</textarea>
+                        <small>Tự do điền bản dạng giới, danh xưng/Đại từ, loài, giai đoạn tuổi và thân phận xã hội; ngoại hình vui lòng viết riêng ở“Cài đặt ngoại hình”。Không giới hạn chỉ chọn một trong hai nam hoặc nữ.</small>
                     </label>
-                    <label>外貌设定<textarea name="appearanceProfile" maxlength="700" rows="3"
-                        placeholder="例如：黑色短发，身高185cm，常穿深色衬衫。">${escapeHtml(person?.appearanceProfile || '')}</textarea></label>
-                    <label>人格锚点<textarea name="personalityAnchor" maxlength="600" rows="3"
-                        placeholder="例如：外冷内热，警惕权威；重视承诺，但不轻易示弱。">${escapeHtml(person?.personalityAnchor || '')}</textarea></label>
-                    <label>背景与关系<textarea name="backgroundProfile" maxlength="900" rows="4"
-                        placeholder="例如：成长经历、家庭关系、社会关系和既有重要经历。">${escapeHtml(person?.backgroundProfile || '')}</textarea></label>
-                    <label>说话习惯<textarea name="speakingStyle" maxlength="360" rows="2"
-                        placeholder="例如：句子简短，很少使用感叹号；紧张时会转移话题。">${escapeHtml(person?.speakingStyle || '')}</textarea></label>
-                    <label>行为边界<textarea name="behaviorBoundaries" maxlength="500" rows="3"
-                        placeholder="例如：不会无证据背叛同伴；不替玩家做决定；不知道的幕后信息不得说出口。">${escapeHtml(person?.behaviorBoundaries || '')}</textarea></label>
+                    <label>Cài đặt ngoại hình<textarea name="appearanceProfile" maxlength="700" rows="3"
+                        placeholder="Ví dụ: Tóc ngắn màu đen, chiều cao 185cm，thường mặc áo sơ mi tối màu.">${escapeHtml(person?.appearanceProfile || '')}</textarea></label>
+                    <label>Điểm neo nhân cách<textarea name="personalityAnchor" maxlength="600" rows="3"
+                        placeholder="Ví dụ: Ngoài lạnh trong nóng, cảnh giác với chính quyền; coi trọng lời hứa, nhưng không dễ dàng tỏ ra yếu đuối.">${escapeHtml(person?.personalityAnchor || '')}</textarea></label>
+                    <label>Bối cảnh và mối quan hệ<textarea name="backgroundProfile" maxlength="900" rows="4"
+                        placeholder="Ví dụ: Quá trình trưởng thành, mối quan hệ gia đình, mối quan hệ xã hội và những trải nghiệm quan trọng đã có.">${escapeHtml(person?.backgroundProfile || '')}</textarea></label>
+                    <label>Thói quen nói chuyện<textarea name="speakingStyle" maxlength="360" rows="2"
+                        placeholder="Ví dụ: Câu từ ngắn gọn, rất ít sử dụng dấu chấm than; khi căng thẳng sẽ chuyển chủ đề.">${escapeHtml(person?.speakingStyle || '')}</textarea></label>
+                    <label>Ranh giới hành vi<textarea name="behaviorBoundaries" maxlength="500" rows="3"
+                        placeholder="Ví dụ: Sẽ không phản bội đồng đội khi không có chứng cứ; không thay người chơi đưa ra quyết định; không được nói ra những thông tin hậu trường mà bản thân không biết.">${escapeHtml(person?.behaviorBoundaries || '')}</textarea></label>
                 </fieldset>
                 <div class="wb-form-grid">
-                    <label>知识边界
+                    <label>Ranh giới kiến thức
                         <select name="knowledge">
-                            <option value="backstage" ${person?.knowledge !== 'known' ? 'selected' : ''}>幕后未知</option>
-                            <option value="known" ${person?.knowledge === 'known' ? 'selected' : ''}>角色可知</option>
+                            <option value="backstage" ${person?.knowledge !== 'known' ? 'selected' : ''}>Hậu trường chưa biết</option>
+                            <option value="known" ${person?.knowledge === 'known' ? 'selected' : ''}>Nhân vật có thể biết</option>
                         </select>
                     </label>
-                    <label>重要程度
+                    <label>Mức độ quan trọng
                         <select name="relevance">
-                            <option value="1" ${Number(person?.relevance || 2) === 1 ? 'selected' : ''}>普通</option>
-                            <option value="2" ${Number(person?.relevance || 2) === 2 ? 'selected' : ''}>重要</option>
-                            <option value="3" ${Number(person?.relevance || 2) === 3 ? 'selected' : ''}>核心</option>
+                            <option value="1" ${Number(person?.relevance || 2) === 1 ? 'selected' : ''}>Bình thường</option>
+                            <option value="2" ${Number(person?.relevance || 2) === 2 ? 'selected' : ''}>Quan trọng</option>
+                            <option value="3" ${Number(person?.relevance || 2) === 3 ? 'selected' : ''}>Cốt lõi</option>
                         </select>
                     </label>
                 </div>
                 <div class="wb-memory-editor-flags">
                     <label><input name="simulationEnabled" type="checkbox"
-                        ${person?.simulationEnabled !== false ? 'checked' : ''}> 参与镜头外推演</label>
-                    <label><input name="locked" type="checkbox" ${person?.locked ? 'checked' : ''}> 锁定核心设定</label>
+                        ${person?.simulationEnabled !== false ? 'checked' : ''}> Tham gia suy diễn ngoài ống kính</label>
+                    <label><input name="locked" type="checkbox" ${person?.locked ? 'checked' : ''}> Khóa thiết lập cốt lõi</label>
                 </div>
-                <div class="wb-form-note">关闭“参与镜头外推演”后，人物仍保存在名单里；只有正文让其出场时才更新。</div>
+                <div class="wb-form-note">Đóng“Tham gia suy diễn ngoài ống kính”sau đó, nhân vật vẫn được lưu trong danh sách; chỉ cập nhật khi nội dung chính cho phép xuất hiện.</div>
                 <div class="wb-person-editor-actions">
                     ${person ? `<button class="wb-person-delete-button" type="button" data-wb-action="delete-manual-person"
-                        data-person-id="${escapeAttr(person.id)}" ${person.locked ? 'disabled' : ''}>删除人物</button>` : ''}
-                    <button class="wb-primary-button" type="submit">${person ? '保存人物卡' : '加入后台名单'}</button>
+                        data-person-id="${escapeAttr(person.id)}" ${person.locked ? 'disabled' : ''}>Xóa nhân vật</button>` : ''}
+                    <button class="wb-primary-button" type="submit">${person ? 'Lưu thẻ nhân vật' : 'Thêm vào danh sách chạy ngầm'}</button>
                 </div>
             </form>
         </div>
@@ -1664,22 +1664,22 @@ function renderPersonEditorModal(state, editor) {
 function renderCurrentsView(state, activeEvents, openFolds = new Set(), settings = {}) {
     return `
         <div class="wb-view-intro">
-            <p>这里装的是还没走完的事情～它们会跟着世界继续发展，结果一旦落地就真的算数啦 ( •̀ ω •́ )✧</p>
+            <p>Ở đây chứa những sự việc chưa kết thúc～ Chúng sẽ tiếp tục phát triển theo thế giới, một khi có kết quả thì mới thực sự được tính nha ( •̀ ω •́ )✧</p>
             <div class="wb-view-inline-actions">
                 <label class="wb-view-toggle">
-                    <span>自动运行</span>
+                    <span>Tự động chạy</span>
                     <input type="checkbox" data-wb-setting="worldAutoEnabled" ${settings.worldAutoEnabled ? 'checked' : ''}>
                 </label>
-                <button class="wb-inline-add" type="button" data-wb-action="open-event-form">＋ 放入一条暗流</button>
+                <button class="wb-inline-add" type="button" data-wb-action="open-event-form">＋ Đưa vào một dòng chảy ngầm</button>
             </div>
         </div>
         <div class="wb-view-fold-head">
-            <span>先扫一眼状态、地点和剩余时间～想看细节再展开就好。</span>
+            <span>Trước tiên hãy lướt qua trạng thái, địa điểm và thời gian còn lại～ Muốn xem chi tiết thì mở rộng ra là được.</span>
             ${renderFoldToolbar('currents:')}
         </div>
         <div class="wb-event-list is-full">
             ${activeEvents.map(event => renderEventCard(event, state, true, openFolds)).join('')
-                || renderEmpty('暗流暂时清空啦～', '到时、取消或错过的事情会离开这里，结果会乖乖转去回声。')}
+                || renderEmpty('Dòng chảy ngầm tạm thời đã được dọn sạch nha～', 'Những sự việc đến hạn, bị hủy hoặc bỏ lỡ sẽ rời khỏi đây, kết quả sẽ ngoan ngoãn chuyển sang tiếng vang.')}
         </div>
     `;
 }
@@ -1687,34 +1687,34 @@ function renderCurrentsView(state, activeEvents, openFolds = new Set(), settings
 function renderEchoesView(state, outcomes, openFolds = new Set()) {
     return `
         <div class="wb-view-intro">
-            <p>事情走到结果后会来到这里～有没有被正文看见是另一回事，结果本身可不会凭空消失 (｡•̀ᴗ-)✧</p>
-            <span>最近结果</span>
+            <p>Sự việc sau khi đi đến kết quả sẽ đến đây～ Có được nội dung chính nhìn thấy hay không lại là chuyện khác, bản thân kết quả sẽ không biến mất một cách vô cớ đâu (｡•̀ᴗ-)✧</p>
+            <span>Kết quả gần đây</span>
         </div>
         <div class="wb-view-fold-head">
-            <span>结果是否存在，与正文是否看见，是两回事～先看看有没有碰到镜头吧。</span>
+            <span>Kết quả có tồn tại hay không, và nội dung chính có nhìn thấy hay không, là hai chuyện khác nhau～ Trước tiên hãy xem có chạm vào ống kính không đã.</span>
             ${renderFoldToolbar('echoes:')}
         </div>
         <div class="wb-echo-timeline">
             ${outcomes.map(event => renderOutcome(event, state, openFolds)).join('')
-                || renderEmpty('还没有回声呢～', '后台发生过的事，不等于已经被正文看见。等它真正形成结果再来这里。')}
+                || renderEmpty('Vẫn chưa có tiếng vang nào nha～', 'Những chuyện từng xảy ra chạy ngầm, không có nghĩa là đã được nội dung chính nhìn thấy. Đợi nó thực sự hình thành kết quả rồi hãy đến đây.')}
         </div>
     `;
 }
 
 function publicOpinionClaimLabel(status) {
     return {
-        fact: '基于公开事实',
-        mixed: '事实与猜测混合',
-        rumor: '传闻 / 未证实',
-    }[status] || '事实与猜测混合';
+        fact: 'Dựa trên sự thật công khai',
+        mixed: 'Sự thật và suy đoán lẫn lộn',
+        rumor: 'Tin đồn / Chưa được xác nhận',
+    }[status] || 'Sự thật và suy đoán lẫn lộn';
 }
 
 function publicOpinionConfidenceLabel(confidence) {
-    return confidence === 'high' ? '较高可信' : '信息有限';
+    return confidence === 'high' ? 'Độ tin cậy khá cao' : 'Thông tin hạn chế';
 }
 
 function publicOpinionSourceTypeLabel(sourceType) {
-    return sourceType === 'official' ? '🏛 官方 / 权威' : '🗣 非官方 / 小道';
+    return sourceType === 'official' ? '🏛 Chính thức / Chính thống' : '🗣 Không chính thức / Vỉa hè';
 }
 
 function renderPublicOpinionAudience(item) {
@@ -1729,9 +1729,9 @@ function renderPublicOpinionAudience(item) {
 }
 
 function publicOpinionGeneratedLabel(value) {
-    if (!value) return '尚未生成';
+    if (!value) return 'Chưa được tạo';
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '最近一次快照';
+    if (Number.isNaN(date.getTime())) return 'Bản ghi nhanh gần đây nhất';
     return date.toLocaleString('zh-CN', {
         month: '2-digit',
         day: '2-digit',
@@ -1759,39 +1759,39 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
     const renderRelated = item => {
         const event = relatedEvents.get(item.relatedEventId);
         return event
-            ? `<span class="wb-opinion-related">来源事件 · ${escapeHtml(event.title)}</span>`
+            ? `<span class="wb-opinion-related">Sự kiện nguồn · ${escapeHtml(event.title)}</span>`
             : '';
     };
     return `
         <div class="wb-opinion-toolbar">
             <div class="wb-opinion-summary">
-                <p>镜头外今天在聊什么～只拿世界里真的公开、能察觉到的变化来吃瓜，不会自己造新闻 (˘▾˘)</p>
+                <p>Hôm nay ngoài ống kính đang bàn tán gì~ Chỉ hóng hớt những thay đổi thực sự công khai, có thể nhận biết được trong thế giới, sẽ không tự bịa tin tức (˘▾˘)</p>
                 <div class="wb-opinion-meta">
-                    <span>快照 · ${escapeHtml(publicOpinionGeneratedLabel(opinion.generatedAt))}</span>
+                    <span>Bản ghi nhanh · ${escapeHtml(publicOpinionGeneratedLabel(opinion.generatedAt))}</span>
                     ${stale
-                        ? '<span class="is-stale">世界往前走啦 · 刷新一下更准</span>'
-                        : `<span>${settings.publicOpinionRevealMode === 'relevant' ? '相关时可显露' : '安心吃瓜模式'}</span>`}
+                        ? '<span class="is-stale">Thế giới đang tiến về phía trước rồi · Làm mới một chút sẽ chuẩn hơn</span>'
+                        : `<span>${settings.publicOpinionRevealMode === 'relevant' ? 'Có thể hiển thị khi liên quan' : 'Chế độ hóng hớt an tâm'}</span>`}
                 </div>
             </div>
             <div class="wb-opinion-actions">
                 <label class="wb-view-toggle">
-                    <span>自动更新</span>
+                    <span>Tự động cập nhật</span>
                     <input type="checkbox" data-wb-setting="publicOpinionAutoEnabled" ${settings.publicOpinionAutoEnabled ? 'checked' : ''}>
                 </label>
-                ${opinion.generatedAt ? `<button type="button" data-wb-action="clear-public-opinion" ${running ? 'disabled' : ''}>清空</button>` : ''}
-                <button type="button" data-wb-action="generate-public-opinion-sandbox" ${running ? 'disabled' : ''}>${sandboxRunning ? '正在闲逛…' : '随便逛逛～'}</button>
+                ${opinion.generatedAt ? `<button type="button" data-wb-action="clear-public-opinion" ${running ? 'disabled' : ''}>Làm trống</button>` : ''}
+                <button type="button" data-wb-action="generate-public-opinion-sandbox" ${running ? 'disabled' : ''}>${sandboxRunning ? 'Đang đi dạo…' : 'Đi dạo loanh quanh~'}</button>
                 <button class="wb-inline-add" type="button" data-wb-action="generate-public-opinion" ${running ? 'disabled' : ''}>
-                    ${canonRunning ? '正在刷新世界舆情…' : (opinion.generatedAt ? '刷新世界舆情' : '生成当前舆情')}
+                    ${canonRunning ? 'Đang làm mới dư luận thế giới…' : (opinion.generatedAt ? 'Làm mới dư luận thế giới' : 'Tạo dư luận hiện tại')}
                 </button>
             </div>
         </div>
-        <div class="wb-opinion-tabs" role="tablist" aria-label="舆情类型">
+        <div class="wb-opinion-tabs" role="tablist" aria-label="Loại dư luận">
             <button type="button" role="tab" data-wb-action="set-public-opinion-mode" data-mode="news"
-                aria-selected="${activeMode === 'news'}" class="${activeMode === 'news' ? 'is-active' : ''}">📰 新闻 <small>${news.length}</small></button>
+                aria-selected="${activeMode === 'news'}" class="${activeMode === 'news' ? 'is-active' : ''}">📰 Tin tức <small>${news.length}</small></button>
             <button type="button" role="tab" data-wb-action="set-public-opinion-mode" data-mode="forum"
-                aria-selected="${activeMode === 'forum'}" class="${activeMode === 'forum' ? 'is-active' : ''}">💬 论坛 <small>${forums.length}</small></button>
+                aria-selected="${activeMode === 'forum'}" class="${activeMode === 'forum' ? 'is-active' : ''}">💬 Diễn đàn <small>${forums.length}</small></button>
             <button type="button" role="tab" data-wb-action="set-public-opinion-mode" data-mode="sandbox"
-                aria-selected="${activeMode === 'sandbox'}" class="${activeMode === 'sandbox' ? 'is-active' : ''}">🍿 闲逛 <small>${sandboxItems.length}</small></button>
+                aria-selected="${activeMode === 'sandbox'}" class="${activeMode === 'sandbox' ? 'is-active' : ''}">🍿 Đi dạo <small>${sandboxItems.length}</small></button>
         </div>
         ${showStatusMessage ? `<div class="wb-opinion-status is-${escapeAttr(opinion.phase || 'idle')} ${hasMainOpinion || hasSandboxOpinion ? 'is-compact' : ''}">${escapeHtml(statusMessage)}</div>` : ''}
         ${activeMode === 'news' ? `
@@ -1799,7 +1799,7 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
                 ${news.map(item => `
                     <article class="wb-news-card">
                         <div class="wb-news-card-top">
-                            <span>${escapeHtml(item.category || '世界新闻')}</span>
+                            <span>${escapeHtml(item.category || 'Tin tức thế giới')}</span>
                             <small>${'●'.repeat(Math.max(1, Math.min(3, Number(item.heat) || 1)))}</small>
                         </div>
                         <div class="wb-opinion-source-row">
@@ -1809,18 +1809,18 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
                         <p>${escapeHtml(item.summary)}</p>
                         ${renderPublicOpinionAudience(item)}
                         <div class="wb-news-card-foot">
-                            <span>${escapeHtml(item.source || '公开信息')} · ${escapeHtml(publicOpinionConfidenceLabel(item.confidence))}</span>
+                            <span>${escapeHtml(item.source || 'Thông tin công khai')} · ${escapeHtml(publicOpinionConfidenceLabel(item.confidence))}</span>
                             ${renderRelated(item)}
                         </div>
                     </article>
-                `).join('') || renderEmpty('今天的世界有点安静～', '还没有值得上新闻的事，或者你还没生成舆情快照 (˘▾˘)')}
+                `).join('') || renderEmpty('Thế giới hôm nay hơi yên tĩnh~', 'Vẫn chưa có chuyện gì đáng lên tin tức, hoặc bạn chưa tạo bản ghi nhanh dư luận (˘▾˘)')}
             </div>
         ` : activeMode === 'forum' ? `
             <div class="wb-forum-list">
                 ${forums.map(item => `
                     <article class="wb-forum-card">
                         <div class="wb-forum-card-top">
-                            <span>${escapeHtml(item.board || '闲聊')}</span>
+                            <span>${escapeHtml(item.board || 'Trò chuyện phiếm')}</span>
                             <small class="is-${escapeAttr(item.claimStatus || 'mixed')}">${escapeHtml(publicOpinionClaimLabel(item.claimStatus))}</small>
                         </div>
                         <div class="wb-opinion-source-row">
@@ -1829,10 +1829,10 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
                         <h3>${escapeHtml(item.title)}</h3>
                         <p>${escapeHtml(item.summary)}</p>
                         ${renderPublicOpinionAudience(item)}
-                        <div class="wb-forum-heat"><span>热度</span><strong>${'●'.repeat(Math.max(1, Math.min(5, Number(item.heat) || 1)))}</strong></div>
+                        <div class="wb-forum-heat"><span>Độ hot</span><strong>${'●'.repeat(Math.max(1, Math.min(5, Number(item.heat) || 1)))}</strong></div>
                         ${item.replies?.length ? `
                             <details class="wb-forum-reply-fold">
-                                <summary>看看 ${item.replies.length} 条代表回复～</summary>
+                                <summary>Xem thử ${item.replies.length}  phản hồi tiêu biểu~</summary>
                                 <div class="wb-forum-replies">
                                     ${item.replies.map(reply => `
                                         <div><strong>${escapeHtml(reply.author)}</strong><p>${escapeHtml(reply.text)}</p></div>
@@ -1842,33 +1842,33 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
                         ` : ''}
                         <div class="wb-news-card-foot">${renderRelated(item)}</div>
                     </article>
-                `).join('') || renderEmpty('论坛今天没吵起来～', '没有适合公开讨论的事，或者你还没生成舆情快照。')}
+                `).join('') || renderEmpty('Diễn đàn hôm nay không cãi nhau~', 'Không có chuyện gì phù hợp để thảo luận công khai, hoặc bạn chưa tạo bản ghi nhanh dư luận.')}
             </div>
         ` : `
             <div class="wb-opinion-sandbox">
-                <div class="wb-memory-fact-note"><strong>🍿 纯娱乐沙盒</strong> · 下面这些只是“世界里可能有人在聊什么”的随手小报，不算正史，不会写进事件、记忆、NPC认知或正文因果。</div>
-                ${sandbox.generatedAt ? `<div class="wb-opinion-meta wb-opinion-meta-inline"><span>闲逛快照 · ${escapeHtml(publicOpinionGeneratedLabel(sandbox.generatedAt))}</span><button class="wb-opinion-meta-button" type="button" data-wb-action="clear-public-opinion-sandbox">收起这锅瓜</button></div>` : ''}
+                <div class="wb-memory-fact-note"><strong>🍿 Hộp cát thuần giải trí</strong> · Những điều dưới đây chỉ là“trong thế giới có thể có người đang bàn tán gì đó”tờ báo nhỏ viết tùy hứng, không tính là chính sử, sẽ không được viết vào sự kiện, ký ức,NPC nhận thức hoặc nhân quả của nội dung chính.</div>
+                ${sandbox.generatedAt ? `<div class="wb-opinion-meta wb-opinion-meta-inline"><span>Bản ghi nhanh đi dạo · ${escapeHtml(publicOpinionGeneratedLabel(sandbox.generatedAt))}</span><button class="wb-opinion-meta-button" type="button" data-wb-action="clear-public-opinion-sandbox">Cất nồi dưa này đi</button></div>` : ''}
                 <div class="wb-news-grid">
                     ${(sandbox.news || []).map(item => `
                         <article class="wb-news-card is-sandbox">
-                            <div class="wb-news-card-top"><span>${escapeHtml(item.category || '闲逛新闻')}</span><small>NON-CANON</small></div>
+                            <div class="wb-news-card-top"><span>${escapeHtml(item.category || 'Tin tức đi dạo')}</span><small>NON-CANON</small></div>
                             <h3>${escapeHtml(item.headline)}</h3>
                             <p>${escapeHtml(item.summary)}</p>
-                            <div class="wb-news-card-foot"><span>${escapeHtml(item.source || '世界里的普通公开信息')}</span></div>
+                            <div class="wb-news-card-foot"><span>${escapeHtml(item.source || 'Thông tin công khai bình thường trong thế giới')}</span></div>
                         </article>
                     `).join('')}
                 </div>
                 <div class="wb-forum-list">
                     ${(sandbox.forums || []).map(item => `
                         <article class="wb-forum-card is-sandbox">
-                            <div class="wb-forum-card-top"><span>${escapeHtml(item.board || '闲聊')}</span><small>NON-CANON</small></div>
+                            <div class="wb-forum-card-top"><span>${escapeHtml(item.board || 'Trò chuyện phiếm')}</span><small>NON-CANON</small></div>
                             <h3>${escapeHtml(item.title)}</h3>
                             <p>${escapeHtml(item.summary)}</p>
-                            ${item.replies?.length ? `<details class="wb-forum-reply-fold"><summary>看看 ${item.replies.length} 条代表回复～</summary><div class="wb-forum-replies">${item.replies.map(reply => `<div><strong>${escapeHtml(reply.author)}</strong><p>${escapeHtml(reply.text)}</p></div>`).join('')}</div></details>` : ''}
+                            ${item.replies?.length ? `<details class="wb-forum-reply-fold"><summary>Xem thử ${item.replies.length}  phản hồi tiêu biểu~</summary><div class="wb-forum-replies">${item.replies.map(reply => `<div><strong>${escapeHtml(reply.author)}</strong><p>${escapeHtml(reply.text)}</p></div>`).join('')}</div></details>` : ''}
                         </article>
                     `).join('')}
                 </div>
-                ${sandboxItems.length ? '' : renderEmpty('今天还没随便逛～', '点一下“随便逛逛～”，抽一锅和主线无关的小新闻和论坛水帖。')}
+                ${sandboxItems.length ? '' : renderEmpty('Hôm nay vẫn chưa đi dạo loanh quanh~', 'Nhấn một chút“Đi dạo loanh quanh~”，Rút một nồi tin tức nhỏ và bài đăng rác trên diễn đàn không liên quan đến tuyến truyện chính.')}
             </div>
         `}
     `;
@@ -1876,30 +1876,30 @@ function renderPublicOpinionView(state, opinion = {}, mode = 'news', settings = 
 
 function clueStatusLabel(status) {
     return {
-        open: '等待发芽',
-        developing: '正在发展',
-        echoed: '正在发展',
-        triggered: '已经触发',
-        resolved: '已经回收',
-        discarded: '已经放下',
-    }[status] || '尚未呼应';
+        open: 'Chờ nảy mầm',
+        developing: 'Đang phát triển',
+        echoed: 'Đang phát triển',
+        triggered: 'Đã kích hoạt',
+        resolved: 'Đã thu hồi',
+        discarded: 'Đã buông bỏ',
+    }[status] || 'Chưa hô ứng';
 }
 
 function memoryFactStatusLabel(status) {
     return {
-        active: '当前有效',
-        disputed: '说法冲突',
-        superseded: '已被新版本覆盖',
-        invalidated: '已经失效',
-    }[status] || '当前有效';
+        active: 'Hiện đang có hiệu lực',
+        disputed: 'Xung đột thông tin',
+        superseded: 'Đã bị ghi đè bởi phiên bản mới',
+        invalidated: 'Đã hết hiệu lực',
+    }[status] || 'Hiện đang có hiệu lực';
 }
 
 function memoryConfidenceLabel(confidence) {
     return {
-        high: '明确',
-        medium: '较可信',
-        low: '待确认',
-    }[confidence] || '较可信';
+        high: 'Rõ ràng',
+        medium: 'Khá đáng tin',
+        low: 'Chờ xác nhận',
+    }[confidence] || 'Khá đáng tin';
 }
 
 function memoryItemMatches(item, query) {
@@ -1935,7 +1935,7 @@ function resolvePersonEntity(state, value, { allowSubjectPrefix = false } = {}) 
         .sort((a, b) => String(b.name).length - String(a.name).length)
         .find(item => {
             const name = String(item.name).trim();
-            return raw.startsWith(`${name}的`)
+            return raw.startsWith(`${name}của`)
                 || raw.startsWith(`${name}·`)
                 || raw.startsWith(`${name}：`)
                 || raw.startsWith(`${name}:`);
@@ -1963,7 +1963,7 @@ function memoryFactGroupDescriptor(fact, state) {
             label: subjectPerson.name,
         };
     }
-    const label = String(fact?.subject || fact?.key || '').trim() || '其他事实';
+    const label = String(fact?.subject || fact?.key || '').trim() || 'Sự thật khác';
     return { key: `fact:${label}`, label };
 }
 
@@ -1978,23 +1978,23 @@ function memoryClueGroupDescriptor(clue, state) {
         };
     }
     if (Array.isArray(clue?.locations) && clue.locations.length) {
-        const label = String(clue.locations[0] || '').trim() || '其他伏笔';
+        const label = String(clue.locations[0] || '').trim() || 'Phục bút khác';
         return { key: `location:${label}`, label };
     }
-    const label = String(clue?.title || '').trim() || '其他伏笔';
+    const label = String(clue?.title || '').trim() || 'Phục bút khác';
     return { key: `clue:${label}`, label };
 }
 
 function memorySummaryLevelMeta(summary) {
     if (!summary?.hierarchyManaged) {
-        return { label: '旧版经历', tone: 'legacy', description: '以前留下的阶段经历～照样会好好记着。' };
+        return { label: 'Trải nghiệm phiên bản cũ', tone: 'legacy', description: 'Trải nghiệm giai đoạn để lại từ trước~ vẫn sẽ được ghi nhớ kỹ.' };
     }
     const level = Math.max(0, Math.min(3, Number(summary?.level) || 0));
     const meta = [
-        { label: '近期片段', tone: 'detail', description: '离原正文最近的小片段～细节会比较多。' },
-        { label: '阶段小结', tone: 'stage', description: '一小段剧情的重点都收在这里啦～' },
-        { label: '章节经历', tone: 'chapter', description: '把更长一段经历收成重点～方便后面继续接上。' },
-        { label: '长期经历', tone: 'longterm', description: '真正跨过很久还重要的变化，会乖乖留在这里。' },
+        { label: 'Đoạn gần đây', tone: 'detail', description: 'Những đoạn nhỏ gần với nội dung chính gốc nhất~ sẽ có nhiều chi tiết hơn.' },
+        { label: 'Tóm tắt giai đoạn', tone: 'stage', description: 'Trọng tâm của một đoạn cốt truyện nhỏ đều được thu thập ở đây nha~' },
+        { label: 'Trải nghiệm chương', tone: 'chapter', description: 'Thu thập một đoạn trải nghiệm dài hơn thành trọng tâm~ thuận tiện cho việc tiếp nối sau này.' },
+        { label: 'Trải nghiệm dài hạn', tone: 'longterm', description: 'Những thay đổi thực sự quan trọng trải qua thời gian dài, sẽ ngoan ngoãn ở lại đây.' },
     ];
     return meta[level];
 }
@@ -2004,20 +2004,20 @@ function renderMemoryActions(kind, item) {
         <div class="wb-memory-card-actions">
             <button class="is-edit" type="button" data-wb-action="open-memory-editor"
                 data-memory-kind="${kind}" data-memory-id="${escapeAttr(item.id)}"
-                ${item.locked ? 'disabled' : ''}>编辑</button>
+                ${item.locked ? 'disabled' : ''}>Chỉnh sửa</button>
             <button type="button" data-wb-action="toggle-memory-flag"
                 data-memory-kind="${kind}" data-memory-id="${escapeAttr(item.id)}"
                 data-memory-field="important" class="is-important ${item.important ? 'is-active' : ''}">
-                ${item.important ? '已标为重要' : '标为重要'}
+                ${item.important ? 'Đã đánh dấu là quan trọng' : 'Đánh dấu là quan trọng'}
             </button>
             <button type="button" data-wb-action="toggle-memory-flag"
                 data-memory-kind="${kind}" data-memory-id="${escapeAttr(item.id)}"
                 data-memory-field="locked" class="is-lock ${item.locked ? 'is-active' : ''}">
-                ${item.locked ? '已锁定' : '锁定'}
+                ${item.locked ? 'Đã khóa' : 'Khóa'}
             </button>
             <button class="is-delete" type="button" data-wb-action="delete-memory-item"
                 data-memory-kind="${kind}" data-memory-id="${escapeAttr(item.id)}"
-                ${item.locked ? 'disabled' : ''}>删除</button>
+                ${item.locked ? 'disabled' : ''}>Xóa</button>
         </div>
     `;
 }
@@ -2125,43 +2125,43 @@ function renderMemoryView(state, observerMode, {
             <p>${escapeHtml(clue.text)}</p>
             ${clue.sourceExcerpt ? `<blockquote>${escapeHtml(clue.sourceExcerpt)}</blockquote>` : ''}
             ${clue.resolution ? `<div class="wb-clue-resolution">${escapeHtml(clue.resolution)}</div>` : ''}
-            ${clue.lifecycleReason && clue.lifecycleReason !== clue.resolution ? `<div class="wb-memory-fact-note">为什么变更：${escapeHtml(clue.lifecycleReason)}</div>` : ''}
+            ${clue.lifecycleReason && clue.lifecycleReason !== clue.resolution ? `<div class="wb-memory-fact-note">Tại sao thay đổi:${escapeHtml(clue.lifecycleReason)}</div>` : ''}
             ${renderMemoryActions('clue', clue)}
         </article>
     `;
     return `
         <div class="wb-view-intro wb-memory-intro">
-            <p>重要事实、经历和没收尾的伏笔会留在这里～不用管底下怎么收拾，记得住就好啦 (｡•̀ᴗ-)✧</p>
+            <p>Sự thật quan trọng, trải nghiệm và phục bút chưa kết thúc sẽ được lưu lại ở đây~ không cần quan tâm bên dưới dọn dẹp thế nào, nhớ được là tốt rồi nha (｡•̀ᴗ-)✧</p>
             <div class="wb-memory-intro-actions">
-                <span>${allFacts.filter(fact => ['active', 'disputed'].includes(fact.status)).length} 条事实 · ${allClues.filter(clue => ['open', 'developing', 'echoed', 'triggered'].includes(clue.status)).length} 条伏笔</span>
-                <button type="button" data-wb-action="open-memory-editor" data-memory-kind="fact">＋ 新增记忆</button>
+                <span>${allFacts.filter(fact => ['active', 'disputed'].includes(fact.status)).length} mục sự thật · ${allClues.filter(clue => ['open', 'developing', 'echoed', 'triggered'].includes(clue.status)).length} mục phục bút</span>
+                <button type="button" data-wb-action="open-memory-editor" data-memory-kind="fact">＋ Thêm ký ức mới</button>
             </div>
         </div>
         <div class="wb-memory-shell">
             <div class="wb-memory-tools">
-                <div class="wb-memory-filters" aria-label="记忆筛选">
-                    ${filterButton('active', '进行中')}
-                    ${filterButton('facts', '事实')}
-                    ${filterButton('clues', '伏笔')}
-                    ${filterButton('episodes', '经历')}
-                    ${filterButton('all', '全部')}
+                <div class="wb-memory-filters" aria-label="Lọc ký ức">
+                    ${filterButton('active', 'Đang tiến hành')}
+                    ${filterButton('facts', 'Sự thật')}
+                    ${filterButton('clues', 'Phục bút')}
+                    ${filterButton('episodes', 'Trải nghiệm')}
+                    ${filterButton('all', 'Tất cả')}
                 </div>
                 <label class="wb-memory-search">
-                    <span>搜索记忆</span>
+                    <span>Tìm kiếm ký ức</span>
                     <input type="search" data-wb-memory-search maxlength="80"
-                        value="${escapeAttr(query)}" placeholder="人物、地点、物品或关键词">
+                        value="${escapeAttr(query)}" placeholder="Nhân vật, địa điểm, vật phẩm hoặc từ khóa">
                 </label>
-                <small>${query ? `找到 ${resultCount} 条` : `当前分类 ${resultCount} 条`}</small>
+                <small>${query ? `Tìm thấy ${resultCount} mục` : `Phân loại hiện tại ${resultCount} mục`}</small>
             </div>
             ${(memory.metabolismLog || []).length ? `
                 <details class="wb-fold wb-memory-digest" data-fold-key="memory:metabolism"
                     ${foldOpenAttr(openFolds, 'memory:metabolism')}>
                     <summary class="wb-memory-digest-summary">
-                        <span><strong>最近收拾了什么～</strong></span>
-                        <span class="wb-fold-meta"><small>${Math.min(12, (memory.metabolismLog || []).length)} 条最近变化</small><i class="wb-fold-chevron" aria-hidden="true"></i></span>
+                        <span><strong>Gần đây đã dọn dẹp những gì~</strong></span>
+                        <span class="wb-fold-meta"><small>${Math.min(12, (memory.metabolismLog || []).length)} mục thay đổi gần đây</small><i class="wb-fold-chevron" aria-hidden="true"></i></span>
                     </summary>
                     <div class="wb-fold-body wb-memory-digest-body">
-                        ${(memory.metabolismLog || []).slice(-12).reverse().map(item => `<p><strong>${escapeHtml(item.kind === 'fact' ? '事实' : item.kind === 'clue' ? '伏笔' : '经历')}</strong> · ${escapeHtml(item.action || '更新')}<br><small>${escapeHtml(item.reason || '已按后续内容整理')}</small></p>`).join('')}
+                        ${(memory.metabolismLog || []).slice(-12).reverse().map(item => `<p><strong>${escapeHtml(item.kind === 'fact' ? 'Sự thật' : item.kind === 'clue' ? 'Phục bút' : 'Trải nghiệm')}</strong> · ${escapeHtml(item.action || 'Cập nhật')}<br><small>${escapeHtml(item.reason || 'Đã sắp xếp theo nội dung tiếp theo')}</small></p>`).join('')}
                     </div>
                 </details>
             ` : ''}
@@ -2169,9 +2169,9 @@ function renderMemoryView(state, observerMode, {
                 <details class="wb-fold wb-memory-digest" data-fold-key="memory:digest"
                     ${foldOpenAttr(openFolds, 'memory:digest')}>
                     <summary class="wb-memory-digest-summary">
-                        <span><strong>长期摘要</strong></span>
+                        <span><strong>Tóm tắt dài hạn</strong></span>
                         <span class="wb-fold-meta">
-                            <small>已经乖乖整理好啦～</small>
+                            <small>Đã ngoan ngoãn sắp xếp xong rồi nha~</small>
                             <i class="wb-fold-chevron" aria-hidden="true"></i>
                         </span>
                     </summary>
@@ -2181,13 +2181,13 @@ function renderMemoryView(state, observerMode, {
                 </details>
             ` : ''}
             ${resultCount === 0 ? renderEmpty(
-                query ? '没有找到匹配的记忆' : '这个分类暂时是空的',
-                query ? '换一个人物、地点、物品或关键词试试。' : '新的正文整理后会自动补充。',
+                query ? 'Không tìm thấy ký ức phù hợp' : 'Phân loại này tạm thời trống',
+                query ? 'Hãy thử đổi một nhân vật, địa điểm, vật phẩm hoặc từ khóa khác.' : 'Nội dung chính mới sau khi sắp xếp sẽ tự động bổ sung.',
             ) : `
             <div class="wb-memory-layout">
                 <section class="wb-memory-section ${shownFacts.length ? '' : 'is-hidden'}">
                     <div class="wb-section-heading wb-memory-heading-with-folds">
-                        <div><h3>长期事实</h3></div>
+                        <div><h3>Sự thật dài hạn</h3></div>
                         ${renderFoldToolbar('memory:facts:')}
                     </div>
                     <div class="wb-memory-group-list">
@@ -2199,7 +2199,7 @@ function renderMemoryView(state, observerMode, {
                                     <summary class="wb-memory-group-summary">
                                         <span>
                                             <strong>${escapeHtml(group.label)}</strong>
-                                            <small>${group.items.length} 条长期事实</small>
+                                            <small>${group.items.length} mục sự thật dài hạn</small>
                                         </span>
                                         <i class="wb-fold-chevron" aria-hidden="true"></i>
                                     </summary>
@@ -2208,12 +2208,12 @@ function renderMemoryView(state, observerMode, {
                                     </div>
                                 </details>
                             `;
-                        }).join('') || renderEmpty('还没有长期事实～', '以后真的重要、还会用到的事情会慢慢留在这里。')}
+                        }).join('') || renderEmpty('Vẫn chưa có sự thật dài hạn~', 'Sau này những việc thực sự quan trọng, vẫn còn dùng đến sẽ từ từ được lưu lại ở đây.')}
                     </div>
                 </section>
                 <section class="wb-memory-section ${shownClues.length ? '' : 'is-hidden'}">
                     <div class="wb-section-heading wb-memory-heading-with-folds">
-                        <div><h3>伏笔簿</h3></div>
+                        <div><h3>Sổ phục bút</h3></div>
                         ${renderFoldToolbar('memory:clues:')}
                     </div>
                     <div class="wb-memory-group-list">
@@ -2225,7 +2225,7 @@ function renderMemoryView(state, observerMode, {
                                     <summary class="wb-memory-group-summary">
                                         <span>
                                             <strong>${escapeHtml(group.label)}</strong>
-                                            <small>${group.items.length} 条相关伏笔</small>
+                                            <small>${group.items.length} mục phục bút liên quan</small>
                                         </span>
                                         <i class="wb-fold-chevron" aria-hidden="true"></i>
                                     </summary>
@@ -2234,13 +2234,13 @@ function renderMemoryView(state, observerMode, {
                                     </div>
                                 </details>
                             `;
-                        }).join('') || renderEmpty('伏笔簿还是空的～', '以后有需要惦记着回收的线索，它们会自己冒出来。')}
+                        }).join('') || renderEmpty('Sổ phục bút vẫn đang trống~', 'Sau này có manh mối nào cần nhớ để thu hồi, chúng sẽ tự động hiện ra.')}
                     </div>
                 </section>
             </div>
             <section class="wb-memory-summary-section ${shownSummaries.length ? '' : 'is-hidden'}">
                 <div class="wb-section-heading wb-memory-heading-with-folds">
-                    <div><h3>经历</h3></div>
+                    <div><h3>Trải nghiệm</h3></div>
                     ${renderFoldToolbar('memory:summary:')}
                 </div>
                 <div class="wb-summary-list">
@@ -2261,11 +2261,11 @@ function renderMemoryView(state, observerMode, {
                                 <div class="wb-fold-body wb-summary-card-body">
                                     <p>${escapeHtml(summary.summary)}</p>
                                     <details class="wb-memory-lineage">
-                                        <summary>这段记忆从哪来～</summary>
+                                        <summary>Ký ức này từ đâu đến~</summary>
                                         <div>
-                                            <p>${escapeHtml(levelMeta.label)} · 消息 ${escapeHtml(summary.startMessageId)}—${escapeHtml(summary.endMessageId)}</p>
-                                            ${parent ? `<p>已经收进：${escapeHtml(parent.title)}</p>` : ''}
-                                            ${sourceSummaries.length ? `<p>还有 ${sourceSummaries.length} 条更细的来源可以追溯～</p>` : ''}
+                                            <p>${escapeHtml(levelMeta.label)} · Tin nhắn ${escapeHtml(summary.startMessageId)}—${escapeHtml(summary.endMessageId)}</p>
+                                            ${parent ? `<p>Đã thu thập vào:${escapeHtml(parent.title)}</p>` : ''}
+                                            ${sourceSummaries.length ? `<p>Còn có ${sourceSummaries.length} nguồn chi tiết hơn có thể truy xuất~</p>` : ''}
                                         </div>
                                     </details>
                                     ${renderMemoryActions('summary', summary)}
@@ -2273,15 +2273,15 @@ function renderMemoryView(state, observerMode, {
                             </details>
                         `;
                     }).join('') || renderEmpty(
-                        observerMode === 'backstage' ? '还没有分层经历' : '分层经历只在幕后视角显示',
-                        observerMode === 'backstage' ? '正文整理后，重要经历会慢慢出现在这里～' : '',
+                        observerMode === 'backstage' ? 'Chưa có trải nghiệm phân tầng' : 'Trải nghiệm phân tầng chỉ hiển thị ở góc nhìn hậu trường',
+                        observerMode === 'backstage' ? 'Sau khi sắp xếp nội dung chính, những trải nghiệm quan trọng sẽ dần xuất hiện ở đây~' : '',
                     )}
                 </div>
             </section>
             `}
             ${hasMore ? `
                 <button class="wb-memory-load-more" type="button" data-wb-action="load-more-memory">
-                    再显示一些 · 当前 ${shownCount}/${resultCount}
+                    Hiển thị thêm một chút · Hiện tại ${shownCount}/${resultCount}
                 </button>
             ` : ''}
         </div>
@@ -2309,30 +2309,30 @@ function renderMemoryEditorModal(state, editor) {
         <div class="wb-drawer-scrim" data-wb-action="close-memory-editor">
             <form class="wb-event-form wb-memory-editor" data-wb-form="memory">
                 <div class="wb-form-heading">
-                    <div><span>MEMORY DESK</span><h3>${item ? '编辑记忆' : '手动新增记忆'}</h3></div>
+                    <div><span>MEMORY DESK</span><h3>${item ? 'Chỉnh sửa ký ức' : 'Thêm ký ức thủ công'}</h3></div>
                     <button type="button" data-wb-action="close-memory-editor">×</button>
                 </div>
                 <input type="hidden" name="id" value="${escapeAttr(item?.id || '')}">
-                <label>记忆类型
+                <label>Loại ký ức
                     <select name="kind" ${item ? 'disabled' : ''}>
-                        <option value="fact" ${requestedKind === 'fact' ? 'selected' : ''}>长期事实</option>
-                        <option value="clue" ${requestedKind === 'clue' ? 'selected' : ''}>伏笔</option>
-                        <option value="summary" ${requestedKind === 'summary' ? 'selected' : ''}>阶段经历</option>
+                        <option value="fact" ${requestedKind === 'fact' ? 'selected' : ''}>Sự thật dài hạn</option>
+                        <option value="clue" ${requestedKind === 'clue' ? 'selected' : ''}>Phục bút</option>
+                        <option value="summary" ${requestedKind === 'summary' ? 'selected' : ''}>Trải nghiệm giai đoạn</option>
                     </select>
                     ${item ? `<input type="hidden" name="kind" value="${requestedKind}">` : ''}
                 </label>
-                <label>标题<input name="title" required maxlength="120"
-                    value="${escapeAttr(title || '')}" placeholder="人物、物品、约定或事件"></label>
-                <label>关系（长期事实可用）<input name="relation" maxlength="100"
-                    value="${escapeAttr(relation || '')}" placeholder="例如：答应、持有、真实身份"></label>
-                <label>内容<textarea name="content" required maxlength="1400" rows="5"
-                    placeholder="写下需要长期保留的准确内容">${escapeHtml(content || '')}</textarea></label>
+                <label>Tiêu đề<input name="title" required maxlength="120"
+                    value="${escapeAttr(title || '')}" placeholder="Nhân vật, vật phẩm, lời hứa hoặc sự kiện"></label>
+                <label>Mối quan hệ (có thể dùng cho sự thật dài hạn)<input name="relation" maxlength="100"
+                    value="${escapeAttr(relation || '')}" placeholder="Ví dụ: đồng ý, sở hữu, thân phận thật"></label>
+                <label>Nội dung<textarea name="content" required maxlength="1400" rows="5"
+                    placeholder="Viết xuống nội dung chính xác cần giữ lại lâu dài">${escapeHtml(content || '')}</textarea></label>
                 <div class="wb-memory-editor-flags">
-                    <label><input name="important" type="checkbox" ${item?.important ? 'checked' : ''}> 标记为重要</label>
-                    <label><input name="locked" type="checkbox" ${item?.locked ? 'checked' : ''}> 保存后锁定</label>
+                    <label><input name="important" type="checkbox" ${item?.important ? 'checked' : ''}> Đánh dấu là quan trọng</label>
+                    <label><input name="locked" type="checkbox" ${item?.locked ? 'checked' : ''}> Khóa sau khi lưu</label>
                 </div>
-                <div class="wb-form-note">锁定后，自动整理不会覆盖或删除这条记忆；需要修改时先在卡片上解锁。</div>
-                <button class="wb-primary-button" type="submit">${item ? '保存修改' : '加入记忆'}</button>
+                <div class="wb-form-note">Sau khi khóa, tự động sắp xếp sẽ không ghi đè hoặc xóa ký ức này; khi cần sửa đổi hãy mở khóa trên thẻ trước.</div>
+                <button class="wb-primary-button" type="submit">${item ? 'Lưu sửa đổi' : 'Thêm vào ký ức'}</button>
             </form>
         </div>
     `;
@@ -2342,12 +2342,12 @@ function renderArchiveView(state, openFolds = new Set()) {
     const archived = Array.isArray(state.archive) ? state.archive : [];
     return `
         <div class="wb-view-intro">
-            <p>没被镜头看见的事情也不会凭空蒸发～这里记着那些真的发生过、却悄悄错过正文的世界历史。</p>
-            <span>世界账本</span>
+            <p>Những chuyện không được ống kính nhìn thấy cũng sẽ không bốc hơi khỏi thế gian~ Ở đây ghi lại những lịch sử thế giới đã thực sự xảy ra, nhưng lại lặng lẽ bỏ lỡ nội dung chính.</p>
+            <span>Sổ cái thế giới</span>
         </div>
         <div class="wb-archive-ledger">
             ${archived.map(entry => renderArchiveEntry(entry, state, 'archive', openFolds)).join('')
-                || renderEmpty('纪事簿还是空的～', '还没有哪段世界历史悄悄错过镜头 (˘ω˘)')}
+                || renderEmpty('Sổ biên niên sử vẫn còn trống~', 'Chưa có đoạn lịch sử thế giới nào lặng lẽ bỏ lỡ ống kính (˘ω˘)')}
         </div>
     `;
 }
@@ -2357,17 +2357,17 @@ function renderWorldEditorModal(state) {
         <div class="wb-drawer-scrim" data-wb-action="close-world-editor">
             <form class="wb-event-form wb-world-editor" data-wb-form="world">
                 <div class="wb-form-heading">
-                    <div><span>WORLD DESK</span><h3>编辑世界概况</h3></div>
+                    <div><span>WORLD DESK</span><h3>Chỉnh sửa tổng quan thế giới</h3></div>
                     <button type="button" data-wb-action="close-world-editor">×</button>
                 </div>
-                <label>世界标题
+                <label>Tiêu đề thế giới
                     <input name="title" required maxlength="140" value="${escapeAttr(state.world?.title || '')}">
                 </label>
-                <label>当前概况
+                <label>Tổng quan hiện tại
                     <textarea name="detail" required maxlength="900" rows="6">${escapeHtml(state.world?.detail || '')}</textarea>
                 </label>
-                <div class="wb-form-note">这里只修改“此刻”页展示的世界概况；主世界时间请继续在观测设置里校准。</div>
-                <button class="wb-primary-button" type="submit">保存世界概况</button>
+                <div class="wb-form-note">Ở đây chỉ sửa đổi“Lúc này”tổng quan thế giới hiển thị trên trang; thời gian thế giới chính vui lòng tiếp tục hiệu chuẩn trong cài đặt quan sát.</div>
+                <button class="wb-primary-button" type="submit">Lưu tổng quan thế giới</button>
             </form>
         </div>
     `;
@@ -2393,7 +2393,7 @@ function recordEditorData(state, editor) {
     return {
         kind: 'archive',
         id: entry.id,
-        title: entry.title || '未命名记录',
+        title: entry.title || 'Bản ghi chưa đặt tên',
         text: entry.result || entry.text || entry.consequence || entry.route || '',
         place: '',
         visibility: entry.visibility || 'hidden',
@@ -2409,40 +2409,40 @@ function renderRecordEditorModal(state, editor) {
         <div class="wb-drawer-scrim" data-wb-action="close-record-editor">
             <form class="wb-event-form wb-record-editor" data-wb-form="record">
                 <div class="wb-form-heading">
-                    <div><span>${isEcho ? 'ECHO DESK' : 'ARCHIVE DESK'}</span><h3>${isEcho ? '编辑回声' : '编辑纪事'}</h3></div>
+                    <div><span>${isEcho ? 'ECHO DESK' : 'ARCHIVE DESK'}</span><h3>${isEcho ? 'Chỉnh sửa tiếng vang' : 'Chỉnh sửa biên niên sử'}</h3></div>
                     <button type="button" data-wb-action="close-record-editor">×</button>
                 </div>
                 <input type="hidden" name="kind" value="${escapeAttr(record.kind)}">
                 <input type="hidden" name="id" value="${escapeAttr(record.id)}">
-                <label>标题
+                <label>Tiêu đề
                     <input name="title" required maxlength="140" value="${escapeAttr(record.title)}">
                 </label>
-                <label>${isEcho ? '形成的结果' : '纪事内容'}
+                <label>${isEcho ? 'Kết quả hình thành' : 'Nội dung biên niên sử'}
                     <textarea name="text" required maxlength="900" rows="6">${escapeHtml(record.text)}</textarea>
                 </label>
-                ${isEcho ? `<label>地点
+                ${isEcho ? `<label>Địa điểm
                     <input name="place" maxlength="160" value="${escapeAttr(record.place)}">
                 </label>` : ''}
                 <div class="wb-form-grid">
-                    <label>可见边界
+                    <label>Ranh giới có thể nhìn thấy
                         <select name="visibility">
-                            <option value="hidden" ${record.visibility === 'hidden' ? 'selected' : ''}>完全幕后</option>
-                            <option value="trace" ${record.visibility === 'trace' ? 'selected' : ''}>留下痕迹</option>
-                            <option value="known" ${record.visibility === 'known' ? 'selected' : ''}>角色可知</option>
-                            <option value="direct" ${record.visibility === 'direct' ? 'selected' : ''}>可直接显露</option>
+                            <option value="hidden" ${record.visibility === 'hidden' ? 'selected' : ''}>Hoàn toàn hậu trường</option>
+                            <option value="trace" ${record.visibility === 'trace' ? 'selected' : ''}>Để lại dấu vết</option>
+                            <option value="known" ${record.visibility === 'known' ? 'selected' : ''}>Nhân vật có thể biết</option>
+                            <option value="direct" ${record.visibility === 'direct' ? 'selected' : ''}>Có thể hiển thị trực tiếp</option>
                         </select>
                     </label>
-                    ${isEcho ? `<label>递交状态
+                    ${isEcho ? `<label>Trạng thái đệ trình
                         <select name="deliveryState">
-                            <option value="none" ${record.deliveryState === 'none' ? 'selected' : ''}>尚未递交</option>
-                            <option value="pending" ${record.deliveryState === 'pending' ? 'selected' : ''}>等待显露</option>
-                            <option value="delivered" ${record.deliveryState === 'delivered' ? 'selected' : ''}>正文已承接</option>
-                            <option value="expired" ${record.deliveryState === 'expired' ? 'selected' : ''}>未显露归档</option>
+                            <option value="none" ${record.deliveryState === 'none' ? 'selected' : ''}>Chưa đệ trình</option>
+                            <option value="pending" ${record.deliveryState === 'pending' ? 'selected' : ''}>Chờ hiển thị</option>
+                            <option value="delivered" ${record.deliveryState === 'delivered' ? 'selected' : ''}>Nội dung chính đã tiếp nối</option>
+                            <option value="expired" ${record.deliveryState === 'expired' ? 'selected' : ''}>Lưu trữ chưa hiển thị</option>
                         </select>
                     </label>` : ''}
                 </div>
-                <div class="wb-form-note">修改只会修正当前世界记录，不会推进主世界时间。删除则可以用底部撤销恢复。</div>
-                <button class="wb-primary-button" type="submit">保存修改</button>
+                <div class="wb-form-note">Sửa đổi chỉ chỉnh sửa kỷ lục thế giới hiện tại, sẽ không thúc đẩy thời gian thế giới chính. Xóa thì có thể dùng hoàn tác ở dưới cùng để khôi phục.</div>
+                <button class="wb-primary-button" type="submit">Lưu sửa đổi</button>
             </form>
         </div>
     `;
@@ -2505,7 +2505,7 @@ function orbInlineStyles(position) {
 export function createWorldBackstageUI({
     getState,
     getSettings,
-    getSyncStatus = () => ({ phase: 'idle', message: '尚未进行世界推演' }),
+    getSyncStatus = () => ({ phase: 'idle', message: 'Chưa tiến hành suy diễn thế giới' }),
     onAction,
     pluginVersion = '',
 }) {
@@ -2616,14 +2616,14 @@ export function createWorldBackstageUI({
             || existingProfile?.key
             || (!profileId ? settings.customApiKey : '');
         const model = String(data.customApiModel || '').trim();
-        if (!key) throw new Error('这个接口还缺 API Key 哦～');
-        if (requireModel && !model) throw new Error('先选个模型再测试吧～');
+        if (!key) throw new Error('Giao diện này vẫn thiếu API Key ồ~');
+        if (requireModel && !model) throw new Error('Hãy chọn một mô hình trước rồi mới kiểm tra nhé~');
         return {
             url: data.customApiUrl,
             key,
             model,
             transport: data.customApiTransport,
-            label: String(data.profileName || existingProfile?.name || '这个接口').trim() || '这个接口',
+            label: String(data.profileName || existingProfile?.name || 'Giao diện này').trim() || 'Giao diện này',
         };
     }
 
@@ -2637,9 +2637,9 @@ export function createWorldBackstageUI({
             const result = await onAction(action, payload);
             return result === undefined ? true : result;
         } catch (error) {
-            const message = String(error?.message || error || '未知错误');
-            console.warn('[世界背面] 界面操作没有完成', error);
-            notify(`操作没有完成：${message}`, 'error');
+            const message = String(error?.message || error || 'Lỗi không xác định');
+            console.warn('[Mặt trái thế giới] Thao tác giao diện chưa hoàn thành', error);
+            notify(`Thao tác chưa hoàn thành:${message}`, 'error');
             return false;
         }
     }
@@ -2782,9 +2782,9 @@ export function createWorldBackstageUI({
         const memoryTakesFocus = ['running', 'error'].includes(memoryPhase);
         const displayPhase = memoryTakesFocus ? memoryPhase : syncStatus.phase;
         const displayPhaseLabel = memoryTakesFocus
-            ? (memoryPhase === 'error' ? '记忆失败' : '整理记忆中')
+            ? (memoryPhase === 'error' ? 'Ký ức thất bại' : 'Đang sắp xếp ký ức')
             : `${syncPhaseLabel(syncStatus.phase)}${syncStatus.queue?.waitingTurns > 0
-                ? ` · 待 ${syncStatus.queue.waitingTurns} 轮`
+                ? ` · Chờ ${syncStatus.queue.waitingTurns} Vòng`
                 : ''}`;
         const theme = themeFor(state, settings);
         const clock = formatWorldCalendar(state);
@@ -2850,7 +2850,7 @@ export function createWorldBackstageUI({
         root.innerHTML = `
             <button class="wb-world-orb ${isOpen ? 'is-open' : ''} ${orbProcessing ? 'is-processing' : ''} ${settings.orbPosition ? 'has-custom-position' : ''}" type="button"
                 style="${orbStyles.orb}" data-wb-action="toggle-panel"
-                aria-label="${isOpen ? '收起世界背面' : '打开世界背面'}">
+                aria-label="${isOpen ? 'Thu gọn Mặt trái thế giới' : 'Mở Mặt trái thế giới'}">
                 <span class="wb-orb-halo"></span>
                 <span class="wb-orb-ring ring-one"></span>
                 <span class="wb-orb-ring ring-two"></span>
@@ -2859,33 +2859,33 @@ export function createWorldBackstageUI({
             </button>
             <div class="wb-orb-caption ${!isOpen && needsAttention ? 'is-visible' : ''}"
                 style="${orbStyles.caption}">
-                <strong>世界背面</strong>
+                <strong>Mặt trái thế giới</strong>
                 <span>${escapeHtml(
                     memoryPhase === 'error'
-                        ? syncStatus.memory?.message || '记忆整理刚刚绊了一下 QAQ，点开看看原因～'
+                        ? syncStatus.memory?.message || 'Sắp xếp ký ức vừa bị vấp một chút QAQ，Nhấn vào xem nguyên nhân nhé～'
                         : memoryPhase === 'running'
-                        ? syncStatus.memory.message || '记忆正在悄悄收拾中～ (｡•̀ᴗ-)✧'
+                        ? syncStatus.memory.message || 'Ký ức đang được âm thầm dọn dẹp～ (｡•̀ᴗ-)✧'
                         : orbProcessing
-                            ? syncStatus.message || '镜头外的世界正在悄悄运转中… ( •̀ ω •́ )✧'
+                            ? syncStatus.message || 'Thế giới ngoài ống kính đang âm thầm vận hành… ( •̀ ω •́ )✧'
                             : syncStatus.phase === 'error'
-                                ? '唔，世界这次没转起来 QAQ，点开看看原因～'
+                                ? 'Ưm, thế giới lần này không quay rồi QAQ，Nhấn vào xem nguyên nhân nhé～'
                                 : state.pendingSync
-                                    ? '新正文正在乖乖排队等推演～ (｡•̀ᴗ-)✧'
+                                    ? 'Nội dung chính mới đang ngoan ngoãn xếp hàng chờ suy diễn～ (｡•̀ᴗ-)✧'
                                     : pendingDeliveries > 0
-                                        ? `${pendingDeliveries} 条变化正慢慢靠近镜头～`
-                                        : '镜头之外暂时安安静静的～ (˘ω˘)',
+                                        ? `${pendingDeliveries}  điều thay đổi đang từ từ tiến lại gần ống kính～`
+                                        : 'Ngoài ống kính tạm thời rất yên tĩnh～ (˘ω˘)',
                 )}</span>
             </div>
 
             ${isOpen ? `
                 <div class="wb-panel-scrim ${animatePanelEntrance ? 'is-opening' : ''}" data-wb-action="close-panel">
-                    <section class="wb-window" role="dialog" aria-modal="true" aria-label="世界背面">
+                    <section class="wb-window" role="dialog" aria-modal="true" aria-label="Mặt trái thế giới">
                         <header class="wb-window-header">
                             <div class="wb-brand">
                                 ${renderBrandMark()}
                                 <div>
-                            <span class="wb-brand-line"><h1>世界背面</h1><i>正式版 ${escapeHtml(pluginVersion || '1.1.0')}</i></span>
-                                    <p>镜头之外，世界仍在继续</p>
+                            <span class="wb-brand-line"><h1>Mặt trái thế giới</h1><i>Phiên bản chính thức ${escapeHtml(pluginVersion || '1.1.0')}</i></span>
+                                    <p>Ngoài ống kính, thế giới vẫn đang tiếp diễn</p>
                                 </div>
                             </div>
                             <div class="wb-header-center">
@@ -2894,23 +2894,23 @@ export function createWorldBackstageUI({
                                 )}"` : ''} aria-label="${escapeAttr(clockLabel)}">
                                     ${clockAnchored ? `
                                         <span class="wb-calendar-page" aria-hidden="true">
-                                            <small>${escapeHtml(`${clock.month}月`)}</small>
+                                            <small>${escapeHtml(`${clock.month}Tháng`)}</small>
                                             <strong>${escapeHtml(String(clock.dayOfMonth).padStart(2, '0'))}</strong>
                                         </span>
                                         <span class="wb-calendar-copy">
                                             <small>${escapeHtml(`${state.world.name} · ${clock.calendarName}`)}</small>
-                                            <strong>${escapeHtml(`${clock.year} 年 ${clock.month} 月`)}</strong>
+                                            <strong>${escapeHtml(`${clock.year} Năm ${clock.month} Tháng`)}</strong>
                                             <em>${escapeHtml(clock.time)}</em>
                                         </span>
                                     ` : `
                                         <span class="wb-calendar-page" aria-hidden="true">
-                                            <small>时间</small>
+                                            <small>Thời gian</small>
                                             <strong>··</strong>
                                         </span>
                                         <span class="wb-calendar-copy">
-                                            <small>${escapeHtml(`${state.world.name} · 主世界钟`)}</small>
-                                            <strong>等待首次校准</strong>
-                                            <em>推演后建立</em>
+                                            <small>${escapeHtml(`${state.world.name} · Đồng hồ thế giới chính`)}</small>
+                                            <strong>Chờ hiệu chuẩn lần đầu</strong>
+                                            <em>Thiết lập sau khi suy diễn</em>
                                         </span>
                                     `}
                                 </time>
@@ -2920,13 +2920,13 @@ export function createWorldBackstageUI({
                             </div>
                             <div class="wb-header-actions">
                                 <button type="button" class="wb-round-action" data-wb-action="cycle-theme"
-                                    aria-label="切换日间/夜间"><span class="wb-theme-glyph"></span></button>
+                                    aria-label="Chuyển sang ban ngày/Ban đêm"><span class="wb-theme-glyph"></span></button>
                                 <button type="button" class="wb-round-action ${settingsOpen ? 'is-active' : ''}"
-                                    data-wb-action="toggle-settings" aria-label="观测设置">
+                                    data-wb-action="toggle-settings" aria-label="Cài đặt quan sát">
                                     <span class="wb-settings-glyph"></span>
                                 </button>
                                 <button type="button" class="wb-round-action" data-wb-action="toggle-panel"
-                                    aria-label="收起">—</button>
+                                    aria-label="Thu gọn">—</button>
                             </div>
                         </header>
 
@@ -2942,7 +2942,7 @@ export function createWorldBackstageUI({
                                 <button class="wb-side-sync wb-sim-action ${canCancelSimulation ? 'is-cancel' : ''}"
                                     type="button" data-wb-action="${canCancelSimulation ? 'cancel-simulation' : 'manual-sync'}"
                                     ${busy && !canCancelSimulation ? 'disabled' : ''}>
-                                    <i aria-hidden="true"></i><span>${canCancelSimulation ? '停止推演' : '推演世界'}</span>
+                                    <i aria-hidden="true"></i><span>${canCancelSimulation ? 'Dừng suy diễn' : 'Suy diễn thế giới'}</span>
                                 </button>
                             </nav>
 
@@ -2950,15 +2950,15 @@ export function createWorldBackstageUI({
                                 <div class="wb-view-header">
                                     <div><span>${currentView.eyebrow}</span><h2>${currentView.label}</h2></div>
                                     ${activeView === 'opinion' ? `
-                                        <div class="wb-public-readonly-badge"><i></i>只读观察</div>
+                                        <div class="wb-public-readonly-badge"><i></i>Chỉ đọc quan sát</div>
                                     ` : `
                                         <div class="wb-observer-switch">
                                             <button type="button" data-wb-action="set-observer" data-mode="backstage"
                                                 aria-pressed="${observerMode === 'backstage'}"
-                                                class="${observerMode === 'backstage' ? 'is-active' : ''}">幕后视角</button>
+                                                class="${observerMode === 'backstage' ? 'is-active' : ''}">Góc nhìn hậu trường</button>
                                             <button type="button" data-wb-action="set-observer" data-mode="known"
                                                 aria-pressed="${observerMode === 'known'}"
-                                                class="${observerMode === 'known' ? 'is-active' : ''}">角色所知</button>
+                                                class="${observerMode === 'known' ? 'is-active' : ''}">Những gì nhân vật biết</button>
                                         </div>
                                     `}
                                 </div>
@@ -2966,14 +2966,14 @@ export function createWorldBackstageUI({
                                 <div class="wb-view-content ${viewChanged ? 'is-entering' : ''}">${content}</div>
                                 <footer class="wb-window-footer">
                                     <div>
-                                        <span>主世界 ${escapeHtml(clockLabel)}</span><i></i>
-                                        <span>AI回复：由世界钟结算实际耗时</span><i></i>
-                                        <span>独白：仅幕后可见</span>
+                                        <span>Thế giới chính ${escapeHtml(clockLabel)}</span><i></i>
+                                        <span>AI Phản hồi: Thời gian tiêu hao thực tế do Đồng hồ thế giới quyết toán</span><i></i>
+                                        <span>Độc thoại: Chỉ hiển thị ở hậu trường</span>
                                     </div>
                                     <button class="wb-sim-action ${canCancelSimulation ? 'is-cancel' : ''}" type="button"
                                         data-wb-action="${canCancelSimulation ? 'cancel-simulation' : 'manual-sync'}"
                                         ${busy && !canCancelSimulation ? 'disabled' : ''}>
-                                        <i aria-hidden="true"></i><span>${canCancelSimulation ? '停止本次推演' : '推演最新正文'}</span>
+                                        <i aria-hidden="true"></i><span>${canCancelSimulation ? 'Dừng lần suy diễn này' : 'Suy diễn nội dung chính mới nhất'}</span>
                                     </button>
                                 </footer>
                             </div>
@@ -3018,12 +3018,12 @@ export function createWorldBackstageUI({
                     aria-labelledby="wb-edit-choice-title" aria-describedby="wb-edit-choice-detail">
                     <span class="wb-edit-choice-face" aria-hidden="true">${escapeHtml(TOAST_FACES.warning)}</span>
                     <div class="wb-edit-choice-copy">
-                        <strong id="wb-edit-choice-title">检测到已推演正文被修改</strong>
-                        <p id="wb-edit-choice-detail">剧情、时间或人物行动有变化时建议重推；若只修正错字、标点或措辞，可以保留原推演。</p>
+                        <strong id="wb-edit-choice-title">Phát hiện nội dung chính đã suy diễn bị sửa đổi</strong>
+                        <p id="wb-edit-choice-detail">Khi cốt truyện, thời gian hoặc hành động nhân vật có thay đổi thì khuyên dùng suy diễn lại; nếu chỉ sửa lỗi chính tả, dấu câu hoặc cách dùng từ, có thể giữ lại suy diễn gốc.</p>
                     </div>
                     <div class="wb-edit-choice-actions">
-                        <button type="button" class="is-rerun" data-wb-action="resolve-message-edit" data-mode="rerun">按修改后正文重推</button>
-                        <button type="button" data-wb-action="resolve-message-edit" data-mode="keep">保留原推演</button>
+                        <button type="button" class="is-rerun" data-wb-action="resolve-message-edit" data-mode="rerun">Suy diễn lại theo nội dung chính đã sửa đổi</button>
+                        <button type="button" data-wb-action="resolve-message-edit" data-mode="keep">Giữ lại suy diễn gốc</button>
                     </div>
                 </div>
             ` : ''}
@@ -3036,7 +3036,7 @@ export function createWorldBackstageUI({
             ${syncStatus.manualUndo?.available ? `
                 <div class="wb-undo-toast" role="status">
                     <span>${escapeHtml(syncStatus.manualUndo.label)}</span>
-                    <button type="button" data-wb-action="undo-manual">撤销</button>
+                    <button type="button" data-wb-action="undo-manual">Hoàn tác</button>
                 </div>
             ` : ''}
         `;
@@ -3228,7 +3228,7 @@ export function createWorldBackstageUI({
         }
         if (action === 'delete-record') {
             const kind = target.dataset.recordKind === 'archive' ? 'archive' : 'echo';
-            const confirmed = globalThis.confirm?.(`(・_・;)  确定删除这条${kind === 'echo' ? '回声' : '纪事'}吗？删除后可以用底部撤销恢复。`);
+            const confirmed = globalThis.confirm?.(`(・_・;)  Xác nhận xóa mục này${kind === 'echo' ? 'Tiếng vang' : 'Biên niên sử'} không? Sau khi xóa có thể dùng nút hoàn tác ở dưới cùng để khôi phục.`);
             if (confirmed === false) return;
             const completed = await invokeAction('delete-record', {
                 kind,
@@ -3281,7 +3281,7 @@ export function createWorldBackstageUI({
             return;
         }
         if (action === 'delete-memory-item') {
-            const confirmed = globalThis.confirm?.('(・_・;)  确定删除这条记忆吗？此操作可以用底部撤销恢复。');
+            const confirmed = globalThis.confirm?.('(・_・;)  Xác nhận xóa ký ức này không? Thao tác này có thể dùng nút hoàn tác ở dưới cùng để khôi phục.');
             if (confirmed === false) return;
             await invokeAction('delete-memory-item', {
                 kind: target.dataset.memoryKind || 'fact',
@@ -3299,8 +3299,8 @@ export function createWorldBackstageUI({
             const opening = !settingsOpen;
             settingsOpen = opening;
             if (opening) {
-                // 每次打开观测设置都从干净的折叠态开始～需要哪块再点哪块，
-                // 避免上一次打开的几个大模块一股脑铺满屏幕。
+                // Mỗi lần mở cài đặt quan sát đều bắt đầu từ trạng thái thu gọn sạch sẽ～ Cần phần nào thì nhấn phần đó,
+                // Tránh việc mấy mô-đun lớn mở lần trước đồng loạt lấp đầy màn hình.
                 openSettingsGroups = new Set();
                 openSettingsSubgroups = new Set();
                 settingsScrollTop = 0;
@@ -3361,7 +3361,7 @@ export function createWorldBackstageUI({
                 alreadyAdded: item.alreadyAdded || seen.has(`${item.open}\u0000${item.close}`),
                 recommended: false,
             }));
-            notify(added ? `已加入 ${added} 条过滤规则。` : '没有新的候选需要加入。', added ? 'success' : 'info');
+            notify(added ? `Đã thêm ${added}  quy tắc lọc.` : 'Không có ứng cử viên mới nào cần thêm vào.', added ? 'success' : 'info');
             render();
             return;
         }
@@ -3374,9 +3374,9 @@ export function createWorldBackstageUI({
             const result = await invokeAction('generate-public-opinion');
             if (result?.kind === 'sandbox') {
                 publicOpinionMode = 'sandbox';
-                notify('正史这轮没什么瓜～顺手给你捞了一锅闲逛内容，放心，不算正史 `(ﾉ◕ヮ◕)ﾉ`', 'info');
+                notify('Chính sử vòng này không có drama gì～ Tiện tay vớt cho bạn một mẻ nội dung dạo chơi, yên tâm, không tính là chính sử `(ﾉ◕ヮ◕)ﾉ`', 'info');
             } else if (result) {
-                notify('世界舆情刷新好啦～来看看大家又在聊什么 `(ﾉ◕ヮ◕)ﾉ`', 'success');
+                notify('Dư luận thế giới đã làm mới xong～ Hãy xem mọi người lại đang bàn tán gì nào `(ﾉ◕ヮ◕)ﾉ`', 'success');
             }
             render();
             return;
@@ -3385,7 +3385,7 @@ export function createWorldBackstageUI({
             const result = await invokeAction('generate-public-opinion-sandbox');
             if (result) {
                 publicOpinionMode = 'sandbox';
-                notify('随便逛到一锅新鲜瓜～放心，这些不算正史 `(≧▽≦)`', 'success');
+                notify('Tình cờ dạo được một mẻ drama tươi mới～ Yên tâm, những thứ này không tính là chính sử `(≧▽≦)`', 'success');
             }
             render();
             return;
@@ -3396,7 +3396,7 @@ export function createWorldBackstageUI({
             return;
         }
         if (action === 'clear-public-opinion') {
-            const confirmed = globalThis.confirm?.('(・_・;)  清空当前舆情快照吗？世界状态不会受到影响。');
+            const confirmed = globalThis.confirm?.('(・_・;)  Xóa bản ghi nhanh dư luận hiện tại không? Trạng thái thế giới sẽ không bị ảnh hưởng.');
             if (confirmed === false) return;
             await invokeAction('clear-public-opinion');
             render();
@@ -3440,7 +3440,7 @@ export function createWorldBackstageUI({
             return;
         }
         if (action === 'delete-manual-person') {
-            const confirmed = globalThis.confirm?.('(・_・;)  确定从后台人物名单中删除这个 NPC 吗？');
+            const confirmed = globalThis.confirm?.('(・_・;)  Xác nhận xóa khỏi danh sách nhân vật chạy ngầm cái này NPC không?');
             if (confirmed === false) return;
             const completed = await invokeAction('delete-manual-person', {
                 id: target.dataset.personId || '',
@@ -3465,7 +3465,7 @@ export function createWorldBackstageUI({
         }
         if (action === 'delete-event') {
             const eventId = target.dataset.eventId || '';
-            const confirmed = globalThis.confirm?.('(・_・;)  确定删除这条暗流吗？删除后可以用底部撤销恢复。');
+            const confirmed = globalThis.confirm?.('(・_・;)  Xác nhận xóa dòng chảy ngầm này không? Sau khi xóa có thể dùng nút hoàn tác ở dưới cùng để khôi phục.');
             if (confirmed === false) return;
             const completed = await invokeAction('delete-event', { eventId });
             if (completed && eventEditorId === eventId) {
@@ -3490,8 +3490,8 @@ export function createWorldBackstageUI({
                 [setting]: value,
             });
             render();
-            // 选择“独立接口”后立即展开填写区，恢复一键进入配置的填写体验。
-            // 用户之后仍可手动收起；普通重渲染不会强制再次展开。
+            // Chọn“Giao diện độc lập”sau đó ngay lập tức mở rộng khu vực điền, khôi phục trải nghiệm điền vào cấu hình chỉ với một cú nhấp chuột.
+            // Người dùng sau đó vẫn có thể thu gọn thủ công; việc render lại thông thường sẽ không bắt buộc mở rộng lần nữa.
             if (setting === 'apiMode' && value === 'custom') {
                 window.setTimeout(() => {
                     const connectionGroup = root.querySelector('.wb-settings-group[data-settings-group="connection"]');
@@ -3515,8 +3515,8 @@ export function createWorldBackstageUI({
         if (action === 'cycle-theme') {
             const settings = getSettings();
             const state = getState();
-            // 顶栏快捷键只做“日间 ↔ 夜间”直切；自动模式仍可在设置页选择。
-            // 旧逻辑会经过 auto，若 auto 恰好解析成当前主题，视觉上像按钮失灵。
+            // Phím tắt thanh trên cùng chỉ làm“Ban ngày ↔ Ban đêm”chuyển đổi trực tiếp; chế độ tự động vẫn có thể chọn ở trang cài đặt.
+            // Logic cũ sẽ đi qua auto，Nếu auto tình cờ phân tích thành chủ đề hiện tại, về mặt thị giác giống như nút không hoạt động.
             const currentTheme = themeFor(state, settings);
             const next = currentTheme === 'day' ? 'night' : 'day';
             await invokeAction('update-settings', { theme: next });
@@ -3614,7 +3614,7 @@ export function createWorldBackstageUI({
             }
             if (modelField && !String(modelField.value || '').trim()) {
                 modelField.focus();
-                notify('先选个模型再保存方案吧～', 'error');
+                notify('Trước tiên hãy chọn một mô hình rồi lưu phương án nhé~', 'error');
                 return;
             }
             const data = readApiForm(form);
@@ -3624,13 +3624,13 @@ export function createWorldBackstageUI({
                 || existingProfile?.key
                 || (!profileId ? getSettings().customApiKey : '');
             if (!key) {
-                notify('这个方案还缺 API Key 哦～', 'error');
+                notify('Phương án này vẫn thiếu API Key ồ~', 'error');
                 form.elements?.customApiCredential?.focus();
                 return;
             }
             const name = String(data.profileName || '').trim()
                 || String(data.customApiModel || '').trim()
-                || '我的独立 API';
+                || 'Độc lập của tôi API';
             const completed = await invokeAction('save-api-profile', {
                 id: profileId,
                 name,
@@ -3650,7 +3650,7 @@ export function createWorldBackstageUI({
             const profileId = String(target.dataset.profileId || '');
             const profile = (getSettings().apiProfiles || []).find(item => item.id === profileId);
             if (!profile) {
-                notify('这个 API 方案好像已经不在啦～', 'error');
+                notify('Cái này API phương án hình như đã không còn nữa~', 'error');
                 return;
             }
             apiFormDraft = {
@@ -3693,7 +3693,7 @@ export function createWorldBackstageUI({
         if (action === 'delete-api-profile') {
             const settings = getSettings();
             const profile = (settings.apiProfiles || []).find(item => item.id === String(target.dataset.profileId || ''));
-            const confirmed = globalThis.confirm?.(`(・_・;)  要删掉 API 方案“${profile?.name || '这个方案'}”吗？\n使用它的模块会自动退回“跟随默认”。`);
+            const confirmed = globalThis.confirm?.(`(・_・;)  Muốn xóa API Phương án“${profile?.name || 'phương án này'}”không?\n Mô-đun sử dụng nó sẽ tự động quay về“Theo mặc định”。`);
             if (confirmed === false) return;
             await invokeAction('delete-api-profile', { profileId: target.dataset.profileId || '' });
             render();
@@ -3710,7 +3710,7 @@ export function createWorldBackstageUI({
             }
             if (modelField && !String(modelField.value || '').trim()) {
                 modelField.focus();
-                notify('先选个模型再测试吧～', 'error');
+                notify('Hãy chọn một mô hình trước rồi mới kiểm tra nhé~', 'error');
                 return;
             }
             const data = readApiForm(form);
@@ -3728,8 +3728,8 @@ export function createWorldBackstageUI({
         if (action === 'pull-api-models') {
             const form = target.closest('[data-wb-form="api"]');
             if (!form) return;
-            // 拉模型只读取当前草稿，不再偷偷改默认独立接口。编辑已保存方案时，
-            // Key 留空会安全沿用该方案自己的 Key，而不是串到默认配置。
+            // Lấy mô hình chỉ đọc bản nháp hiện tại, không còn lén lút sửa giao diện độc lập mặc định. Khi chỉnh sửa phương án đã lưu,
+            // Key để trống sẽ an toàn tiếp tục sử dụng của chính phương án đó Key，chứ không phải chuyển sang cấu hình mặc định.
             const urlField = form.elements?.customApiUrl;
             const keyField = form.elements?.customApiCredential;
             if (urlField && !urlField.checkValidity()) {
@@ -3770,7 +3770,7 @@ export function createWorldBackstageUI({
             if (!field) return;
             const visible = field.classList.toggle('is-visible');
             target.setAttribute('aria-pressed', String(visible));
-            target.textContent = visible ? '隐藏' : '显示';
+            target.textContent = visible ? 'Ẩn' : 'Hiển thị';
             field.focus();
             return;
         }
@@ -3811,7 +3811,7 @@ export function createWorldBackstageUI({
                 [apiRouteKey]: String(event.target.value || 'default'),
             };
             await invokeAction('update-settings', { apiModuleRoutes: routes });
-            notify('这块的 API 路线记好啦～', 'success');
+            notify('của phần này API Tuyến đường đã ghi nhớ~', 'success');
             render();
             return;
         }
@@ -3889,7 +3889,7 @@ export function createWorldBackstageUI({
             const completed = await invokeAction('update-settings', apiSettingsFromDraft(data));
             if (completed) {
                 forgetApiKeyDraft(data);
-                notify('独立接口存好啦～旧 Key 还是不会偷偷回填哦。', 'success');
+                notify('Giao diện độc lập đã lưu~ cũ Key vẫn sẽ không lén lút điền lại đâu.', 'success');
             }
         }
         if (form.dataset.wbForm === 'world') {

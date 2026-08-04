@@ -154,19 +154,19 @@ export function splitBackstagePrompt(prompt) {
     const text = String(prompt || '').trim();
     if (!text) {
         return {
-            systemPrompt: '你是“世界背面”的后台结构化任务执行器。严格执行本轮任务，只输出任务要求的结构化结果。',
+            systemPrompt: 'Bạn là“Mặt trái thế giới”trình thực thi nhiệm vụ có cấu trúc chạy ngầm. Nghiêm túc thực thi nhiệm vụ vòng này, chỉ xuất ra kết quả có cấu trúc theo yêu cầu của nhiệm vụ.',
             userPrompt: '',
         };
     }
 
     const lines = text.split(/\r?\n/);
     const firstLine = cleanText(lines[0]);
-    const looksLikeRoleDeclaration = /^你是[“"]?世界背面[”"]?的/.test(firstLine)
-        && /(推演器|世界状态引擎|状态引擎|档案员|整理器|观测器)/.test(firstLine);
+    const looksLikeRoleDeclaration = /^Bạn là[“"]?Mặt trái thế giới[”"]?của/.test(firstLine)
+        && /(Trình suy diễn|Động cơ trạng thái thế giới|Động cơ trạng thái|Người lưu trữ|Trình sắp xếp|Trình quan sát)/.test(firstLine);
 
     if (!looksLikeRoleDeclaration) {
         return {
-            systemPrompt: '你是“世界背面”的后台结构化任务执行器。严格执行本轮任务，不续写主聊天正文。',
+            systemPrompt: 'Bạn là“Mặt trái thế giới”trình thực thi nhiệm vụ có cấu trúc chạy ngầm. Nghiêm túc thực thi nhiệm vụ vòng này, không viết tiếp nội dung chính của trò chuyện.',
             userPrompt: text,
         };
     }
@@ -194,7 +194,7 @@ export function buildBackstageMessages(prompt, {
     systemParts.push([
         '<world_backstage_task_system>',
         task.systemPrompt,
-        '本轮后台任务指令优先决定输出格式与数据约束。不要生成主聊天正文。',
+        'Lệnh nhiệm vụ chạy ngầm vòng này ưu tiên quyết định định dạng đầu ra và ràng buộc dữ liệu. Không tạo nội dung chính của trò chuyện.',
         '</world_backstage_task_system>',
     ].join('\n'));
 

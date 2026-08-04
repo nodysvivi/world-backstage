@@ -82,14 +82,14 @@ export async function runWithRetries(operation, {
 }
 
 function cancellationError() {
-    const error = new Error('推演已由用户取消');
+    const error = new Error('Suy diễn đã bị người dùng hủy');
     error.name = 'AbortError';
     return error;
 }
 
 export function isAbortError(error) {
     return error?.name === 'AbortError'
-        || /aborted|aborterror|已由用户取消|用户取消/i.test(String(error?.message || error || ''));
+        || /aborted|aborterror|Đã bị người dùng hủy|Người dùng hủy/i.test(String(error?.message || error || ''));
 }
 
 async function waitForRetry(wait, milliseconds, signal) {
@@ -186,7 +186,7 @@ async function readResponse(response) {
             data = JSON.parse(text);
         } catch {
             if (response.ok) {
-                throw new Error(`接口返回的不是 JSON：${text.slice(0, 180)}`);
+                throw new Error(`Giao diện trả về không phải là JSON：${text.slice(0, 180)}`);
             }
         }
     }
@@ -215,33 +215,33 @@ function classifyUpstreamError(response, data, detail = '') {
     ].filter(Boolean).join(' ').toLocaleLowerCase();
 
     if (
-        /insufficient[_\s-]*quota|quota\s*(?:exceeded|exhausted|depleted)|credits?\s*(?:exhausted|depleted)|额度(?:不足|耗尽)|余额不足/.test(text)
+        /insufficient[_\s-]*quota|quota\s*(?:exceeded|exhausted|depleted)|credits?\s*(?:exhausted|depleted)|Hạn mức(?:Không đủ|Cạn kiệt)|Số dư không đủ/.test(text)
     ) {
         return { errorType: 'quota-exhausted', upstreamStatus: response?.status === 429 ? 429 : null };
     }
     if (
         Number(response?.status) === 429
-        || /too many requests|rate[_\s-]*limit(?:ed|_exceeded)?|请求过于频繁|限流|频率限制/.test(text)
+        || /too many requests|rate[_\s-]*limit(?:ed|_exceeded)?|Yêu cầu quá thường xuyên|Giới hạn luồng|Giới hạn tần suất/.test(text)
     ) {
         return { errorType: 'rate-limit', upstreamStatus: 429 };
     }
     return { errorType: 'other', upstreamStatus: null };
 }
 
-function buildCustomApiResponseError(response, data, text, subject = '独立 API') {
+function buildCustomApiResponseError(response, data, text, subject = 'Độc lập API') {
     const detail = errorDetail(data, text);
     const classified = classifyUpstreamError(response, data, detail);
     let message;
     if (classified.errorType === 'rate-limit') {
-        message = `${subject} 被上游限流：${detail || 'Too Many Requests'}（429 类错误`;
-        if (Number(response?.status) === 200) message += '；酒馆转发层 HTTP 200';
-        message += '）。稍后再试，或检查该接口/模型的频率限制。';
+        message = `${subject} Bị giới hạn luồng từ thượng nguồn:${detail || 'Too Many Requests'}（429 Lỗi loại`;
+        if (Number(response?.status) === 200) message += '；Lớp chuyển tiếp Tavern HTTP 200';
+        message += '）。Thử lại sau, hoặc kiểm tra giao diện này/Giới hạn tần suất của mô hình.';
     } else if (classified.errorType === 'quota-exhausted') {
-        message = `${subject} 额度已耗尽：${detail || 'quota exhausted'}`;
-        if (Number(response?.status) === 200) message += '（酒馆转发层 HTTP 200）';
-        message += '。请检查该接口/模型的额度或余额。';
+        message = `${subject} Hạn mức đã cạn kiệt:${detail || 'quota exhausted'}`;
+        if (Number(response?.status) === 200) message += '（Lớp chuyển tiếp Tavern HTTP 200）';
+        message += '。Vui lòng kiểm tra giao diện này/Hạn mức hoặc số dư của mô hình.';
     } else {
-        message = `${subject} 返回 HTTP ${response?.status}${detail ? `：${detail}` : ''}`;
+        message = `${subject} Trả về HTTP ${response?.status}${detail ? `：${detail}` : ''}`;
     }
     const error = new Error(message);
     error.errorType = classified.errorType;
@@ -264,7 +264,7 @@ function headersFrom(getRequestHeaders) {
 }
 
 function timeoutError(timeoutMs) {
-    return new Error(`独立 API 请求超时（${Math.ceil(timeoutMs / 1000)} 秒）`);
+    return new Error(`Độc lập API Yêu cầu hết thời gian (${Math.ceil(timeoutMs / 1000)} giây)`);
 }
 
 async function fetchWithTimeout(fetchImpl, url, options, timeoutMs, externalSignal) {
@@ -321,13 +321,13 @@ export async function requestCustomModels(settings, {
     signal = null,
     routeLabel = '',
 } = {}) {
-    if (typeof fetchImpl !== 'function') throw new Error('当前环境不支持网络请求');
+    if (typeof fetchImpl !== 'function') throw new Error('Môi trường hiện tại không hỗ trợ yêu cầu mạng');
     const modelsUrl = normalizeCustomModelsUrl(settings?.customApiUrl);
     const apiKey = cleanText(settings?.customApiKey);
     const transport = settings?.customApiTransport === 'direct' ? 'direct' : 'proxy';
     const requestTimeout = Number(timeoutMs ?? settings?.customApiTimeoutMs ?? 120000);
-    if (!modelsUrl) throw new Error('请先填写独立 API 地址');
-    if (!apiKey) throw new Error('请先填写独立 API Key');
+    if (!modelsUrl) throw new Error('Vui lòng điền độc lập trước API Địa chỉ');
+    if (!apiKey) throw new Error('Vui lòng điền độc lập trước API Key');
 
     let target = modelsUrl;
     let options = {
@@ -359,11 +359,11 @@ export async function requestCustomModels(settings, {
         const response = await fetchWithTimeout(fetchImpl, target, options, requestTimeout, signal);
         const { text, data } = await readResponse(response);
         if (!response.ok || data?.error) {
-            throw buildCustomApiResponseError(response, data, text, '模型列表请求');
+            throw buildCustomApiResponseError(response, data, text, 'Yêu cầu danh sách mô hình');
         }
         const models = modelIdsFrom(data);
         if (!models.length) {
-            throw new Error('接口连接成功，但没有返回可识别的模型列表；仍可手动填写模型名称');
+            throw new Error('Kết nối giao diện thành công, nhưng không trả về danh sách mô hình có thể nhận dạng; vẫn có thể điền tên mô hình thủ công');
         }
         finishCustomApiOperation(operationId, {
             phase: 'success',
@@ -396,7 +396,7 @@ export async function requestCustomCompletion(settings, messages, {
     routeLabel = '',
 } = {}) {
     if (typeof fetchImpl !== 'function') {
-        throw new Error('当前环境不支持网络请求');
+        throw new Error('Môi trường hiện tại không hỗ trợ yêu cầu mạng');
     }
 
     const apiUrl = normalizeCustomApiUrl(settings?.customApiUrl);
@@ -405,9 +405,9 @@ export async function requestCustomCompletion(settings, messages, {
     const transport = settings?.customApiTransport === 'direct' ? 'direct' : 'proxy';
     const requestTimeout = Number(timeoutMs ?? settings?.customApiTimeoutMs ?? 120000);
 
-    if (!apiUrl) throw new Error('请先填写独立 API 地址');
-    if (!model) throw new Error('请先填写独立 API 模型名');
-    if (!apiKey) throw new Error('请先填写独立 API Key');
+    if (!apiUrl) throw new Error('Vui lòng điền độc lập trước API Địa chỉ');
+    if (!model) throw new Error('Vui lòng điền độc lập trước API Tên mô hình');
+    if (!apiKey) throw new Error('Vui lòng điền độc lập trước API Key');
 
     const body = {
         model,
@@ -468,7 +468,7 @@ export async function requestCustomCompletion(settings, messages, {
     } catch (error) {
         let nextError = error;
         if (transport === 'direct' && /fetch|network|cors/i.test(String(error?.message || error))) {
-            nextError = new Error('浏览器直连接口失败，可能是跨域限制；请改用“经酒馆转发”');
+            nextError = new Error('Kết nối trực tiếp giao diện qua trình duyệt thất bại, có thể do giới hạn cross-domain; vui lòng chuyển sang dùng“Chuyển tiếp qua Tavern”');
         }
         finishCustomApiOperation(operationId, {
             phase: 'error',
@@ -501,15 +501,15 @@ export async function requestCustomCompletion(settings, messages, {
         let error;
         if (/no message generated|empty (?:message|response)|no content/i.test(detail)) {
             error = new Error(
-                '独立 API 没有返回最终正文（No message generated）。'
+                'Độc lập API Không trả về nội dung chính cuối cùng (No message generated）。'
                 + (useDeepSeekV4Compatibility
-                    ? '插件已请求关闭 DS4 思考；若仍为空，通常是中转站未转发该参数或接口输出额度耗尽'
-                    : '请检查模型输出额度或改用能稳定返回正文的模型'),
+                    ? 'Plugin đã yêu cầu đóng DS4 suy nghĩ; nếu vẫn trống, thường là do trạm trung chuyển không chuyển tiếp tham số này hoặc hạn mức đầu ra của giao diện đã cạn kiệt'
+                    : 'Vui lòng kiểm tra hạn mức đầu ra của mô hình hoặc chuyển sang mô hình có thể trả về nội dung chính ổn định'),
             );
             error.errorType = 'empty-response';
             error.transportStatus = Number(response.status) || null;
         } else {
-            error = buildCustomApiResponseError(response, data, text, '独立 API');
+            error = buildCustomApiResponseError(response, data, text, 'Độc lập API');
         }
         finishCustomApiOperation(operationId, {
             phase: 'error',
@@ -527,10 +527,10 @@ export async function requestCustomCompletion(settings, messages, {
     if (!completion) {
         const hitLengthLimit = /length|max[_\s-]*tokens?|token[_\s-]*limit/i.test(finishReason);
         const error = hitLengthLimit
-            ? new Error(`独立 API 输出达到长度上限（${finishReason}），且没有返回可恢复的正文`)
+            ? new Error(`Độc lập API Đầu ra đạt giới hạn độ dài (${finishReason}），và không trả về nội dung chính có thể khôi phục`)
             : new Error(
-                '独立 API 返回成功，但没有可读取的最终正文。'
-                + (useDeepSeekV4Compatibility ? 'DS4 思考可能占满了中转站的输出额度' : ''),
+                'Độc lập API Trả về thành công, nhưng không có nội dung chính cuối cùng có thể đọc.'
+                + (useDeepSeekV4Compatibility ? 'DS4 Suy nghĩ có thể đã chiếm hết hạn mức đầu ra của trạm trung chuyển' : ''),
             );
         error.errorType = hitLengthLimit ? 'output-limit' : 'empty-response';
         error.transportStatus = Number(response.status) || null;
@@ -546,7 +546,7 @@ export async function requestCustomCompletion(settings, messages, {
     }
     const hitLengthLimit = /length|max[_\s-]*tokens?|token[_\s-]*limit/i.test(finishReason);
     if (hitLengthLimit && rejectTruncated) {
-        const error = new Error(`独立 API 输出达到长度上限（${finishReason}），本任务不接受被截断的结果`);
+        const error = new Error(`Độc lập API Đầu ra đạt giới hạn độ dài (${finishReason}），Nhiệm vụ này không chấp nhận kết quả bị cắt bớt`);
         error.code = 'OUTPUT_TRUNCATED';
         error.errorType = 'output-limit';
         error.transportStatus = Number(response.status) || null;
