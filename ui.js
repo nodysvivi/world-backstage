@@ -2894,12 +2894,12 @@ export function createWorldBackstageUI({
                                 )}"` : ''} aria-label="${escapeAttr(clockLabel)}">
                                     ${clockAnchored ? `
                                         <span class="wb-calendar-page" aria-hidden="true">
-                                            <small>${escapeHtml(`${clock.month}Tháng`)}</small>
+                                            <small>${escapeHtml(`T${clock.month}`)}</small>
                                             <strong>${escapeHtml(String(clock.dayOfMonth).padStart(2, '0'))}</strong>
                                         </span>
                                         <span class="wb-calendar-copy">
                                             <small>${escapeHtml(`${state.world.name} · ${clock.calendarName}`)}</small>
-                                            <strong>${escapeHtml(`${clock.year} Năm ${clock.month} Tháng`)}</strong>
+                                            <strong>${escapeHtml(`Tháng ${clock.month} Năm ${clock.year}`)}</strong>
                                             <em>${escapeHtml(clock.time)}</em>
                                         </span>
                                     ` : `

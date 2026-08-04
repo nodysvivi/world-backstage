@@ -341,7 +341,7 @@ export function formatWorldCalendar(state, totalMinutes = state?.clock?.absolute
         day: calendar.anchorDay,
     }, clock.day - calendar.anchorAbsoluteDay);
     const pad = number => String(number).padStart(2, '0');
-    const dateLabel = `${date.year}Năm${date.month}Tháng${date.day}Ngày`;
+    const dateLabel = `Ngày ${date.day} Tháng ${date.month} Năm ${date.year}`;
     return {
         ...clock,
         calendarName: calendar.name,
@@ -349,7 +349,7 @@ export function formatWorldCalendar(state, totalMinutes = state?.clock?.absolute
         month: date.month,
         dayOfMonth: date.day,
         date: dateLabel,
-        shortDate: `${pad(date.month)}Tháng${pad(date.day)}Ngày`,
+        shortDate: `Ngày ${pad(date.day)} Tháng ${pad(date.month)}`,
         stamp: `${calendar.name} ${dateLabel} ${clock.time}`,
     };
 }
