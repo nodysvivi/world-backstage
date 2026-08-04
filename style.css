@@ -3357,6 +3357,13 @@
         grid-template-columns: minmax(0, 1fr) auto auto;
         gap: clamp(4px, 2vw, 8px);
         padding: 0 clamp(8px, 3vw, 12px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+    }
+
+    .wb-window-header::-webkit-scrollbar {
+        display: none;
     }
 
     .wb-calendar-page {
@@ -7036,6 +7043,45 @@
 
 #world-backstage-root .wb-settings-group[data-settings-group="calendar"] .wb-clock-form {
     margin: 0;
+}
+
+@media (max-width: 360px) {
+    .wb-window-header {
+        gap: 4px;
+        padding: 0 6px;
+    }
+
+    .wb-brand h1 {
+        max-width: 84px;
+    }
+
+    .wb-brand p,
+    .wb-brand-line {
+        display: none;
+    }
+
+    .wb-calendar-page {
+        width: 32px;
+        height: 38px;
+    }
+
+    .wb-calendar-page strong {
+        font-size: 15px;
+        line-height: 24px;
+    }
+
+    .wb-header-center .wb-calendar-copy {
+        display: none;
+    }
+
+    .wb-round-action {
+        width: 28px;
+        height: 28px;
+    }
+
+    .wb-header-actions {
+        gap: 4px;
+    }
 }
 
 @media (max-width: 560px) {
